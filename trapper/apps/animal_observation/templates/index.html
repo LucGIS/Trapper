@@ -1,0 +1,10 @@
+{% if projects %}
+	Available projects:
+	<ul>
+	{% for project in projects %}
+	<li><a href="{% url "project_view" project.id %}">{{ project.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+No project available. Start one now!
+{% endif %}

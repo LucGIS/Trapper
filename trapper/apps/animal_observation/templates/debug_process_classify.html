@@ -1,0 +1,17 @@
+Classification details
+<br />
+Project:
+<h1>{{ project.name }}</h1>
+Resources:
+<h1>{{ resource.name }}</h1>
+Answers:
+<ul>
+{% for row in answers %}
+Next:
+	<ul>
+		{% for kk, vv in row.iteritems %}
+		<li> {{kk}} , {{vv}} </li>
+		{% endfor %}
+	</ul>
+{% endfor %}
+</ul>

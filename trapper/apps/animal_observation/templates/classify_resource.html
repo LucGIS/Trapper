@@ -1,0 +1,84 @@
+Project:
+<h1>{{ project.name }}</h1>
+Resource:
+<h1>{{ resource.name }}</h1>
+<h2>Classify:</h2>
+<script language="javascript">
+	function addRow(rowId) {
+		var idx = parseInt(rowId.split('_')[1]);
+		var table = document.getElementById("classifyTable");
+		var row0 = table.rows[0].cloneNode(true);
+		table.appendChild(row0);
+		var last_row = table.lastChild;
+		last_row.id = rowId;
+		var cells = last_row.getElementsByTagName('td');
+		for(var i = 0 ; i < cells.length - 1 ; ++i) {
+			var features = cells[i].getElementsByClassName('AnimalFeature');
+			for(var j = 0 ; j < features.length ; ++j) {
+				var feature = features[j];
+				var f_name = feature.name.split("__")[1];
+				feature.name = idx + "__" + f_name;
+			}
+		}
+		var button = cells[cells.length - 1].getElementsByTagName('input')[0];
+		button.setAttribute('onclick',"removeRow('" + rowId + "')");
+
+		var newRowButton = document.getElementById("newRowButton");
+		var nextRowId = "row_" + (parseInt(rowId.split("_")[1]) + 1)
+		newRowButton.setAttribute('onclick',"addRow('" + nextRowId + "')");
+	}
+	function removeRow(rowId) {
+		var table = document.getElementById("classifyTable");
+		var rowCount = table.rows.length;
+		for(var i = 0 ; i < rowCount ; ++i) {
+			var row = table.rows[i];
+			if (row.id == rowId) {
+				table.deleteRow(i);
+				break;
+			}
+		}
+	}
+</script>
+<form action="{% url "process_classify" %}" method="post">
+<input type="hidden" name="project_id" value="{{project.id}}" />
+<input type="hidden" name="resource_id" value="{{resource.id}}" />
+{% csrf_token %}
+<table border=1>
+<tbody id="classifyTable">
+<tr id="row_1">
+{% for feature, scope in features %}
+	<td>
+	<label>{{feature.get_short_name}}:</label>
+	{% if feature.feature_type == "S" %}
+		<select name="1__{{feature.id}}" class="AnimalFeature" >
+			<option value="0" selected> - </option>
+			{% for state in scope %}
+			<option value="{{state.id}}"> {{state.name}} </option>
+			{% endfor %}
+		</select>
+	{% elif feature.feature_type == "I" or feature.feature_type == "F" %} 
+		<input type="text" name="1__{{feature.id}}" value="" class="AnimalFeature" />
+	{% elif feature.feature_type == "B" %}
+		<input type="hidden" value="0" name="1__{{feature.id}}" class="AnimalFeature" /> 
+		<input type="checkbox" value="1" name="1__{{feature.id}}" class="AnimalFeature" /> 
+	{% endif %}
+	</td>
+{% endfor %}
+	<td>
+		<input type="button" value="X" onclick="removeRow('row_1')" />
+	</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tr>
+	<td>
+		<input id="newRowButton" type="button" value="+" onclick="addRow('row_2')"/>
+	</td>
+<tr>
+</table>
+<input type="submit" value="Send">
+</form>
+
+<h1>{{ .name }}</h1>

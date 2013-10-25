@@ -1,0 +1,11 @@
+<h1>{{ project.name }}</h1>
+Resources:
+<ul>
+{% for resource in project.resources.all %}
+	<li>{{ resource.name }}</li>
+	<ul>
+		<li> <a href="{% url "resource_view" resource.id %}">Details</a> </li>
+		<li> <a href="{% url "classify_resource" project.id resource.id %}">Classify</a> </li>
+	</ul>
+{% endfor %}
+</ul>

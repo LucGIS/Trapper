@@ -1,0 +1,11 @@
+
+{% if resources %}
+	Available resources:
+	<ul>
+	{% for resource in resources %}
+	<li><a href="{% url "resource_view" resource.id %}">{{ resource.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+No project available. Start one now!
+{% endif %}
