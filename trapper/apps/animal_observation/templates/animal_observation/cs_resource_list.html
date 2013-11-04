@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+Select materials for classification:
+<ul>
+{% for project, resources in data %}
+<li>{{project.name}}
+	<ul>
+	{% for resource in resources %}
+		<li>
+		<a href="{% url "trapper.apps.animal_observation.classify" project.id resource.id %}">{{resource.name}}</a>
+		</li>
+	{% endfor %}
+	</ul>
+	</li>
+{% endfor %}
+</ul>
+{% endblock content %}

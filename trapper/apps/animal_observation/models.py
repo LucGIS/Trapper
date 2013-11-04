@@ -1,5 +1,6 @@
 from django.db import models
-from trapper.apps.storage.models import Resource, ResourceType
+from trapper.apps.storage.models import Resource, ResourceType, ResourceCollection
+from django.contrib.auth.models import User
 
 class AnimalFeature(models.Model):
 
@@ -8,16 +9,16 @@ class AnimalFeature(models.Model):
 	TYPE_FLT = 'F'
 	TYPE_BOL = 'B'
 
-	CHOICES = {
-		TYPE_STR: ('String', str),
-		TYPE_INT: ('Integer', int),
-		TYPE_FLT: ('Float', float),
-		TYPE_BOL: ('Boolean', bool),
+	TYPE_CHOICES = {
+		(TYPE_STR, 'String'),
+		(TYPE_INT, 'Integer'),
+		(TYPE_FLT, 'Float'),
+		(TYPE_BOL, 'Boolean'),
 	}
 
 	name = models.CharField(max_length=255)
 	short_name = models.CharField(max_length=255)
-	feature_type = models.CharField(max_length=1, choices=tuple((k, v[0]) for k, v  in CHOICES.iteritems()))
+	feature_type = models.CharField(max_length=1, choices=TYPE_CHOICES)
 
 	def get_short_name(self):
 		return unicode(self.short_name)
@@ -44,10 +45,21 @@ class ResourceFeatureSet(models.Model):
 	def __unicode__(self):
 		return unicode("Name: %s | Type: %s" %(self.name, self.resource_type.name))
 
+class ResourceExtra(models.Model):
+	"""
+	Extends the default storage.models.Resource model with the information relevant to the animal_observation app.
+	"""
+	resource = models.OneToOneField(Resource)
+	public = models.BooleanField()
+	cs_enabled = models.BooleanField()
+
+	def __unicode__(self):
+		return unicode("%s | public: %s | cs_enabled: %s" % (self.resource.name, self.public, self.cs_enabled))
+
 class ResourceClassification(models.Model):
 	resource = models.ForeignKey(Resource)
 	resource_feature_set = models.ForeignKey(ResourceFeatureSet)
-	#user = 
+	user = models.ForeignKey(User)
 
 	def __unicode__(self):
 		return unicode("Id: %s | FeatureSet: %s | Resource: %s" % (self.id, self.resource_feature_set, self.resource.name))
@@ -66,16 +78,40 @@ class AnimalFeatureAnswer(models.Model):
 	def __unicode__(self):
 		return "Feature: %s | Value: %s | ClassificationId: %s" % (self.feature.name, self.value, self.resource_classification_item.resource_classification.id);
 
-
 class ClassificationProject(models.Model):
 	name = models.CharField(max_length=255)
-	resources = models.ManyToManyField(Resource)
-	resource_feature_sets = models.ManyToManyField(ResourceFeatureSet)
+	resources = models.ManyToManyField(Resource, blank=True, null=True)
+	collections = models.ManyToManyField(ResourceCollection, blank=True, null=True)
+	resource_feature_sets = models.ManyToManyField(ResourceFeatureSet, blank=True, null=True)
+	users = models.ManyToManyField(User)
+	date_created = models.DateTimeField(auto_now_add=True)
+	cs_enabled = models.BooleanField(default=True)
 
 	def __unicode__(self):
 		return unicode(self.name)
 
-#class ResourceGroup(models.Model):
-#	name = models.CharField(max_length=40)
-#	project = models.ForeignKey(ClassificationProject)
-#	resources = models.ManyToManyField(Resource)
+	def get_all_cs_resources(self):
+		"""
+		A list of crowd-sourcing enabled resources.
+		"""
+		resources = [r.resource for r in ResourceExtra.objects.filter(cs_enabled=True, pk__in=self.resources.all())]
+		for c in self.collections.all():
+			new = [r.resource for r in ResourceExtra.objects.filter(cs_enabled=True, resource__in=c.resources.all())]
+			resources.extend(new)
+		return list(set(resources))
+
+class ClassificationProjectRole(models.Model):
+	ROLE_PROJECT_ADMIN = "A"
+	ROLE_EXPERT = "E"
+	ROLE_COLLABORATOR = "C"
+	ROLE_CHOICES = (
+		(ROLE_PROJECT_ADMIN, "Admin"),
+		(ROLE_EXPERT, "Expert"),
+		(ROLE_COLLABORATOR, "Collaborator"),
+	)
+	name = models.CharField(max_length=1, choices=ROLE_CHOICES)
+	user = models.ForeignKey(User)
+	project = models.ForeignKey(ClassificationProject)
+
+	def __unicode__(self):
+		return unicode("%s | Project: %s | Role: %s " % (self.user.username, self.project.name, self.get_name_display()))

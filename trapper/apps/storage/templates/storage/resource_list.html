@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if resources %}
+	Available resources:
+	<ul>
+	{% for resource in resources %}
+	<li><a href="{% url "trapper.apps.storage.resource_details" resource.id %}">{{ resource.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+No project available. Start one now!
+{% endif %}
+{% endblock content %}

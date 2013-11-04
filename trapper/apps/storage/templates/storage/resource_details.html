@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<ul>
+	<li>
+Name: {{ resource.name }}
+	</li>
+	<li>
+Type: {{ resource.resource_type.name }}
+	</li>
+	<li>
+Date Uploaded: {{ resource.date_uploaded}}
+	</li>
+	<li>
+Owner: {{ resource.owner}}
+	</li>
+	<li>
+Uploader: {{ resource.uploader}}
+	</li>
+	<li>
+Public: {{ resource.resourceextra.public}}
+	</li>
+	<li>
+Crowd-Sourcing enabled: {{ resource.resourceextra.cs_enabled}}
+	</li>
+<ul>
+{% endblock content %}

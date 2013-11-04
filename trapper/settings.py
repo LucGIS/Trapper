@@ -74,6 +74,8 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
@@ -84,6 +86,9 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '!*!hketnrwg8txwk)u2v8w(n1)e@bt$mo-5)oxgjn___uk%zua'
+
+import os
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -111,6 +116,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+	os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
 )
 
 INSTALLED_APPS = (
@@ -122,6 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 	'trapper.apps.animal_observation',
 	'trapper.apps.storage',
+	'trapper.apps.accounts',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
 	'django_extensions',

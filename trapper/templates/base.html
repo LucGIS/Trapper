@@ -1,0 +1,20 @@
+<a href="{% url 'trapper.index' %}">Tr@pper Home</a>
+</br>
+Hello
+<b>
+{% if user.is_authenticated %}
+<a href="{% url 'trapper.apps.accounts.profile_details' %}">{{user.username}}</a>
+(<a href="{% url 'trapper.apps.accounts.logout' %}">Logout</a>)
+{% else %}
+anonymous!
+(<a href="{% url 'trapper.apps.accounts.login' %}">Login</a>)
+{% endif %}
+</b>
+| <a href="{% url 'trapper.apps.storage.index' %}">Storage</a>
+| <a href="{% url 'trapper.apps.animal_observation.index' %}">AnimalObservation</a>
+| <a href="{% url 'trapper.apps.animal_observation.cs_resource_list' %}">CrowdSourcing</a>
+|
+<br/>
+<br/>
+{% block content %}{% endblock content %}
+

@@ -7,12 +7,17 @@ from trapper.apps.storage.models import Resource
 def index(request):
 	resources = Resource.objects.all()
 	context = {'resources': resources}
-	return render(request, 'storage_index.html', context)
+	return render(request, 'storage/index.html', context)
 
-class ResourceView(generic.DetailView):
+def resource_list(request):
+	resources = Resource.objects.all()
+	context = {'resources': resources}
+	return render(request, 'storage/resource_list.html', context)
+
+class ResourceDetails(generic.DetailView):
 	model = Resource
-	template_name = 'resource_view.html'
+	template_name = 'storage/resource_details.html'
 
 class ResourceUpdate(generic.UpdateView):
 	model = Resource
-	template_name = 'resource_view.html'
+	template_name = 'storage/resource_details.html'

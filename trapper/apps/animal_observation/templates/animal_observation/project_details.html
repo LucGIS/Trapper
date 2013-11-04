@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ project.name }}</h1>
+Your role in this project:
+{% if role %}
+{{role.get_name_display}}
+{% else %}
+None
+{% endif %}
+<br/>
+Single Resources:
+<ul>
+{% for resource in project.resources.all %}
+	<li>{{ resource.name }}</li>
+	<ul>
+		<li> <a href="{% url "trapper.apps.storage.resource_details" resource.id %}">Details</a> </li>
+		<li> <a href="{% url "trapper.apps.animal_observation.classify" project.id resource.id %}">Classify</a> </li>
+	</ul>
+{% endfor %}
+</ul>
+
+Resource Collections:
+<ul>
+{% for collection in project.collections.all %}
+<li>
+{{collection.name}}
+<ul>
+	{% for resource in collection.resources.all %}
+	<li>{{ resource.name }}</li>
+	<ul>
+		<li> <a href="{% url "trapper.apps.storage.resource_details" resource.id %}">Details</a> </li>
+		<li> <a href="{% url "trapper.apps.animal_observation.classify" project.id resource.id %}">Classify</a> </li>
+	</ul>
+	{% endfor %}
+</ul>
+
+</li>
+{% endfor %}
+</ul>
+{% endblock content %}

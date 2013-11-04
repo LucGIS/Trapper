@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+{% if projects %}
+	Available projects:
+	<ul>
+	{% for project in projects %}
+	<li><a href="{% url "trapper.apps.animal_observation.project_details" project.id %}">{{ project.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+No project available. Start one now!
+{% endif %}
+{% endblock content %}
