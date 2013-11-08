@@ -22,11 +22,11 @@ class ResourceClassificationItemInline(admin.StackedInline):
 class ResourceClassificationAdmin(admin.ModelAdmin):
 	inlines = [ResourceClassificationItemInline,]
 
-class ClassificationProjectRoleInline(admin.StackedInline):
+class ClassificationProjectRoleInline(admin.TabularInline):
 	model = ClassificationProjectRole
 	extra = 0
 
-class ClassificationProjectResourceCollectionInline(admin.StackedInline):
+class ClassificationProjectResourceCollectionInline(admin.TabularInline):
 	model = ClassificationProjectResourceCollection
 	extra = 0
 

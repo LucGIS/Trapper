@@ -7,8 +7,15 @@
 
 <form action="{% url "animal_observation:project_update" project.id %}" method="post">
 {% csrf_token %}
-{{form.as_p}}
-<input type="submit" value="Edit" />
+{{ form.as_p }}
+Select resource collections which are to be active for your project:
+<br />
+{% for form in formset %}
+<label>{{ form.collection }}</label>
+<label>Active: </label> {{ form.active }}
+<br/>
+{% endfor %}
+<input type="submit" value="Update" />
 </form>
 
 {% endblock content %}

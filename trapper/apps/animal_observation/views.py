@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.forms.models import modelformset_factory
 
-from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ResourceExtra, ClassificationProjectRole
+from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ResourceExtra, ClassificationProjectRole, ClassificationProjectResourceCollection
 from trapper.apps.storage.models import Resource
 from trapper.apps.animal_observation.decorators import project_role_required
-from trapper.apps.animal_observation.forms import ClassificationProjectForm
+from trapper.apps.animal_observation.forms import ClassificationProjectForm, ClassificationProjectResourceCollectionForm
 
 
 def index(request):
@@ -36,11 +37,20 @@ def project_update(request, project_id):
 	if request.method == "POST":
 		form = ClassificationProjectForm(request.POST, instance=project)
 		if form.is_valid():
-			form.save()
+			project = form.save(commit=False)
+			project.save()
+			for collection in form.cleaned_data.get('resource_collections'):
+				cp_rc = ClassificationProjectResourceCollection(collection=collection, project=project, active=True)
+				cp_rc.save()
+
 	else:
+		CPRCForm = modelformset_factory(ClassificationProjectResourceCollection, extra=0)
+		items = ClassificationProjectResourceCollection.objects.filter(project=project)
+		rprc_formset = CPRCForm(queryset=items)
 		form = ClassificationProjectForm(instance=project)
 
-	context = {'project': project, 'form': form}
+	context = {'project': project, 'form': form, 'formset': rprc_formset}
+
 	return render(request, 'animal_observation/project_update.html', context)
 
 def cs_resource_list(request):

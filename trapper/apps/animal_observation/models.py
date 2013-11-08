@@ -132,8 +132,8 @@ class ClassificationProjectRole(models.Model):
 		(ROLE_EXPERT, "Expert"),
 		(ROLE_COLLABORATOR, "Collaborator"),
 	)
-	name = models.CharField(max_length=1, choices=ROLE_CHOICES)
 	user = models.ForeignKey(User)
+	name = models.CharField(max_length=1, choices=ROLE_CHOICES)
 	project = models.ForeignKey(ClassificationProject)
 
 	def __unicode__(self):
