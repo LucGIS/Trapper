@@ -8,11 +8,13 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
+import os
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/alice/Projects/Trapper/trapper/trapper_db.sqlite',                      # Or path to database file if using sqlite3.
+        'NAME': os.path.join(SITE_ROOT, '..', 'trapper_db.sqlite'),
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',

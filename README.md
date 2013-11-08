@@ -17,17 +17,18 @@ It is suggested to install Django and other requirements using [virtualenv](www.
 
 1. Clone the repository:
 ```
-https://github.com/kiryx/Trapper.git
+git clone http://github.com/kiryx/Trapper.git
+cd Trapper/
 ```
 
-2. Once you're inside the **Trapper/** directory, initialize the virtual environment:
+2. Initialize the virtual environment:
 
 ```
 virtualenv env
-./env/bin/pip install -r requirements.txt **
+./env/bin/pip install -r requirements.txt
 ```
 
-3. Run the script which initializes the database along with the initial data:
+3. Run the script which sets the database along with the initial data:
 
 ```
 ./reset_database.sh
@@ -36,5 +37,5 @@ virtualenv env
 Run the server:
 
 ```
-./env/bin/python manage.py runserver
+./runserver.sh
 ```
