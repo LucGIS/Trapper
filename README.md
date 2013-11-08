@@ -22,20 +22,17 @@ cd Trapper/
 ```
 
 2. Initialize the virtual environment:
-
 ```
 virtualenv env
 ./env/bin/pip install -r requirements.txt
 ```
 
-3. Run the script which sets the database along with the initial data:
-
+3. Set the database along with the initial data:
 ```
 ./reset_database.sh
 ```
 
 Run the server:
-
 ```
 ./runserver.sh
 ```

@@ -6,7 +6,7 @@ Hello
 <a href="{% url "accounts:profile_details" %}">{{user.username}}</a>
 (<a href="{% url "accounts:logout" %}">Logout</a>)
 {% if user.is_staff %}
-| <a href="/admin/">AdminSite</a>
+| <a href="{% url "admin:index" %}">AdminSite</a>
 {% endif %}
 {% else %}
 anonymous!
@@ -15,9 +15,8 @@ anonymous!
 </b>
 | <a href="{% url "storage:index" %}">Storage</a>
 | <a href="{% url "animal_observation:index" %}">AnimalObservation</a>
-| <a href="{% url "animal_observation:cs_resource_list" %}">CrowdSourcing</a>
 |
 <br/>
 <br/>
-{% block content %}{% endblock content %}
+{% block master_content %}{% endblock master_content %}
 
