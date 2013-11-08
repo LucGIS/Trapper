@@ -18,8 +18,8 @@ Resource Collections:
 	{% for resource in collection.resources.all %}
 	<li>{{ resource.name }}</li>
 	<ul>
-		<li> <a href="{% url "trapper.apps.storage.resource_details" resource.id %}">Details</a> </li>
-		<li> <a href="{% url "trapper.apps.animal_observation.classify" project.id resource.id %}">Classify</a> </li>
+		<li> <a href="{% url "storage:resource_details" resource.id %}">Details</a> </li>
+		<li> <a href="{% url "animal_observation:classify" project.id resource.id %}">Classify</a> </li>
 	</ul>
 	{% endfor %}
 </ul>

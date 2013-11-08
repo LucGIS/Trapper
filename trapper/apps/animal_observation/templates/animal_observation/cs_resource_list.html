@@ -8,7 +8,7 @@ Select materials for classification:
 	<ul>
 	{% for resource in resources %}
 		<li>
-		<a href="{% url "trapper.apps.animal_observation.classify" project.id resource.id %}">{{resource.name}}</a>
+		<a href="{% url "animal_observation:classify" project.id resource.id %}">{{resource.name}}</a>
 		</li>
 	{% endfor %}
 	</ul>

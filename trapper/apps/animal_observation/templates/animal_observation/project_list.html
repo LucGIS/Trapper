@@ -7,10 +7,10 @@
 	<li>
 	<b>{{ project.name }}</b>
 	{% if can_view %}
-	<a href="{% url "trapper.apps.animal_observation.project_details" project.id %}">View</a>
+	<a href="{% url "animal_observation:project_details" project.id %}">View</a>
 	{% endif %}
 	{% if can_edit %}
-	<a href="{% url "trapper.apps.animal_observation.project_update" project.id %}">Edit</a>
+	<a href="{% url "animal_observation:project_update" project.id %}">Edit</a>
 	{% endif %}
 	</li>
 	{% endfor %}
