@@ -4,14 +4,22 @@ from django.shortcuts import redirect, render
 from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ResourceExtra, ClassificationProjectRole
 from trapper.apps.storage.models import Resource
 from trapper.apps.animal_observation.decorators import project_role_required
+from trapper.apps.animal_observation.forms import ClassificationProjectForm
 
 
 def index(request):
-	projects = ClassificationProject.objects.all()
-	context = {'projects': projects}
-	return render(request, 'animal_observation/index.html', context)
+	return render(request, 'animal_observation/index.html', {})
 
-@project_role_required([ClassificationProjectRole.ROLE_PROJECT_ADMIN,], redirect_page='trapper.apps.animal_observation.index')
+def project_list(request):
+	projects = ClassificationProject.objects.all()
+	items = []
+	for p in projects:
+		roles = p.determine_roles(request.user) if request.user.is_authenticated() else []
+		items.append((p, len(roles) > 0, ClassificationProjectRole.ROLE_PROJECT_ADMIN in roles))
+	context = {'items': items}
+	return render(request, 'animal_observation/project_list.html', context)
+
+@project_role_required(ClassificationProjectRole.ROLE_ANY, access_denied_page='/message/1/')
 def project_details(request, project_id):
 	project = ClassificationProject.objects.get(id=project_id)
 	role = None
@@ -21,6 +29,19 @@ def project_details(request, project_id):
 			role = role[0]
 	context = {'project': project, 'role': role}
 	return render(request, 'animal_observation/project_details.html', context)
+
+@project_role_required([ClassificationProjectRole.ROLE_PROJECT_ADMIN,], access_denied_page='/message/1/')
+def project_update(request, project_id):
+	project = ClassificationProject.objects.get(id=project_id)
+	if request.method == "POST":
+		form = ClassificationProjectForm(request.POST, instance=project)
+		if form.is_valid():
+			form.save()
+	else:
+		form = ClassificationProjectForm(instance=project)
+
+	context = {'project': project, 'form': form}
+	return render(request, 'animal_observation/project_update.html', context)
 
 def cs_resource_list(request):
 	projects = ClassificationProject.objects.filter(cs_enabled=True)

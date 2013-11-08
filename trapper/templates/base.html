@@ -5,6 +5,9 @@ Hello
 {% if user.is_authenticated %}
 <a href="{% url 'trapper.apps.accounts.profile_details' %}">{{user.username}}</a>
 (<a href="{% url 'trapper.apps.accounts.logout' %}">Logout</a>)
+{% if user.is_staff %}
+| <a href="/admin/">AdminSite</a>
+{% endif %}
 {% else %}
 anonymous!
 (<a href="{% url 'trapper.apps.accounts.login' %}">Login</a>)

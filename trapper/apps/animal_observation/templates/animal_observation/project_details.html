@@ -8,20 +8,10 @@ Your role in this project:
 None
 {% endif %}
 <br/>
-Single Resources:
-<ul>
-{% for resource in project.resources.all %}
-	<li>{{ resource.name }}</li>
-	<ul>
-		<li> <a href="{% url "trapper.apps.storage.resource_details" resource.id %}">Details</a> </li>
-		<li> <a href="{% url "trapper.apps.animal_observation.classify" project.id resource.id %}">Classify</a> </li>
-	</ul>
-{% endfor %}
-</ul>
 
 Resource Collections:
 <ul>
-{% for collection in project.collections.all %}
+{% for collection in project.resource_collections.all %}
 <li>
 {{collection.name}}
 <ul>

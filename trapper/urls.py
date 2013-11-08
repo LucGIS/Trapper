@@ -16,7 +16,11 @@ urlpatterns = patterns('',
     url(r'^storage/', include('trapper.apps.storage.urls')),
 
 	# Accounts urls
+	# TODO: add namespace='accounts'
     url(r'^accounts/', include('trapper.apps.accounts.urls')),
+
+	# Display error messages
+	url(r'message/(?P<msg_id>\d+)/$', views.message, name='trapper.message'),
 
     url(r'^admin/', include(admin.site.urls)),
 )

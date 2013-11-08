@@ -78,12 +78,11 @@ class AnimalFeatureAnswer(models.Model):
 	def __unicode__(self):
 		return "Feature: %s | Value: %s | ClassificationId: %s" % (self.feature.name, self.value, self.resource_classification_item.resource_classification.id);
 
+
 class ClassificationProject(models.Model):
 	name = models.CharField(max_length=255)
-	resources = models.ManyToManyField(Resource, blank=True, null=True)
-	collections = models.ManyToManyField(ResourceCollection, blank=True, null=True)
+	resource_collections = models.ManyToManyField(ResourceCollection, through='ClassificationProjectResourceCollection', blank=True, null=True)
 	resource_feature_sets = models.ManyToManyField(ResourceFeatureSet, blank=True, null=True)
-	users = models.ManyToManyField(User)
 	date_created = models.DateTimeField(auto_now_add=True)
 	cs_enabled = models.BooleanField(default=True)
 
@@ -94,16 +93,40 @@ class ClassificationProject(models.Model):
 		"""
 		A list of crowd-sourcing enabled resources.
 		"""
-		resources = [r.resource for r in ResourceExtra.objects.filter(cs_enabled=True, pk__in=self.resources.all())]
-		for c in self.collections.all():
+
+		resources = []
+		for c in self.resource_collections.filter(classificationprojectresourcecollection__active=True):
+			print c.name
 			new = [r.resource for r in ResourceExtra.objects.filter(cs_enabled=True, resource__in=c.resources.all())]
 			resources.extend(new)
 		return list(set(resources))
+
+	def determine_roles(self, user):
+		"""
+		Returns a tuple of project roles for given user.
+		"""
+		return [r.name for r in self.classificationprojectrole_set.filter(user=user)]
+
+class ClassificationProjectResourceCollection(models.Model):
+	"""
+	ManyToMany model for ClassificationProject-ResourceCollection relationship.
+
+	* active - states whether given resource is "enabled" for the project. In that case it will be 
+	"""
+	project = models.ForeignKey(ClassificationProject)
+	collection = models.ForeignKey(ResourceCollection)
+	active = models.BooleanField()
+
+	def __unicode__(self):
+		return unicode("%s <-> %s (%s)" % (self.project.name, self.collection.name, self.active))
 
 class ClassificationProjectRole(models.Model):
 	ROLE_PROJECT_ADMIN = "A"
 	ROLE_EXPERT = "E"
 	ROLE_COLLABORATOR = "C"
+
+	ROLE_ANY = [ROLE_PROJECT_ADMIN, ROLE_EXPERT, ROLE_COLLABORATOR, ]
+
 	ROLE_CHOICES = (
 		(ROLE_PROJECT_ADMIN, "Admin"),
 		(ROLE_EXPERT, "Expert"),
@@ -115,3 +138,10 @@ class ClassificationProjectRole(models.Model):
 
 	def __unicode__(self):
 		return unicode("%s | Project: %s | Role: %s " % (self.user.username, self.project.name, self.get_name_display()))
+
+def create_resource_extra(sender, instance, created, **kwargs):
+	if created:
+		resource_extra, created = ResourceExtra.objects.get_or_create(resource=instance, public=False, cs_enabled=False)
+
+models.signals.post_save.connect(create_resource_extra, sender=Resource)
+

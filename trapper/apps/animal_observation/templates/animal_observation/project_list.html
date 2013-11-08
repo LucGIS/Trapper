@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+{% if items %}
+	Available projects:
+	<ul>
+	{% for project, can_view, can_edit in items %}
+	<li>
+	<b>{{ project.name }}</b>
+	{% if can_view %}
+	<a href="{% url "trapper.apps.animal_observation.project_details" project.id %}">View</a>
+	{% endif %}
+	{% if can_edit %}
+	<a href="{% url "trapper.apps.animal_observation.project_update" project.id %}">Edit</a>
+	{% endif %}
+	</li>
+	{% endfor %}
+	</ul>
+{% else %}
+No project available. Start one now!
+{% endif %}
+{% endblock content %}

@@ -5,7 +5,9 @@ Apply this script using the following:
 	./env/bin/python manage.py shell_plus < init_db.py
 """
 
-from django.contrib.auth.models import User, Group
+from django.db.models import Q
+from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes.models import ContentType
 
 # Users
 
@@ -16,8 +18,24 @@ u0.save()
 
 # Groups
 
-g0 = Group.objects.create(name='Admin')
-g1 = Group.objects.create(name='Staff')
-g2 = Group.objects.create(name='User')
+g0, created = Group.objects.get_or_create(name='Admin')
+g1, created = Group.objects.get_or_create(name='Staff')
 
-u0.groups.add(g0)
+# Add group permissions
+
+admin_cts = ContentType.objects.filter(app_label__in=['animal_observation','accounts','storage','auth'])
+staff_cts = ContentType.objects.filter(app_label__in=['animal_observation','storage'])
+
+for g, cts in zip([g0, g1], [admin_cts, staff_cts]):
+    query = Q()
+    
+    for ct in cts:
+        query |= Q(content_type__app_label=ct.app_label, content_type__name=ct.name, codename__in=['%s_%s' % (perm_name, ct.model) for perm_name in ['change','add','delete']])
+    
+    perms = Permission.objects.filter(query)
+    
+    for p in perms:
+        g.permissions.add(p)
+    
+    g.save()
+

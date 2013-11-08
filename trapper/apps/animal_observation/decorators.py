@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 
 from functools import wraps
 
-def project_role_required(roles, redirect_page):
+def project_role_required(roles, access_denied_page):
 	def decorator(func):
 		def inner(request, project_id, *args, **kwargs):
 			project = ClassificationProject.objects.get(id=project_id)
@@ -16,6 +16,6 @@ def project_role_required(roles, redirect_page):
 				if role.name in roles:
 					return func(request, project_id, *args, **kwargs)
 			else:
-				return redirect(redirect_page)
+				return redirect(access_denied_page)
 		return wraps(func)(inner)
 	return decorator

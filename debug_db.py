@@ -5,13 +5,20 @@ Apply this script using the following:
 	./env/bin/python manage.py shell_plus < init_db.py
 """
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from trapper.apps.storage.models import ResourceType, Resource, ResourceCollection
-from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureScope, ResourceFeatureSet, ClassificationProject, ResourceExtra, ClassificationProjectRole
+from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureScope, ResourceFeatureSet, ClassificationProject, ResourceExtra, ClassificationProjectRole, ClassificationProjectResourceCollection
 
 # Users
+u0 = User.objects.get(username='alice')
+
+g0 = Group.objects.get(name='Admin')
+g1 = Group.objects.get(name='Staff')
+
 u1 = User.objects.create_user('admin1','admin1@trapper.pl','admin1')
+u1.groups.add(g0)
 u2 = User.objects.create_user('staff1','admin1@trapper.pl','staff1')
+u2.groups.add(g1)
 u3 = User.objects.create_user('user1','user1@gmail.com','user1')
 u4 = User.objects.create_user('user2','user1@gmail.com','user2')
 
@@ -38,20 +45,19 @@ rt1 = ResourceType.objects.create(name="Video")
 rt2 = ResourceType.objects.create(name="Audio")
 
 r1 = Resource.objects.create(name="VIDEO001.mp4", resource_type=rt1, owner=u1, uploader=u2)
-re1 = ResourceExtra.objects.create(resource=r1, public=True, cs_enabled=True)
 r2 = Resource.objects.create(name="VIDEO002.mp4", resource_type=rt1, owner=u2, uploader=u2)
-re2 = ResourceExtra.objects.create(resource=r2, public=True, cs_enabled=True)
 r3 = Resource.objects.create(name="VIDEO003.mp4", resource_type=rt1, owner=u3, uploader=u4)
 r4 = Resource.objects.create(name="AUDIO001.mp4", resource_type=rt2, owner=u1, uploader=u3)
 r5 = Resource.objects.create(name="AUDIO002.mp4", resource_type=rt2, owner=u3, uploader=u3)
 r6 = Resource.objects.create(name="AUDIO003.mp4", resource_type=rt2, owner=u3, uploader=u3)
-re6 = ResourceExtra.objects.create(resource=r6, public=True, cs_enabled=True)
+
+ResourceExtra.objects.filter(resource__in=[r1,r2,r6]).update(public=True, cs_enabled=True)
 
 # ResourceCollection
-rc1 = ResourceCollection.objects.create(name="Spring2013_Vid_Aud")
-rc1.resources.add(r1, r2, r3, r4, r5, r6)
+rc1 = ResourceCollection.objects.create(name="Video2013")
+rc1.resources.add(r1, r2, r3)
 
-rc2 = ResourceCollection.objects.create(name="2013Audio")
+rc2 = ResourceCollection.objects.create(name="Audio2013")
 rc2.resources.add(r4, r5, r6)
 
 # ResourceFeatureSet
@@ -63,10 +69,8 @@ rfs2.features.add(af4)
 
 # ClassificationProject
 cp1 = ClassificationProject.objects.create(name="PhDProject1")
-cp1.resources.add(r1)
-cp1.collections.add(rc2)
 cp1.resource_feature_sets.add(rfs1, rfs2)
-cp1.users.add(u1,u3)
+cprc1 = ClassificationProjectResourceCollection.objects.create(project=cp1, collection=rc2, active=True)
 
-ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_PROJECT_ADMIN, user=u1, project=cp1)
-ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_EXPERT, user=u2, project=cp1)
+cpr1 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_PROJECT_ADMIN, user=u3, project=cp1)
+cpr2 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_EXPERT, user=u4, project=cp1)
