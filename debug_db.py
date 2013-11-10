@@ -70,7 +70,9 @@ rfs2.features.add(af4)
 # ClassificationProject
 cp1 = ClassificationProject.objects.create(name="PhDProject1")
 cp1.resource_feature_sets.add(rfs1, rfs2)
-cprc1 = ClassificationProjectResourceCollection.objects.create(project=cp1, collection=rc2, active=True)
+cprc1 = ClassificationProjectResourceCollection.objects.create(project=cp1, collection=rc1, active=True)
+cprc2 = ClassificationProjectResourceCollection.objects.create(project=cp1, collection=rc2, active=True)
 
+cpr0 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_PROJECT_ADMIN, user=u0, project=cp1)
 cpr1 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_PROJECT_ADMIN, user=u3, project=cp1)
 cpr2 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_EXPERT, user=u4, project=cp1)

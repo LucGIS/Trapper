@@ -7,14 +7,36 @@
 
 <form action="{% url "animal_observation:project_update" project.id %}" method="post">
 {% csrf_token %}
+
 {{ form.as_p }}
-Select resource collections which are to be active for your project:
+
+Resource collections:
 <br />
-{% for form in formset %}
-<label>{{ form.collection }}</label>
-<label>Active: </label> {{ form.active }}
+{{ resources_formset.management_form }}
+{% for form in resources_formset.forms %}
+<b>{{form.col_name}}</b>: {{form}}
 <br/>
 {% endfor %}
+<br />
+
+Roles:
+<br />
+{{ roles_formset.management_form }}
+{% for form in roles_formset.forms %}
+{{form}}
+<br/>
+{% endfor %}
+
+{% comment %}
+Feature Sets:
+<br />
+{{ features_formset.management_form }}
+{% for form in features_formset.forms %}
+{{form}}
+<br/>
+{% endfor %}
+{% endcomment %}
+
 <input type="submit" value="Update" />
 </form>
 

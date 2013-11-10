@@ -9,12 +9,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 import os
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(SITE_ROOT, '..', 'trapper_db.sqlite'),
+        'NAME': os.path.join(PROJECT_ROOT, '..', 'trapper_db.sqlite'),
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
@@ -74,6 +74,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+	os.path.join(PROJECT_ROOT, 'static').replace('\\','/'),
 )
 
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
@@ -88,9 +89,6 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '!*!hketnrwg8txwk)u2v8w(n1)e@bt$mo-5)oxgjn___uk%zua'
-
-import os
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

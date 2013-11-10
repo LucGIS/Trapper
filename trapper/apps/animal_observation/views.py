@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from django.forms.models import modelformset_factory
+from django.forms.models import inlineformset_factory
 
-from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ResourceExtra, ClassificationProjectRole, ClassificationProjectResourceCollection
-from trapper.apps.storage.models import Resource
+from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ResourceExtra, ClassificationProjectRole, ClassificationProjectResourceCollection, ResourceFeatureSet
+
+from trapper.apps.storage.models import Resource, ResourceCollection
 from trapper.apps.animal_observation.decorators import project_role_required
-from trapper.apps.animal_observation.forms import ClassificationProjectForm, ClassificationProjectResourceCollectionForm
+from trapper.apps.animal_observation.forms import ClassificationProjectForm, ClassificationProjectResourceCollectionForm, ResourceFeatureSetForm
 
 
 def index(request):
@@ -34,22 +35,31 @@ def project_details(request, project_id):
 @project_role_required([ClassificationProjectRole.ROLE_PROJECT_ADMIN,], access_denied_page='/message/1/')
 def project_update(request, project_id):
 	project = ClassificationProject.objects.get(id=project_id)
+
+	form = ClassificationProjectForm(instance=project)
+	CPRCFormset = inlineformset_factory(ClassificationProject, ClassificationProjectResourceCollection, extra=0, form=ClassificationProjectResourceCollectionForm)
+	CPCPRFormset = inlineformset_factory(ClassificationProject, ClassificationProjectRole, extra=1)
+	#CPRFSFormset = inlineformset_factory(ClassificationProject, ResourceFeatureSet, extra=0, formset=ResourceFeatureSetForm)
+
 	if request.method == "POST":
 		form = ClassificationProjectForm(request.POST, instance=project)
-		if form.is_valid():
-			project = form.save(commit=False)
-			project.save()
-			for collection in form.cleaned_data.get('resource_collections'):
-				cp_rc = ClassificationProjectResourceCollection(collection=collection, project=project, active=True)
-				cp_rc.save()
+		resources_formset = CPRCFormset(request.POST, instance=project)
+		roles_formset = CPCPRFormset(request.POST, instance=project)
+		if form.is_valid() and resources_formset.is_valid() and roles_formset.is_valid():
+			form.save()
+			resources_formset.save()
+			roles_formset.save()
 
-	else:
-		CPRCForm = modelformset_factory(ClassificationProjectResourceCollection, extra=0)
-		items = ClassificationProjectResourceCollection.objects.filter(project=project)
-		rprc_formset = CPRCForm(queryset=items)
-		form = ClassificationProjectForm(instance=project)
+	resources_formset = CPRCFormset(instance=project)
+	roles_formset = CPCPRFormset(instance=project)
+	#features_formset = CPRFSFormset(instance=project)
 
-	context = {'project': project, 'form': form, 'formset': rprc_formset}
+	context = {'project': project,
+			'form': form,
+			'resources_formset': resources_formset,
+			'roles_formset': roles_formset,
+			#'features_formset': features_formset,
+			}
 
 	return render(request, 'animal_observation/project_update.html', context)
 
