@@ -54,10 +54,10 @@ r6 = Resource.objects.create(name="AUDIO003.mp4", resource_type=rt2, owner=u3, u
 ResourceExtra.objects.filter(resource__in=[r1,r2,r6]).update(public=True, cs_enabled=True)
 
 # ResourceCollection
-rc1 = ResourceCollection.objects.create(name="Video2013")
+rc1 = ResourceCollection.objects.create(name="Video2013", owner=u3)
 rc1.resources.add(r1, r2, r3)
 
-rc2 = ResourceCollection.objects.create(name="Audio2013")
+rc2 = ResourceCollection.objects.create(name="Audio2013", owner=u4)
 rc2.resources.add(r4, r5, r6)
 
 # ResourceFeatureSet

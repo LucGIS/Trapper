@@ -27,12 +27,12 @@ virtualenv env
 ./env/bin/pip install -r requirements.txt
 ```
 
-3. Set the database along with the initial data:
+3. Initialize the database along with the data:
 ```
 ./reset_database.sh
 ```
 
-Run the server:
+4. Run the server:
 ```
 ./runserver.sh
 ```

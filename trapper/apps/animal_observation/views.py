@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.forms.models import inlineformset_factory
 
-from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ResourceExtra, ClassificationProjectRole, ClassificationProjectResourceCollection, ResourceFeatureSet
+from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ClassificationProjectRole, ClassificationProjectResourceCollection
 
-from trapper.apps.storage.models import Resource, ResourceCollection
+from trapper.apps.storage.models import Resource
 from trapper.apps.animal_observation.decorators import project_role_required
-from trapper.apps.animal_observation.forms import ClassificationProjectForm, ClassificationProjectResourceCollectionForm, ResourceFeatureSetForm
+from trapper.apps.animal_observation.forms import ClassificationProjectForm, ClassificationProjectResourceCollectionForm
 
 
 def index(request):
@@ -86,7 +86,6 @@ def process_classify(request):
 	resource = Resource.objects.get(id=resource_id)
 	project = ClassificationProject.objects.get(id=project_id)
 	resource_feature_set = project.resource_feature_sets.filter(resource_type=resource.resource_type)[0]
-	features = [[feature, AnimalFeatureScope.objects.filter(feature=feature.pk)] for feature in resource_feature_set.features.all()]
 
 	answers = list(k.split('__') + [v,] for k,v in dict(request.POST).iteritems() if "__" in k)
 	answer_rows = {}

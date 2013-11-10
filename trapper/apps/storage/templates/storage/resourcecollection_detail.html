@@ -1,0 +1,23 @@
+{% extends "storage/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<ul>
+	<li>
+Name: {{ resourcecollection.name }}
+	</li>
+	<li>
+Owner: {{ resourcecollection.owner}}
+	</li>
+	<li>
+Public: {{ resourcecollection.resourceextra.public}}
+	</li>
+	<li>
+Resources:
+		<table border=1>
+		{% for resource in resourcecollection.resources.all %}
+		{% include "storage/resource_iter.html" %}
+		{% endfor %}
+		</table>
+	</li>
+</ul>
+{% endblock content %}

@@ -1,8 +1,5 @@
 from django.shortcuts import render
 
-def index(request):
-	return render(request, 'index.html', { })
-
 def message(request, msg_id):
 	"""
 	Temporary page for testing permissions and errors.

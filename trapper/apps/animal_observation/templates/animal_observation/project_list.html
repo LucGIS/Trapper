@@ -1,4 +1,5 @@
 {% extends "animal_observation/base.html" %}
+{% load staticfiles %}
 {% block content %}
 {% if items %}
 	Available projects:
@@ -7,10 +8,10 @@
 	<li>
 	<b>{{ project.name }}</b>
 	{% if can_view %}
-	<a href="{% url "animal_observation:project_details" project.id %}">View</a>
+	<a href="{% url "animal_observation:project_details" project.id %}"><img src="{% static "icon/detail.png" %}" /></a>
 	{% endif %}
 	{% if can_edit %}
-	<a href="{% url "animal_observation:project_update" project.id %}">Edit</a>
+	<a href="{% url "animal_observation:project_update" project.id %}"><img src="{% static "icon/update.png" %}" /></a>
 	{% endif %}
 	</li>
 	{% endfor %}

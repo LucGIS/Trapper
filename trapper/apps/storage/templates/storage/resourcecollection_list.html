@@ -1,0 +1,20 @@
+{% extends "storage/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+{% if collections %}
+	Available collections:
+	<table border=1>
+	{% for collection in collections %}
+	<tr>
+	<td> <label> {{collection.name}} </label> </td>
+	<td> <a href="{% url "storage:collection_detail" collection.id %}"><img src="{% static "icon/detail.png" %}" /></a> </td>
+	<td> <a href="{% url "storage:collection_update" collection.id %}"><img src="{% static "icon/update.png" %}" /></a> </td>
+	</tr>
+	{% endfor %}
+	</table>
+	<a href="{% url "storage:collection_create" %}">Create new Collection <img src="{% static "icon/add_collection.png" %}" /></a>
+{% else %}
+No collections available.
+{% endif %}
+{% endblock content %}

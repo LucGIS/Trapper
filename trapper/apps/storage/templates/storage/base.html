@@ -3,8 +3,10 @@
 {% block master_content %}
 |
 <a href="{% url "storage:resource_list" %}">Resources List</a> |
-<a href="">My Resources</a> |
-<a href="">Upload Resource</a> |
+<a href="{% url "storage:user_resource_list" user.id %}">My Resources</a> |
+
+<a href="{% url "storage:collection_list" %}">Collection List</a> |
+<a href="{% url "storage:user_collection_list" user.id %}">My Collections</a> |
 <br/>
 <br/>
 {% block content %}{% endblock content %}

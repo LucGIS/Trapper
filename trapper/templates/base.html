@@ -5,7 +5,7 @@
 Hello
 <b>
 {% if user.is_authenticated %}
-<a href="{% url "accounts:profile_details" %}">{{user.username}}</a>
+<a href="{% url "accounts:profile_details" %}">{{user.username}}<img src="{% static "icon/businessman.png" %}" /></a>
 (<a href="{% url "accounts:logout" %}">Logout</a>)
 {% if user.is_staff %}
 | <a href="{% url "admin:index" %}">AdminSite</a>

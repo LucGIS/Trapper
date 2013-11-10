@@ -1,4 +1,5 @@
 {% extends "animal_observation/base.html" %}
+{% load staticfiles %}
 {% block content %}
 Project:
 <h1>{{ project.name }}</h1>
@@ -67,7 +68,7 @@ Resource:
 	</td>
 {% endfor %}
 	<td>
-		<input type="button" value="X" onclick="removeRow('row_1')" />
+		<input type="button" value="Delete" onclick="removeRow('row_1')" />
 	</td>
 </tr>
 </tbody>
@@ -76,7 +77,7 @@ Resource:
 <table>
 <tr>
 	<td>
-		<input id="newRowButton" type="button" value="+" onclick="addRow('row_2')"/>
+		<input id="newRowButton" type="button" value="Add row" onclick="addRow('row_2')"/>
 	</td>
 <tr>
 </table>

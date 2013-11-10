@@ -1,14 +1,16 @@
 {% extends "storage/base.html" %}
+{% load staticfiles %}
 
 {% block content %}
 {% if resources %}
 	Available resources:
-	<ul>
+	<table border=1>
 	{% for resource in resources %}
-	<li><a href="{% url "storage:resource_details" resource.id %}">{{ resource.name }}</a></li>
+	{% include "storage/resource_iter.html" %}
 	{% endfor %}
-	</ul>
+	</table>
+	<a href="{% url "storage:resource_create" %}">Upload a resource <img src="{% static "icon/add_resource.png" %}" /></a>
 {% else %}
-No project available. Start one now!
+No resources available.
 {% endif %}
 {% endblock content %}
