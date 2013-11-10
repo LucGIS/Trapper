@@ -39,7 +39,6 @@ def project_update(request, project_id):
 	form = ClassificationProjectForm(instance=project)
 	CPRCFormset = inlineformset_factory(ClassificationProject, ClassificationProjectResourceCollection, extra=0, form=ClassificationProjectResourceCollectionForm)
 	CPCPRFormset = inlineformset_factory(ClassificationProject, ClassificationProjectRole, extra=1)
-	#CPRFSFormset = inlineformset_factory(ClassificationProject, ResourceFeatureSet, extra=0, formset=ResourceFeatureSetForm)
 
 	if request.method == "POST":
 		form = ClassificationProjectForm(request.POST, instance=project)
@@ -52,13 +51,11 @@ def project_update(request, project_id):
 
 	resources_formset = CPRCFormset(instance=project)
 	roles_formset = CPCPRFormset(instance=project)
-	#features_formset = CPRFSFormset(instance=project)
 
 	context = {'project': project,
 			'form': form,
 			'resources_formset': resources_formset,
 			'roles_formset': roles_formset,
-			#'features_formset': features_formset,
 			}
 
 	return render(request, 'animal_observation/project_update.html', context)
