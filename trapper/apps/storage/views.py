@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django.views import generic
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse_lazy
 
 from trapper.apps.storage.models import Resource, ResourceCollection
 from trapper.apps.storage.forms import ResourceCollectionRequestForm
@@ -46,8 +47,9 @@ class ResourceCollectionRequestView(generic.FormView):
 
 	template_name = "storage/resourcecollection_request.html"
 	form_class = ResourceCollectionRequestForm
+	success_url = reverse_lazy('storage:collection_list')
 
-	# Userful Constants
+	# Template of the default request message
 	TEXT_TEMPLATE = "Dear %s,\nI would like to ask you for the permission to use the %s collection.\n\nBest regards,\n%s"
 
 	# Only Project Admins and Experts can request for the resources
@@ -68,12 +70,22 @@ class ResourceCollectionRequestView(generic.FormView):
 	def get_form(self, form_class, *args, **kwargs):
 		form = super(ResourceCollectionRequestView, self).get_form(form_class, *args, **kwargs)
 
-		# FIXME: This logic should be in get_initial method.
+		##
+		# FIXME:
+		# Logic below should be in get_initial method.
 		# For some reason, the initial for 'projects' does not work as expected
+		# Specifically, ModelChoiceField is hard to initialize with a queryset through the contstructor
+		##
+
 		project_pks = set(role.project.pk for role in self.request.user.classificationprojectrole_set.filter(name__in=self.REQUIRED_PROJECT_ROLES))
 		projects = ClassificationProject.objects.filter(pk__in=project_pks)
 		form.fields['projects'].queryset = projects
 		return form
 
-	#def post(self)
-	# TODO: handle the request
+	def form_invalid(self, form):
+		print "Invalid form"
+		return super(ResourceCollectionRequestView, self).form_invalid(form)
+
+	def form_valid(self, form):
+		print "Send email, add message"
+		return super(ResourceCollectionRequestView, self).form_valid(form)
