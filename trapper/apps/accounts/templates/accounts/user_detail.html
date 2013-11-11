@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block master_content %}
 <table border=1>
 	<tr><td>Username</td><td>{{u.username}}</td></tr>
@@ -8,6 +9,6 @@
 </table>
 
 {% if user.is_authenticated and u.pk == user.pk %}
-<a href="{% url "accounts:userprofile_update" user.pk %}">Edit profile</a>
+<a href="{% url "accounts:userprofile_update" user.pk %}">Edit profile<img src="{% static "icon/update.png" %}" alt="Update"/></a>
 {% endif %}
 {% endblock master_content %}

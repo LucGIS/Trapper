@@ -16,8 +16,6 @@ class UserProfileUpdateView(generic.UpdateView):
 	template_name = "accounts/user_update.html"
 	context_object_name = 'u'
 	fields = ['username','first_name','last_name','email']
-	#success_url = 
-	#reverse_lazy('accounts:userprofile_detail')
 
 	def get_success_url(self):
 		return reverse_lazy('accounts:userprofile_detail', kwargs={'pk':self.request.user.pk,})
