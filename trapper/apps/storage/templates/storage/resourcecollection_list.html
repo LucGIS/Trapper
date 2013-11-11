@@ -16,14 +16,14 @@
 	{% for collection in collections %}
 	<tr>
 	<td> <label> {{collection.name}} </label> </td>
-	<td> <a href="{% url "storage:collection_detail" collection.id %}"><img src="{% static "icon/detail.png" %}" /></a> </td>
-	<td> <a href="{% url "storage:collection_update" collection.id %}"><img src="{% static "icon/update.png" %}" /></a> </td>
-	<td> <a href="{% url "storage:collection_delete" collection.id %}"><img src="{% static "icon/delete.png" %}" /></a> </td>
-	<td> <a href="{% url "storage:collection_request" collection.id %}"><img src="{% static "icon/plus.png" %}" /></a> </td>
+	<td> <a title="Show details" href="{% url "storage:collection_detail" collection.id %}"><img alt="Show Details" src="{% static "icon/detail.png" %}" /></a> </td>
+	<td> <a title="Update collection" href="{% url "storage:collection_update" collection.id %}"><img alt="Update Collection" src="{% static "icon/update.png" %}" /></a> </td>
+	<td> <a title="Delete collection" href="{% url "storage:collection_delete" collection.id %}"><img alt="Delete Collection" src="{% static "icon/delete.png" %}" /></a> </td>
+	<td> <a title="Request for Animal Observation project" href="{% url "storage:collection_request" collection.id %}"><img alt="Request for Animal Observation Project" src="{% static "icon/plus.png" %}" /></a> </td>
 	</tr>
 	{% endfor %}
 	</table>
-	<a href="{% url "storage:collection_create" %}">Create new Collection <img src="{% static "icon/add_collection.png" %}" /></a>
+	<a title="Create new collection" href="{% url "storage:collection_create" %}">Create new collection <img src="{% static "icon/add_collection.png" %}" /></a>
 {% else %}
 No collections available.
 {% endif %}

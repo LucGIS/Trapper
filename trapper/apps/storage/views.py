@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import get_object_or_404
 from django.views import generic
 from django.contrib.auth.models import User
@@ -5,8 +6,8 @@ from django.core.urlresolvers import reverse_lazy
 
 from trapper.apps.storage.models import Resource, ResourceCollection
 from trapper.apps.storage.forms import ResourceCollectionRequestForm
-
 from trapper.apps.animal_observation.models import ClassificationProject, ClassificationProjectRole
+from trapper.apps.messaging.models import Message
 
 
 class UserResourceListView(generic.ListView):
@@ -22,7 +23,7 @@ class ResourceCreateView(generic.CreateView):
 
 	# exclude the 'uploader' so it can be added manually as the request.user
 	fields=['name', 'resource_type', 'owner']
-	template_name='storage/resource_create.html'
+	#template_name='storage/resource_create.html'
 
 	def form_valid(self, form):
 		form.instance.uploader = self.request.user
@@ -64,7 +65,7 @@ class ResourceCollectionRequestView(generic.FormView):
 	def get_initial(self, *args, **kwargs):
 		self.collection = get_object_or_404(ResourceCollection, pk=self.kwargs['pk'])
 		projects = ClassificationProject.objects.all()
-		return {'projects': projects, 'text': self.TEXT_TEMPLATE % (self.collection.owner.username, self.collection.name, self.request.user.username)}
+		return {'collection_pk':self.collection.pk,'projects': projects, 'text': self.TEXT_TEMPLATE % (self.collection.owner.username, self.collection.name, self.request.user.username)}
 
 	def get_form(self, form_class, *args, **kwargs):
 		form = super(ResourceCollectionRequestView, self).get_form(form_class, *args, **kwargs)
@@ -87,4 +88,6 @@ class ResourceCollectionRequestView(generic.FormView):
 
 	def form_valid(self, form):
 		print "Send email, add message"
+		collection = get_object_or_404(ResourceCollection, pk=form.cleaned_data['collection_pk'])
+		Message.objects.create(subject="Request for resources", text=form.cleaned_data['text'], user_from=self.request.user,user_to=collection.owner, date_sent=datetime.now())
 		return super(ResourceCollectionRequestView, self).form_valid(form)

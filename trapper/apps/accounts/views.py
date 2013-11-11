@@ -11,6 +11,10 @@ class UserProfileDetailView(generic.DetailView):
 	template_name = "accounts/user_detail.html"
 	context_object_name = 'u'
 
+class SessionUserProfileDetailView(UserProfileDetailView):
+	def get_object(self):
+		return self.request.user
+
 class UserProfileUpdateView(generic.UpdateView):
 	model = User
 	template_name = "accounts/user_update.html"

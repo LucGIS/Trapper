@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.views import generic
+from django import forms
 
 from datetime import datetime
 
@@ -20,6 +21,13 @@ class MessageCreateView(generic.CreateView):
 	model = Message
 	template_name = 'messaging/message_create.html'
 	fields = ['subject','text','user_to']
+
+	def get_form(self, *args, **kwargs):
+		form = super(MessageCreateView, self).get_form(*args, **kwargs)
+		form.fields['text'].widget=forms.Textarea()
+		form.fields['text'].label = 'Body'
+		form.fields['user_to'].label = 'Recepient'
+		return form
 
 	def form_valid(self, form):
 		form.instance.user_from = self.request.user

@@ -10,18 +10,19 @@ Hello
 	{% if user.is_staff %}
 		| <a href="{% url "admin:index" %}">AdminSite</a>
 	{% endif %}
+		|
 	{% if user.userprofile.has_unread_messages %}
-	<a href="{% url "messaging:message_inbox" %}"><img width=25px src="{% static "icon/message_new.png" %}" /></a>
+	<a href="{% url "messaging:message_inbox" %}">Inbox <img width=25px src="{% static "icon/message_new.png" %}" /></a>
 	{% else %}
-	<a href="{% url "messaging:message_inbox" %}"><img width=25px src="{% static "icon/message.png" %}" /></a>
+	<a href="{% url "messaging:message_inbox" %}">Inbox <img width=25px src="{% static "icon/message.png" %}" /></a>
 	{% endif %}
 {% else %}
 	anonymous (<a href="{% url "accounts:login" %}">Login</a>)
 {% endif %}
-</b>
 | <a href="{% url "storage:index" %}">Storage</a>
 | <a href="{% url "animal_observation:index" %}">AnimalObservation</a>
 |
+</b>
 <br/>
 <br/>
 {% block master_content %}{% endblock master_content %}

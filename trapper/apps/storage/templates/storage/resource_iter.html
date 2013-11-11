@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <tr>
 <td> <label> {{resource.name}} </label> </td>
-<td> <a href="{% url "storage:resource_detail" resource.id %}"><img src="{% static "icon/detail.png" %}" /></a> </td>
-<td> <a href="{% url "storage:resource_update" resource.id %}"><img src="{% static "icon/update.png" %}" /></a> </td>
-<td> <a href="{% url "storage:resource_delete" resource.id %}"><img src="{% static "icon/delete.png" %}" /></a> </td>
+<td> <a title="Show details" href="{% url "storage:resource_detail" resource.id %}"><img src="{% static "icon/detail.png" %}" /></a> </td>
+<td> <a title="Update resource" href="{% url "storage:resource_update" resource.id %}"><img src="{% static "icon/update.png" %}" /></a> </td>
+<td> <a title="Delete resource" href="{% url "storage:resource_delete" resource.id %}"><img src="{% static "icon/delete.png" %}" /></a> </td>
 </tr>
