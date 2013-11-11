@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block master_content %}
+|
+<a href="{% url "messaging:message_inbox" %}">Inbox</a> |
+<a href="{% url "messaging:message_outbox" %}">Outbox</a> |
+<a href="{% url "messaging:message_create" %}">New message</a> |
+<br/>
+<br/>
+{% block content %}{% endblock content %}
+{% endblock master_content %}

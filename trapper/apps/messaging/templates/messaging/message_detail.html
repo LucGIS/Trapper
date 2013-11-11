@@ -1,0 +1,20 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+<ul>
+	<li>
+Subject: {{ message.subject }}
+	</li>
+	<li>
+Text: {{ message.text }}
+	</li>
+	<li>
+Date Sent: {{ message.date_sent }}
+	</li>
+	<li>
+Sender: {{ message.user_from.username }}
+	</li>
+	<li>
+Receiver: {{ message.user_to.username }}
+	</li>
+<ul>
+{% endblock content %}

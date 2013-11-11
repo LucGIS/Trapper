@@ -16,12 +16,12 @@ urlpatterns = patterns('',
 	# Storage urls
     url(r'^storage/', include('trapper.apps.storage.urls', namespace='storage')),
 
+	# Messaging urls
+    url(r'^messaging/', include('trapper.apps.messaging.urls', namespace='messaging')),
+
 	# Accounts urls
 	url('', include('django.contrib.auth.urls')),
     url(r'^accounts/', include('trapper.apps.accounts.urls', namespace='accounts')),
-
-	# Display error messages (temporary view for debugging only)
-	url(r'message/(?P<msg_id>\d+)/$', views.message, name='trapper.message'),
 
     url(r'^admin/', include(admin.site.urls)),
 )

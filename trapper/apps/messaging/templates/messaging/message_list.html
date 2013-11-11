@@ -1,0 +1,27 @@
+{% extends "messaging/base.html" %}
+{% load staticfiles %}
+{% block content %}
+
+{% if message_list %}
+	Available messages:
+	<table border=1>
+	<th>Subject</th>
+	<th>Date</th>
+	<th>From</th>
+	<th>To</th>
+	<th>View</th>
+	{% for message in message_list %}
+	<tr>
+		<td>{{message.subject}}{% if not message.date_received and message.user_to == user %}<b> (new) </b> {% endif %}</td>
+		<td>{{message.date_sent}}</td>
+		<td>{{message.user_from.username}}</td>
+		<td>{{message.user_to.username}}</td>
+		<td> <a href="{% url "messaging:message_detail" message.id %}"><img src="{% static "icon/detail.png" %}" /></a> </td>
+	</tr>
+	{% endfor %}
+	</table>
+{% else %}
+
+No messages available!
+{% endif %}
+{% endblock content %}

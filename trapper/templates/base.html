@@ -10,6 +10,11 @@ Hello
 	{% if user.is_staff %}
 		| <a href="{% url "admin:index" %}">AdminSite</a>
 	{% endif %}
+	{% if user.userprofile.has_unread_messages %}
+	<a href="{% url "messaging:message_inbox" %}"><img width=25px src="{% static "icon/message_new.png" %}" /></a>
+	{% else %}
+	<a href="{% url "messaging:message_inbox" %}"><img width=25px src="{% static "icon/message.png" %}" /></a>
+	{% endif %}
 {% else %}
 	anonymous (<a href="{% url "accounts:login" %}">Login</a>)
 {% endif %}

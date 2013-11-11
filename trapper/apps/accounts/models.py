@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
-	mobile = models.CharField(max_length=100)
+	mobile = models.CharField(max_length=100, null=True, blank=True)
 
 	def __unicode__(self):
 		return unicode("%s" % (self.user.username,))
@@ -13,9 +13,12 @@ class UserProfile(models.Model):
 	def get_absolute_url(self):
 		return reverse('accounts:userprofile_detail', kwargs={'pk':self.pk})
 
+	def has_unread_messages(self):
+		return self.user.received_messages.filter(date_received=None).count() > 0
+
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
-		profile, created = UserProfile.objects.get_or_create(user=instance, mobile="")
+		profile, created = UserProfile.objects.get_or_create(user=instance)
 
 def set_user_as_staff(sender, instance, action, **kwargs):
 	"""

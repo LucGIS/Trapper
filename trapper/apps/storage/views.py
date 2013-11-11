@@ -14,7 +14,6 @@ class UserResourceListView(generic.ListView):
 	context_object_name = 'resources'
 
 	def get_queryset(self):
-		# check if user exists and return the filtered queryset
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Resource.objects.filter(owner=user)
 

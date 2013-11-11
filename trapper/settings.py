@@ -129,6 +129,7 @@ INSTALLED_APPS = (
 	'trapper.apps.animal_observation',
 	'trapper.apps.storage',
 	'trapper.apps.accounts',
+	'trapper.apps.messaging',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
 	'django_extensions',
