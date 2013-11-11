@@ -10,6 +10,8 @@
 	<td> <label> {{collection.name}} </label> </td>
 	<td> <a href="{% url "storage:collection_detail" collection.id %}"><img src="{% static "icon/detail.png" %}" /></a> </td>
 	<td> <a href="{% url "storage:collection_update" collection.id %}"><img src="{% static "icon/update.png" %}" /></a> </td>
+	<td> <a href="{% url "storage:collection_delete" collection.id %}"><img src="{% static "icon/delete.png" %}" /></a> </td>
+	<td> <a href="{% url "storage:collection_request" collection.id %}"><img src="{% static "icon/plus.png" %}" /></a> </td>
 	</tr>
 	{% endfor %}
 	</table>

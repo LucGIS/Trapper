@@ -1,0 +1,15 @@
+{% extends "storage/base.html" %}
+{% load staticfiles %}
+{% block content %}
+You are about to ask <b>{{collection.owner.username}}</b> for a request to obtain access to collection <b>{{collection.name}}</b>.
+<br />
+<br />
+<form action="" method="post">
+{% csrf_token %}
+Project: {{form.projects}}
+<br />
+Text: {{form.text}}
+<br />
+<input type="submit" value="Send request" />
+</form>
+{% endblock content %}

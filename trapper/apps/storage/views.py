@@ -3,33 +3,19 @@ from django.views import generic
 from django.contrib.auth.models import User
 
 from trapper.apps.storage.models import Resource, ResourceCollection
+from trapper.apps.storage.forms import ResourceCollectionRequestForm
+
+from trapper.apps.animal_observation.models import ClassificationProject, ClassificationProjectRole
 
 
-class IndexView(generic.TemplateView):
-	template_name='storage/index.html'
-
-class ResourceListView(generic.ListView):
+class UserResourceListView(generic.ListView):
 	model = Resource
 	context_object_name = 'resources'
-	# inferred storage/resource_list.html template
-
-class UserResourceListView(ResourceListView):
-	"""
-	UserResourceList extends ResourceList and returns a queryset filtered by ownership.
-	"""
 
 	def get_queryset(self):
 		# check if user exists and return the filtered queryset
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Resource.objects.filter(owner=user)
-
-class ResourceDetailView(generic.DetailView):
-	model = Resource
-	# inferred: template_name='storage/resource_detail.html'
-
-class ResourceUpdateView(generic.UpdateView):
-	model = Resource
-	template_name='storage/resource_update.html'
 
 class ResourceCreateView(generic.CreateView):
 	model = Resource
@@ -42,37 +28,52 @@ class ResourceCreateView(generic.CreateView):
 		form.instance.uploader = self.request.user
 		return super(ResourceCreateView, self).form_valid(form)
 
-# ResourceCollection Views
-class ResourceCollectionListView(generic.ListView):
+
+class UserResourceCollectionListView(generic.ListView):
 	model = ResourceCollection
 	context_object_name = 'collections'
-	# inferred storage/collection_list.html template
-
-class UserResourceCollectionListView(ResourceCollectionListView):
-	"""
-	UserCollectionList extends CollectionList and returns a queryset filtered by ownership.
-	"""
 
 	def get_queryset(self):
 		# check if user exists and return the filtered queryset
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return ResourceCollection.objects.filter(owner=user)
 
-class ResourceCollectionDetailView(generic.DetailView):
-	model = ResourceCollection
-	# inferred: template_name='storage/collection_detail.html'
+class ResourceCollectionRequestView(generic.FormView):
+	"""
+	This is the view generating the request page for a ResourceCollection.
+	It will only display the Projects in which the user is the Project Admin
+	"""
 
-class ResourceCollectionUpdateView(generic.UpdateView):
-	model = ResourceCollection
-	template_name='storage/resourcecollection_update.html'
+	template_name = "storage/resourcecollection_request.html"
+	form_class = ResourceCollectionRequestForm
 
-class ResourceCollectionCreateView(generic.CreateView):
-	model = ResourceCollection
+	# Userful Constants
+	TEXT_TEMPLATE = "Dear %s,\nI would like to ask you for the permission to use the %s collection.\n\nBest regards,\n%s"
 
-	# exclude the 'uploader' so it can be added manually as the request.user
-	#fields=['name', 'collection_type', 'owner']
-	template_name='storage/resourcecollection_create.html'
+	# Only Project Admins and Experts can request for the resources
+	REQUIRED_PROJECT_ROLES = [ClassificationProjectRole.ROLE_PROJECT_ADMIN, ClassificationProjectRole.ROLE_EXPERT]
 
-	#def form_valid(self, form):
-	#	form.instance.uploader = self.request.user
-	#	return super(ResourceCollectionCreateView, self).form_valid(form)
+	def get_context_data(self, *args, **kwargs):
+		context = super(ResourceCollectionRequestView, self).get_context_data(*args, **kwargs)
+
+		# self.collection was set previously in the "get_initial" method
+		context['collection'] = self.collection
+		return context
+
+	def get_initial(self, *args, **kwargs):
+		self.collection = get_object_or_404(ResourceCollection, pk=self.kwargs['pk'])
+		projects = ClassificationProject.objects.all()
+		return {'projects': projects, 'text': self.TEXT_TEMPLATE % (self.collection.owner.username, self.collection.name, self.request.user.username)}
+
+	def get_form(self, form_class, *args, **kwargs):
+		form = super(ResourceCollectionRequestView, self).get_form(form_class, *args, **kwargs)
+
+		# FIXME: This logic should be in get_initial method.
+		# For some reason, the initial for 'projects' does not work as expected
+		project_pks = set(role.project.pk for role in self.request.user.classificationprojectrole_set.filter(name__in=self.REQUIRED_PROJECT_ROLES))
+		projects = ClassificationProject.objects.filter(pk__in=project_pks)
+		form.fields['projects'].queryset = projects
+		return form
+
+	#def post(self)
+	# TODO: handle the request

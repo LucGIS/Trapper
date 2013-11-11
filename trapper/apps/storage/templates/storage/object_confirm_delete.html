@@ -1,0 +1,9 @@
+{% extends "storage/base.html" %}
+{% block content %}
+<form action="" method="post">
+{% csrf_token %}
+Are you sure you want to delete "{{object.name}}" ?
+<br />
+<input type="submit" value="Yes" />
+</form>
+{% endblock content %}

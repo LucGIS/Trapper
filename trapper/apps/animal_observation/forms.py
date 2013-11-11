@@ -18,7 +18,6 @@ class ClassificationProjectResourceCollectionForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		super(ClassificationProjectResourceCollectionForm, self).__init__(*args,**kwargs)
 		if self.instance.id:
-
 			# Adds collection as a simple label, so the user can't alter it.
 			self.col_name = self.instance.collection.name
 			del self.fields['collection']

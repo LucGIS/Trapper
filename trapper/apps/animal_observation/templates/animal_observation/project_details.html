@@ -1,4 +1,5 @@
 {% extends "animal_observation/base.html" %}
+{% load staticfiles %}
 {% block content %}
 <h1>{{ project.name }}</h1>
 Your role in this project:
@@ -15,13 +16,15 @@ Resource Collections:
 <li>
 {{collection.name}}
 <ul>
+	<table>
 	{% for resource in collection.resources.all %}
-	<li>{{ resource.name }}</li>
-	<ul>
-		<li> <a href="{% url "storage:resource_detail" resource.id %}">Details</a> </li>
-		<li> <a href="{% url "animal_observation:classify" project.id resource.id %}">Classify</a> </li>
-	</ul>
+	<tr>
+	<td>{{ resource.name }}</td>
+	<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><img alt="Details" src="{% static "icon/detail.png" %}" /></a></td>
+	<td><a href="{% url "animal_observation:classify" project.id resource.id %}" title="Classify Resource"><img alt="Classify" src="{% static "icon/classify.png" %}" width=30px /></a></td>
+	</tr>
 	{% endfor %}
+	</table>
 </ul>
 
 </li>
