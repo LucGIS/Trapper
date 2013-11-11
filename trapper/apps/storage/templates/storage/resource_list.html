@@ -5,6 +5,12 @@
 {% if resources %}
 	Available resources:
 	<table border=1>
+	<tr>
+	<th>Resource name</th>
+	<th>Details</th>
+	<th>Update</th>
+	<th>Delete</th>
+	</tr>
 	{% for resource in resources %}
 	{% include "storage/resource_iter.html" %}
 	{% endfor %}

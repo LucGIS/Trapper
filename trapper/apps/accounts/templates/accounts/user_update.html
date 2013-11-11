@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block master_content %}
+<form action="{% url "accounts:userprofile_update" u.pk %}" method="post">
+{% csrf_token %}
+<table border=1>
+{{form.as_table}}
+</table>
+<input type="submit" value="Update" />
+</form>
+{% endblock master_content %}

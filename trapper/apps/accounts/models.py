@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
+from django.core.urlresolvers import reverse
 
 
 class UserProfile(models.Model):
@@ -9,6 +10,8 @@ class UserProfile(models.Model):
 	def __unicode__(self):
 		return unicode("%s" % (self.user.username,))
 
+	def get_absolute_url(self):
+		return reverse('accounts:userprofile_detail', kwargs={'pk':self.pk})
 
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:

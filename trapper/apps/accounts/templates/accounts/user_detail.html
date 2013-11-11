@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block master_content %}
+<table border=1>
+	<tr><td>Username</td><td>{{u.username}}</td></tr>
+	<tr><td>First name</td><td>{{u.first_name}}</td></tr>
+	<tr><td>Last name</td><td>{{u.last_name}}</td></tr>
+	<tr><td>E-mail address</td><td>{{u.email}}</td></tr>
+</table>
+
+{% if user.is_authenticated and u.pk == user.pk %}
+<a href="{% url "accounts:userprofile_update" user.pk %}">Edit profile</a>
+{% endif %}
+{% endblock master_content %}

@@ -1,12 +1,18 @@
 {% extends "storage/base.html" %}
 {% load staticfiles %}
 {% block content %}
-You are about to ask <b>{{collection.owner.username}}</b> for a request to obtain access to collection <b>{{collection.name}}</b>.
+You are about to ask
+<b>{{collection.owner.username}}</b>
+<a href="{{collection.owner.userprofile.get_absolute_url}}"><img src="{% static "icon/profile.png" %}" /></a>
+for a request to obtain access to collection
+<b>{{collection.name}}</b>
+<a href="{{collection.get_absolute_url}}"><img src="{% static "icon/detail.png" %}" /></a>
 <br />
 <br />
 <form action="" method="post">
 {% csrf_token %}
-Project: {{form.projects}}
+Classification Project: {{form.projects}}
+
 <br />
 Text: {{form.text}}
 <br />

@@ -5,6 +5,14 @@
 {% if collections %}
 	Available collections:
 	<table border=1>
+	<tr>
+	<th>Collection name</th>
+	<th>Details</th>
+	<th>Update</th>
+	<th>Delete</th>
+	<th>AO Request</th>
+	</tr>
+	
 	{% for collection in collections %}
 	<tr>
 	<td> <label> {{collection.name}} </label> </td>
