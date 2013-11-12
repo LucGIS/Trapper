@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+from trapper.apps.storage.models import ResourceCollection
+from trapper.apps.animal_observation.models import ClassificationProject, ClassificationProjectResourceCollection
+
 class Message(models.Model):
 	subject = models.CharField(max_length=50)
 	text = models.CharField(max_length=1000)
@@ -15,3 +18,34 @@ class Message(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('messaging:message_detail', kwargs={'pk':self.pk})
+
+class SystemNotification(models.Model):
+	"""
+	Abstract class for various types of system notifications directed towards a user.
+	"""
+	name = models.CharField(max_length=50)
+	user = models.ForeignKey(User, related_name='system_notifications')
+	resolved = models.BooleanField(default=False)
+
+	def __unicode__(self):
+		return unicode("%s (%s)" % (self.name, self.__class__.__name__))
+
+	def resolve(self):
+		self.resolved=True
+		self.save()
+
+	class Meta:
+		abstract = True
+
+class ResourceCollectionRequest(SystemNotification):
+	message = models.ForeignKey(Message)
+	project = models.ForeignKey(ClassificationProject)
+	collection = models.ForeignKey(ResourceCollection)
+
+	def resolve_yes(self):
+		self.resolve()
+		ClassificationProjectResourceCollection.objects.create(project=self.project, collection=self.collection, active=True)
+		# Add the actual collection
+
+	def resolve_no(self):
+		self.resolve()

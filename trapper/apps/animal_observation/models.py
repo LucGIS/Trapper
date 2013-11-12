@@ -115,7 +115,7 @@ class ClassificationProjectResourceCollection(models.Model):
 	"""
 	project = models.ForeignKey(ClassificationProject)
 	collection = models.ForeignKey(ResourceCollection)
-	active = models.BooleanField()
+	active = models.BooleanField(default=True)
 
 	def __unicode__(self):
 		return unicode("%s <-> %s (%s)" % (self.project.name, self.collection.name, self.active))

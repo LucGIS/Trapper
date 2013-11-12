@@ -12,9 +12,9 @@ Hello
 	{% endif %}
 		|
 	{% if user.userprofile.has_unread_messages %}
-	<a href="{% url "messaging:message_inbox" %}">Inbox <img width=25px src="{% static "icon/message_new.png" %}" /></a>
+	<a href="{% url "messaging:message_inbox" %}">Messaging <img width=25px src="{% static "icon/message_new.png" %}" /></a>
 	{% else %}
-	<a href="{% url "messaging:message_inbox" %}">Inbox <img width=25px src="{% static "icon/message.png" %}" /></a>
+	<a href="{% url "messaging:message_inbox" %}">Messaging <img width=25px src="{% static "icon/message.png" %}" /></a>
 	{% endif %}
 {% else %}
 	anonymous (<a href="{% url "accounts:login" %}">Login</a>)

@@ -1,10 +1,12 @@
-from django.db.models import Q
-from django.views import generic
-from django import forms
-
 from datetime import datetime
 
-from trapper.apps.messaging.models import Message
+from django import forms
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Q
+from django.views import generic
+from django.shortcuts import redirect, get_object_or_404
+
+from trapper.apps.messaging.models import Message, ResourceCollectionRequest
 
 
 class MessageDetailView(generic.DetailView):
@@ -48,3 +50,42 @@ class MessageInboxView(MessageListView):
 class MessageOutboxView(MessageListView):
 	def get_queryset(self):
 		return self.request.user.sent_messages.all().order_by('-date_sent')
+
+class SystemNotificationListView(generic.ListView):
+	model=ResourceCollectionRequest
+	context_object_name='notifications'
+	template_name='messaging/notification_list.html'
+
+	def get_queryset(self):
+		return self.request.user.system_notifications.filter(resolved=False)
+
+class ResolveClassificaionResourceRequestView(generic.edit.FormMixin, generic.DetailView):
+	template_name="messaging/resource_request_resolve.html"
+	context_object_name = "notification"
+	model = ResourceCollectionRequest
+	# Just an empty form
+	form_class = forms.Form
+	success_url = reverse_lazy('messaging:notification_list')
+
+	def get_context_data(self, **kwargs):
+		context = super(ResolveClassificaionResourceRequestView, self).get_context_data(**kwargs)
+		form_class = self.get_form_class()
+		form = self.get_form(form_class)
+		context['form'] = form
+		return context
+
+	def post(self, request, *args, **kwargs):
+		self.object = self.get_object()
+		form_class = self.get_form_class()
+		form = self.get_form(form_class)
+		if form.is_valid():
+			return self.form_valid(form)
+		else:
+			return self.form_invalid(form)
+
+	def form_valid(self, form, *args, **kwargs):
+		if 'y' in self.request.POST:
+			self.object.resolve_yes()
+		elif 'n' in self.request.POST:
+			self.object.resolve_no()
+		return super(ResolveClassificaionResourceRequestView, self).form_valid(form, *args, **kwargs)

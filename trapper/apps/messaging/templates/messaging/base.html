@@ -2,9 +2,11 @@
 
 {% block master_content %}
 |
-<a href="{% url "messaging:message_inbox" %}">Inbox</a> |
+<a href="{% url "messaging:message_inbox" %}">Inbox ({{ user.userprofile.count_unread_messages }})</b>
+</a> |
 <a href="{% url "messaging:message_outbox" %}">Outbox</a> |
 <a href="{% url "messaging:message_create" %}">New message</a> |
+<a href="{% url "messaging:notification_list" %}">System notifications ({{ user.userprofile.count_unresolved_system_notifications }})</a> |
 <br/>
 <br/>
 {% block content %}{% endblock content %}

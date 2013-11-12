@@ -14,7 +14,13 @@ class UserProfile(models.Model):
 		return reverse('accounts:userprofile_detail', kwargs={'pk':self.pk})
 
 	def has_unread_messages(self):
-		return self.user.received_messages.filter(date_received=None).count() > 0
+		return self.user.received_messages.filter(date_received=None).count() + self.user.system_notifications.filter(resolved=False).count() > 0
+
+	def count_unread_messages(self):
+		return self.user.received_messages.filter(date_received=None).count()
+
+	def count_unresolved_system_notifications(self):
+		return self.user.system_notifications.filter(resolved=False).count()
 
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
