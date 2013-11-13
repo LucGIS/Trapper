@@ -1,8 +1,9 @@
+from ajax_select import urls as ajax_select_urls
+
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 
-from trapper import views
 
 admin.autodiscover()
 
@@ -23,5 +24,6 @@ urlpatterns = patterns('',
 	url('', include('django.contrib.auth.urls')),
     url(r'^accounts/', include('trapper.apps.accounts.urls', namespace='accounts')),
 
+    url(r'^ajax_select/', include(ajax_select_urls)),
     url(r'^admin/', include(admin.site.urls)),
 )

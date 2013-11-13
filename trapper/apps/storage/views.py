@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
 
 from trapper.apps.storage.models import Resource, ResourceCollection
-from trapper.apps.storage.forms import ResourceCollectionRequestForm
+from trapper.apps.storage.forms import ResourceForm, ResourceCollectionRequestForm
 from trapper.apps.animal_observation.models import ClassificationProject, ClassificationProjectRole
 from trapper.apps.messaging.models import Message, ResourceCollectionRequest
 
@@ -20,9 +20,7 @@ class UserResourceListView(generic.ListView):
 
 class ResourceCreateView(generic.CreateView):
 	model = Resource
-
-	# exclude the 'uploader' so it can be added manually as the request.user
-	fields=['name', 'resource_type', 'owner']
+	form_class= ResourceForm
 
 	def form_valid(self, form):
 		form.instance.uploader = self.request.user

@@ -133,9 +133,25 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
 	'django_extensions',
+	'ajax_select',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+AJAX_LOOKUP_CHANNELS = {
+	'resource': ('trapper.apps.storage.lookups', 'ResourceLookup'),
+	'user': ('trapper.apps.accounts.lookups', 'UserLookup'),
+
+	#'resource': {
+	#	'model': 'storage.resource',
+	#	'search_field': 'name'
+	#},
+
+	#'user': {
+	#	'model': 'auth.user',
+	#	'search_field': 'username'
+	#},
+}
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
