@@ -1,0 +1,19 @@
+{% if resource.resource_type.name == "Video" %}
+<video id="example_video_1" class="video-js vjs-default-skin"
+	controls preload="auto" width="640" height="370"
+	{% if resource.thumbnail %}
+	poster="{{resource.thumbnail.url}}"
+	{% endif %}
+	data-setup='{"example_option":true}'
+	<source src="{{resource.file.url}}" type="{{resource.mime_type}}" />
+</video>
+
+{% elif resource.resource_type.name == "Audio" %}
+<audio controls>
+	<source src="{{resource.file.url}}" type="{{resource.mime_type}}" />
+</audio>
+{% elif resource.resource_type.name == "Image" %}
+<img src="{{resource.file.url}}" title={{resource_type.name}}/>
+{% else %}
+Unrecognized resource type
+{% endif %}

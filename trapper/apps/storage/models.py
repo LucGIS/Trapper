@@ -11,6 +11,19 @@ class ResourceType(models.Model):
 
 class Resource(models.Model):
 	name = models.CharField(max_length=255)
+	file = models.FileField(upload_to='storage/resource/file/')
+
+	# TODO: mime_type as choices
+	MIME_CHOICES = (
+		('audio/ogg', 'audio/ogg'),
+		('audio/mp3', 'audio/mp3'),
+		('audio/wav', 'audio/wav'),
+		('video/mp4', 'video/mp4'),
+		('video/ogg', 'video/ogg'),
+		('image/jpeg', 'image/jpeg'),
+	)
+	mime_type = models.CharField(choices=MIME_CHOICES, max_length=255)
+	thumbnail = models.ImageField(upload_to='storage/resource/thumbnail/', null=True, blank=True)
 	resource_type = models.ForeignKey(ResourceType)
 	date_uploaded = models.DateTimeField(auto_now_add=True)
 	uploader = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')

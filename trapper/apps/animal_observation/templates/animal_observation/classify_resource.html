@@ -3,8 +3,7 @@
 {% block content %}
 Project:
 <h1>{{ project.name }}</h1>
-Resource:
-<h1>{{ resource.name }}</h1>
+{% include "storage/resource_display.html" %}
 <h2>Classify:</h2>
 <script language="javascript">
 	function addRow(rowId) {
