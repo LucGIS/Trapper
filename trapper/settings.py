@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 	'trapper.apps.animal_observation',
 	'trapper.apps.storage',
 	'trapper.apps.accounts',
