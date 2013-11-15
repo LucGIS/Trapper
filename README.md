@@ -25,6 +25,7 @@ virtualenv env
 ./env/bin/pip install -r requirements.txt
 ```
 ### Prepare the PostgreSQL database
+(userful: http://www.cyberciti.biz/faq/howto-add-postgresql-user-account/)
 
 1. Create a postgresql user 'trapper' with password 'trapper'
 ```
