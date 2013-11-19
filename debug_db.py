@@ -7,7 +7,7 @@ Apply this script using the following:
 
 from django.contrib.auth.models import User, Group
 from trapper.apps.storage.models import ResourceType, Resource, ResourceCollection
-from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureScope, ResourceFeatureSet, ClassificationProject, ResourceExtra, ClassificationProjectRole, ClassificationProjectResourceCollection
+from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureScope, ResourceFeatureSet, ClassificationProject, ResourceExtra, ClassificationProjectRole, ClassificationProjectCollection
 
 # Users
 u0 = User.objects.get(username='alice')
@@ -95,9 +95,9 @@ rfs3.features.add(af1, af2, af3)
 # ClassificationProject
 cp1 = ClassificationProject.objects.create(name="PhDProject1")
 cp1.resource_feature_sets.add(rfs1, rfs2, rfs3)
-cprc1 = ClassificationProjectResourceCollection.objects.create(project=cp1, collection=rc1, active=True)
-cprc2 = ClassificationProjectResourceCollection.objects.create(project=cp1, collection=rc2, active=True)
-cprc3 = ClassificationProjectResourceCollection.objects.create(project=cp1, collection=rc3, active=True)
+cprc1 = ClassificationProjectCollection.objects.create(project=cp1, collection=rc1, active=True)
+cprc2 = ClassificationProjectCollection.objects.create(project=cp1, collection=rc2, active=True)
+cprc3 = ClassificationProjectCollection.objects.create(project=cp1, collection=rc3, active=True)
 
 cpr0 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_PROJECT_ADMIN, user=u0, project=cp1)
 cpr1 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_PROJECT_ADMIN, user=u3, project=cp1)

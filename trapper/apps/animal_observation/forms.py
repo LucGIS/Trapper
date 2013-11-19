@@ -1,6 +1,6 @@
 from django import forms
 
-from trapper.apps.animal_observation.models import ClassificationProject, ClassificationProjectResourceCollection, ResourceFeatureSet
+from trapper.apps.animal_observation.models import ClassificationProject, ClassificationProjectCollection, ResourceFeatureSet
 
 class ClassificationProjectForm(forms.ModelForm):
 	class Meta:
@@ -13,7 +13,7 @@ class ClassificationProjectForm(forms.ModelForm):
 	
 class ClassificationProjectResourceCollectionForm(forms.ModelForm):
 	class Meta:
-		model = ClassificationProjectResourceCollection
+		model = ClassificationProjectCollection
 
 	def __init__(self, *args, **kwargs):
 		super(ClassificationProjectResourceCollectionForm, self).__init__(*args,**kwargs)

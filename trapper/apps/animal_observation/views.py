@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.forms.models import inlineformset_factory
 
-from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ClassificationProjectRole, ClassificationProjectResourceCollection
+from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureAnswer, AnimalFeatureScope, ClassificationProject, ResourceClassification, ResourceClassificationItem, ClassificationProjectRole, ClassificationProjectCollection
 
 from trapper.apps.storage.models import Resource
 from trapper.apps.animal_observation.decorators import project_role_required
@@ -37,7 +37,7 @@ def project_update(request, project_id):
 	project = ClassificationProject.objects.get(id=project_id)
 
 	form = ClassificationProjectForm(instance=project)
-	CPRCFormset = inlineformset_factory(ClassificationProject, ClassificationProjectResourceCollection, extra=0, form=ClassificationProjectResourceCollectionForm)
+	CPRCFormset = inlineformset_factory(ClassificationProject, ClassificationProjectCollection, extra=0, form=ClassificationProjectResourceCollectionForm)
 	CPCPRFormset = inlineformset_factory(ClassificationProject, ClassificationProjectRole, extra=1)
 
 	if request.method == "POST":

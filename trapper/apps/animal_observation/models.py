@@ -81,7 +81,7 @@ class AnimalFeatureAnswer(models.Model):
 
 class ClassificationProject(models.Model):
 	name = models.CharField(max_length=255)
-	resource_collections = models.ManyToManyField(ResourceCollection, through='ClassificationProjectResourceCollection', blank=True, null=True)
+	resource_collections = models.ManyToManyField(ResourceCollection, through='ClassificationProjectCollection', blank=True, null=True)
 	resource_feature_sets = models.ManyToManyField(ResourceFeatureSet, blank=True, null=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	cs_enabled = models.BooleanField(default=True)
@@ -95,7 +95,7 @@ class ClassificationProject(models.Model):
 		"""
 
 		resources = []
-		for c in self.resource_collections.filter(classificationprojectresourcecollection__active=True):
+		for c in self.resource_collections.filter(classificationprojectcollection__active=True):
 			print c.name
 			new = [r.resource for r in ResourceExtra.objects.filter(cs_enabled=True, resource__in=c.resources.all())]
 			resources.extend(new)
@@ -107,7 +107,7 @@ class ClassificationProject(models.Model):
 		"""
 		return [r.name for r in self.classificationprojectrole_set.filter(user=user)]
 
-class ClassificationProjectResourceCollection(models.Model):
+class ClassificationProjectCollection(models.Model):
 	"""
 	ManyToMany model for ClassificationProject-ResourceCollection relationship.
 

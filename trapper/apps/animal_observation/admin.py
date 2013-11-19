@@ -1,5 +1,5 @@
 from django.contrib import admin
-from trapper.apps.animal_observation.models import AnimalFeatureScope, AnimalFeature, ResourceFeatureSet, ResourceClassification, ResourceClassificationItem, ClassificationProject, AnimalFeatureAnswer, ResourceExtra, ClassificationProjectRole, ClassificationProjectResourceCollection, ClassificationProjectResourceCollection
+from trapper.apps.animal_observation.models import AnimalFeatureScope, AnimalFeature, ResourceFeatureSet, ResourceClassification, ResourceClassificationItem, ClassificationProject, AnimalFeatureAnswer, ResourceExtra, ClassificationProjectRole, ClassificationProjectCollection
 
 class AnimalFeatureScopeInline(admin.StackedInline):
 	model = AnimalFeatureScope
@@ -27,7 +27,7 @@ class ClassificationProjectRoleInline(admin.TabularInline):
 	extra = 0
 
 class ClassificationProjectResourceCollectionInline(admin.TabularInline):
-	model = ClassificationProjectResourceCollection
+	model = ClassificationProjectCollection
 	extra = 0
 
 class ClassificationProjectAdmin(admin.ModelAdmin):
@@ -45,7 +45,7 @@ admin.site.register(AnimalFeatureAnswer)
 admin.site.register(AnimalFeatureScope)
 admin.site.register(ResourceFeatureSet)
 admin.site.register(ResourceExtra)
-admin.site.register(ClassificationProjectResourceCollection)
+admin.site.register(ClassificationProjectCollection)
 admin.site.register(ResourceClassification, ResourceClassificationAdmin)
 admin.site.register(ResourceClassificationItem, ResourceClassificationItemAdmin)
 admin.site.register(ClassificationProjectRole)
