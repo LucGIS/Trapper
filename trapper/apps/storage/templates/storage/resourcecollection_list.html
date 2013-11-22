@@ -1,7 +1,9 @@
 {% extends "storage/base.html" %}
 {% load staticfiles %}
 
+{% block storage_collection_list %}class="active"{% endblock %}
 {% block content %}
+<p>
 {% if collections %}
 	Available collections:
 	<table border=1>
@@ -16,15 +18,18 @@
 	{% for collection in collections %}
 	<tr>
 	<td> <label> {{collection.name}} </label> </td>
-	<td> <a title="Show details" href="{% url "storage:collection_detail" collection.id %}"><img alt="Show Details" src="{% static "icon/detail.png" %}" /></a> </td>
-	<td> <a title="Update collection" href="{% url "storage:collection_update" collection.id %}"><img alt="Update Collection" src="{% static "icon/update.png" %}" /></a> </td>
-	<td> <a title="Delete collection" href="{% url "storage:collection_delete" collection.id %}"><img alt="Delete Collection" src="{% static "icon/delete.png" %}" /></a> </td>
-	<td> <a title="Request for Animal Observation project" href="{% url "storage:collection_request" collection.id %}"><img alt="Request for Animal Observation Project" src="{% static "icon/plus.png" %}" /></a> </td>
+	<td> <a title="Show details"      href="{% url "storage:collection_detail" collection.id %}"><span class="glyphicon glyphicon-search"></span></a> </td>
+	<td> <a title="Update collection" href="{% url "storage:collection_update" collection.id %}"><span class="glyphicon glyphicon-pencil"></span></a> </td>
+	<td> <a title="Delete collection" href="{% url "storage:collection_delete" collection.id %}"><span class="glyphicon glyphicon-trash"></span></a> </td>
+	<td> <a title="Request for Animal Observation project" href="{% url "storage:collection_request" collection.id %}"><span class="glyphicon glyphicon-eye-open"></span></a> </td>
 	</tr>
 	{% endfor %}
 	</table>
-	<a title="Create new collection" href="{% url "storage:collection_create" %}">Create new collection <img src="{% static "icon/add_collection.png" %}" /></a>
 {% else %}
 No collections available.
 {% endif %}
+</p>
+<p>
+	<a class="btn btn-sm btn-success" href="{% url "storage:collection_create" %}" role="button">Create new collection <span class="glyphicon glyphicon-plus"></span></a>
+</p>
 {% endblock content %}

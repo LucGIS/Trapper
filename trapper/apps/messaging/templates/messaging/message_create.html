@@ -1,4 +1,5 @@
 {% extends "messaging/base.html" %}
+{% block messaging_message_create %}class="active"{% endblock %}
 {% block content %}
 <form action="{% url "messaging:message_create" %}" method="post">
 {% csrf_token %}

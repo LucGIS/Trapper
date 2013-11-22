@@ -1,5 +1,6 @@
 {% extends "messaging/base.html" %}
 {% load staticfiles %}
+{% block messaging_message_inbox %}class="active"{% endblock %}
 {% block content %}
 
 {% if message_list %}

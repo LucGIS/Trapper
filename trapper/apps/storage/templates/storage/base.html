@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 
 {% block master_content %}
-|
-<a href="{% url "storage:resource_list" %}">Resources List</a> |
-<a href="{% url "storage:user_resource_list" user.id %}">My Resources</a> |
-
-<a href="{% url "storage:collection_list" %}">Collection List</a> |
-<a href="{% url "storage:user_collection_list" user.id %}">My Collections</a> |
-<br/>
-<br/>
+<ul class="nav nav-tabs">
+<li {% block storage_resource_list %}{% endblock %} > <a href="{% url "storage:resource_list" %}">Resources List</a></li>
+<li {% block storage_collection_list %}{% endblock %} ><a href="{% url "storage:collection_list" %}">Collection List</a></li>
+</ul>
+<div class="tab-content">
 {% block content %}{% endblock content %}
+</div>
 {% endblock master_content %}

@@ -20,8 +20,8 @@ Resource Collections:
 	{% for resource in collection.resources.all %}
 	<tr>
 	<td>{{ resource.name }}</td>
-	<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><img alt="Details" src="{% static "icon/detail.png" %}" /></a></td>
-	<td><a href="{% url "animal_observation:classify" project.id resource.id %}" title="Classify Resource"><img alt="Classify" src="{% static "icon/classify.png" %}" width=30px /></a></td>
+	<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
+	<td><a href="{% url "animal_observation:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
 	</tr>
 	{% endfor %}
 	</table>

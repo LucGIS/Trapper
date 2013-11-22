@@ -1,22 +1,18 @@
 {% extends "storage/base.html" %}
 {% load staticfiles %}
-
+{% block storage_resource_list %}class="active"{% endblock %}
 {% block content %}
+<p>
 {% if resources %}
 	Available resources:
-	<table border=1>
-	<tr>
-	<th>Resource name</th>
-	<th>Details</th>
-	<th>Update</th>
-	<th>Delete</th>
-	</tr>
 	{% for resource in resources %}
 	{% include "storage/resource_iter.html" %}
 	{% endfor %}
-	</table>
-	<a href="{% url "storage:resource_create" %}">Upload a resource <img src="{% static "icon/add_resource.png" %}" /></a>
 {% else %}
 No resources available.
 {% endif %}
+</p>
+<p>
+	<a class="btn btn-sm btn-success" href="{% url "storage:resource_create" %}">Upload a resource <span class="glyphicon glyphicon-cloud-upload"></span></a>
+</p>
 {% endblock content %}

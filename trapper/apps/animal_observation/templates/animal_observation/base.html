@@ -2,9 +2,11 @@
 
 {% block master_content %}
 |
-<a href="{% url "animal_observation:cs_resource_list" %}">CrowdSourcing</a> |
-<a href="{% url "animal_observation:project_list" %}">All Projects</a> |
+<a href="{% url "animal_observation:cs_resource_list" %}">Crowd Sourcing</a> |
+<a href="{% url "animal_observation:project_list" %}">All projects</a> |
+{% if user.is_authenticated %}
 <a href="{% url "animal_observation:project_list" %}">My projects</a> |
+{% endif %}
 <br/>
 <br/>
 {% block content %}{% endblock content %}

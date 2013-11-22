@@ -24,13 +24,7 @@ urlpatterns = patterns('',
 		form_class=ResourceForm
 	), name='resource_update'),
 	url(r'resource/create/$', views.ResourceCreateView.as_view(), name='resource_create'),
-
-	url(r'resource/delete/(?P<pk>\d+)$', DeleteView.as_view(
-		model=Resource,
-		success_url='resource/list/',
-		context_object_name='object',
-		template_name='storage/object_confirm_delete.html'
-	), name='resource_delete'),
+	url(r'resource/delete/(?P<pk>\d+)$', views.ResourceDeleteView.as_view(), name='resource_delete'),
 
 	# ResourceCollection views:
 	url(r'resourcecollection/list/$', ListView.as_view(model=ResourceCollection, context_object_name='collections'), name='collection_list'),

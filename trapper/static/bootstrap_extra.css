@@ -1,0 +1,19 @@
+.create_item {
+	color: green;
+}
+.new_message {
+	color: red;
+}
+.tab-content {
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	padding: 10px;
+}
+
+.pill-content {
+	padding: 20px;
+}
+.nav-tabs {
+	margin-bottom: 0;
+}

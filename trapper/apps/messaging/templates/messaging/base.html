@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block master_content %}
-|
-<a href="{% url "messaging:message_inbox" %}">Inbox ({{ user.userprofile.count_unread_messages }})</b>
-</a> |
-<a href="{% url "messaging:message_outbox" %}">Outbox</a> |
-<a href="{% url "messaging:message_create" %}">New message</a> |
-<a href="{% url "messaging:notification_list" %}">System notifications ({{ user.userprofile.count_unresolved_system_notifications }})</a> |
-<br/>
-<br/>
+<ul class="nav nav-pills">
+	<li {% block messaging_message_inbox %}{% endblock %}><a href="{% url "messaging:message_inbox" %}">Inbox <span class="badge">{{ user.userprofile.count_unread_messages }}/{{user.received_messages.all.count}}</span></a></li>
+	<li {% block messaging_message_outbox %}{% endblock %} ><a href="{% url "messaging:message_outbox" %}">Outbox<span class="badge">{{user.sent_messages.all.count}}</span></a></li>
+	<li {% block messaging_message_create %}{% endblock %}><a href="{% url "messaging:message_create" %}">New message <span class="glyphicon glyphicon-pencil"></span></a></li>
+	<li {% block messaging_notification_list %}{% endblock %}><a href="{% url "messaging:notification_list" %}">System notifications <span class="badge">{{ user.userprofile.count_unresolved_system_notifications }}</span></a></li>
+</ul>
+<div class="pill-content">
 {% block content %}{% endblock content %}
+</div>
 {% endblock master_content %}

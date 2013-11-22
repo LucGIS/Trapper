@@ -1,7 +1,11 @@
 {% load staticfiles %}
-<tr>
-<td> <label> {{resource.name}} </label> </td>
-<td> <a title="Show details" href="{% url "storage:resource_detail" resource.id %}"><img src="{% static "icon/detail.png" %}" /></a> </td>
-<td> <a title="Update resource" href="{% url "storage:resource_update" resource.id %}"><img src="{% static "icon/update.png" %}" /></a> </td>
-<td> <a title="Delete resource" href="{% url "storage:resource_delete" resource.id %}"><img src="{% static "icon/delete.png" %}" /></a> </td>
-</tr>
+<div class="media panel panel-default">
+	<a class="pull-left" href="{% url "storage:resource_detail" resource.id %}">
+		<img class="media-object" alt="{{resource.name}}" src="{% if resource.thumbnail %}{{resource.thumbnail.url}}{% endif %}" />
+	</a>
+	<div class="media-body">
+		<h4 class="media-heading">{{resource.name}}</h4>
+		<a title="Update resource" href="{% url "storage:resource_update" resource.id %}"><span class="glyphicon glyphicon-pencil"></a>
+		<a title="Delete resource" href="{% url "storage:resource_delete" resource.id %}"><span class="glyphicon glyphicon-trash"></a>
+	</div>
+</div>

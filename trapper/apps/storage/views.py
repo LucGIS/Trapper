@@ -3,24 +3,53 @@ from django.shortcuts import get_object_or_404
 from django.views import generic
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from trapper.apps.storage.models import Resource, ResourceCollection
 from trapper.apps.storage.forms import ResourceForm, ResourceCollectionRequestForm
 from trapper.apps.animal_observation.models import ClassificationProject, ClassificationProjectRole
 from trapper.apps.messaging.models import Message, ResourceCollectionRequest
+from trapper.commons.decorators import object_access_required
 
 
+# Resource views
 class UserResourceListView(generic.ListView):
+	"""
+	Displays the list of resources of given request.user
+	"""
 	model = Resource
 	context_object_name = 'resources'
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super(UserResourceListView, self).dispatch(*args, **kwargs)
 
 	def get_queryset(self):
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Resource.objects.filter(owner=user)
 
+class ResourceDeleteView(generic.DeleteView):
+	"""
+	Given resource can be removed when user is the owner or the uploader of the resource.
+	"""
+	model=Resource,
+	success_url='resource/list/',
+	context_object_name='object',
+	template_name='storage/object_confirm_delete.html'
+
+	@method_decorator(login_required)
+	@method_decorator(object_access_required(Resource, lambda u, o: u in (o.owner, o.uploader)))
+	def dispatch(self, *args, **kwargs):
+		return super(ResourceDeleteView, self).dispatch(*args, **kwargs)
+
 class ResourceCreateView(generic.CreateView):
 	model = Resource
 	form_class= ResourceForm
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super(ResourceCreateView, self).dispatch(*args, **kwargs)
 
 	def form_valid(self, form):
 		form.instance.uploader = self.request.user
@@ -30,6 +59,10 @@ class ResourceCreateView(generic.CreateView):
 class UserResourceCollectionListView(generic.ListView):
 	model = ResourceCollection
 	context_object_name = 'collections'
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super(UserResourceCollectionListView, self).dispatch(*args, **kwargs)
 
 	def get_queryset(self):
 		# check if user exists and return the filtered queryset
@@ -51,6 +84,10 @@ class ResourceCollectionRequestView(generic.FormView):
 
 	# Only Project Admins and Experts can request for the resources
 	REQUIRED_PROJECT_ROLES = [ClassificationProjectRole.ROLE_PROJECT_ADMIN, ClassificationProjectRole.ROLE_EXPERT]
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super(UserResourceCollectionListView, self).dispatch(*args, **kwargs)
 
 	def get_context_data(self, *args, **kwargs):
 		context = super(ResourceCollectionRequestView, self).get_context_data(*args, **kwargs)

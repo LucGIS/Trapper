@@ -8,10 +8,10 @@
 	<li>
 	<b>{{ project.name }}</b>
 	{% if can_view %}
-	<a href="{% url "animal_observation:project_details" project.id %}"><img src="{% static "icon/detail.png" %}" /></a>
+	<a href="{% url "animal_observation:project_details" project.id %}"><span class="glyphicon glyphicon-search"></span></a>
 	{% endif %}
 	{% if can_edit %}
-	<a href="{% url "animal_observation:project_update" project.id %}"><img src="{% static "icon/update.png" %}" /></a>
+	<a href="{% url "animal_observation:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
 	{% endif %}
 	</li>
 	{% endfor %}
