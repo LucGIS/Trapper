@@ -10,10 +10,9 @@ The project is developed using:
 Database backend:
 
 * PostgreSQL 9.1 (tested on version 9.1.9)
-* PostGIS
+* PostGIS 2.0
 
 ## Installation
-
 Django and other requirements will be installed locally inside the project using [virtualenv](www.virtualenv.org):
 
 ### Prepare the project
@@ -29,6 +28,7 @@ cd Trapper/
 virtualenv env
 ./env/bin/pip install -r requirements.txt
 ```
+
 ### Prepare the PostgreSQL database
 4. Install PosgreSQL:
 ```
