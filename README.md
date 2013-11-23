@@ -23,7 +23,8 @@ Django and other python requirements will be installed locally inside the projec
 1. Install virtualenv, postgresql, geospatial libraries and PostGIS:
 Debian/Ubuntu:
 ```
-apt-get install python-virtualenv postgresql-9.1 binutils libproj-dev gdal-bin postgresql-9.1-postgis postgresql-server-dev-9.1
+apt-get install python-virtualenv postgresql-9.1 binutils
+libproj-dev gdal-bin postgresql-9.1-postgis postgresql-server-dev-9.1
 ```
 
 Useful:
@@ -33,15 +34,13 @@ Useful:
 ### Prepare the PostgreSQL database
 
 2. Create spatial database
-
 PostGIS 2.0.x:
 ```
 su - postgres
 psql trapper_db
 trapper_db# CREATE EXTENSION postgis;
 ```
-
-Instructions for PostGIS 1.X:
+PostGIS 1.x:
 * https://docs.djangoproject.com/en/1.6/ref/contrib/gis/install/postgis/#creating-a-spatial-database-template-for-earlier-versions
 
 3. Create a postgresql user 'trapper'
