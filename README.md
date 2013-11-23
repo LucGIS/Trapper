@@ -20,7 +20,8 @@ Django and other python requirements will be installed locally inside the projec
 
 ### Install system requirements
 
-1. Install virtualenv, postgresql, geospatial libraries and PostGIS:
+1. Install virtualenv, postgresql, geospatial libraries and PostGIS
+
 Debian/Ubuntu:
 ```
 apt-get install python-virtualenv postgresql-9.1 binutils
@@ -34,17 +35,18 @@ Useful:
 ### Prepare the PostgreSQL database
 
 2. Create spatial database
+
 PostGIS 2.0.x:
 ```
 su - postgres
 psql trapper_db
 trapper_db# CREATE EXTENSION postgis;
 ```
+
 PostGIS 1.x:
 * https://docs.djangoproject.com/en/1.6/ref/contrib/gis/install/postgis/#creating-a-spatial-database-template-for-earlier-versions
 
-3. Create a postgresql user 'trapper'
-* http://www.cyberciti.biz/faq/howto-add-postgresql-user-account/
+3. Create a postgresql user 'trapper':
 ```
 adduser trapper
 su - postgres
@@ -52,6 +54,7 @@ psql template1
 template1# CREATE USER trapper WITH PASSWORD 'trapper';
 template1# GRANT ALL PRIVILEGES ON DATABASE trapper_db TO trapper;
 ```
+* http://www.cyberciti.biz/faq/howto-add-postgresql-user-account/
 
 ### Prepare the project
 
