@@ -2,6 +2,7 @@ from ajax_select import urls as ajax_select_urls
 
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.contrib.gis import admin as admin_gis
 from django.views.generic import TemplateView
 
 from django.conf import settings
@@ -26,8 +27,12 @@ urlpatterns = patterns('',
 	url('', include('django.contrib.auth.urls')),
     url(r'^accounts/', include('trapper.apps.accounts.urls', namespace='accounts')),
 
+	# GeoMap urls
+    url(r'^geomap/', include('trapper.apps.geomap.urls', namespace='geomap')),
+
     url(r'^ajax_select/', include(ajax_select_urls)),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin_gis/', include(admin_gis.site.urls)),
 )
 
 if settings.DEBUG:

@@ -13,7 +13,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'trapper_db',
         # The following settings are not used with sqlite3:
         'USER': 'trapper',
@@ -127,11 +127,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+
 	'trapper.apps.animal_observation',
 	'trapper.apps.storage',
 	'trapper.apps.accounts',
 	'trapper.apps.messaging',
-    # Uncomment the next line to enable the admin:
+	'trapper.apps.geomap',
+
     'django.contrib.admin',
 	'django_extensions',
 	'ajax_select',

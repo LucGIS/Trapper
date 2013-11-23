@@ -6,8 +6,10 @@ Apply this script using the following:
 """
 
 from django.contrib.auth.models import User, Group
+from django.contrib.gis.geos import Point
 from trapper.apps.storage.models import ResourceType, Resource, ResourceCollection
 from trapper.apps.animal_observation.models import AnimalFeature, AnimalFeatureScope, ResourceFeatureSet, ClassificationProject, ResourceExtra, ClassificationProjectRole, ClassificationProjectCollection
+from trapper.apps.geomap.models import Location
 
 # Users
 u0 = User.objects.get(username='alice')
@@ -102,3 +104,8 @@ cprc3 = ClassificationProjectCollection.objects.create(project=cp1, collection=r
 cpr0 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_PROJECT_ADMIN, user=u0, project=cp1)
 cpr1 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_PROJECT_ADMIN, user=u3, project=cp1)
 cpr2 = ClassificationProjectRole.objects.create(name=ClassificationProjectRole.ROLE_EXPERT, user=u4, project=cp1)
+
+# Locations
+loc1 = Location.objects.create(coordinates=Point(23.8607, 52.7015))
+loc2 = Location.objects.create(coordinates=Point(23.1510, 53.1367))
+loc3 = Location.objects.create(coordinates=Point(22.3027, 54.3076))

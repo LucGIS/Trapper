@@ -1,0 +1,19 @@
+{% extends "geomap/base.html" %}
+
+{% load staticfiles %}
+{% block geomap_location_list %}class="active"{% endblock %}
+{% block content %}
+<div class="panel panel-primary">
+	<div class="panel-heading">Locations</div>
+	<div class="panel-body">
+		<table class="table">
+			<th>Lat</th><th>Lon</th><th>See on map</th>
+			{% for location in locations %}
+			<tr>
+				<td>{{location.coordinates.x}}</td><td>{{location.coordinates.y}}</td><td><a href="{% url "geomap:location_detail" location.pk %}"><span class="glyphicon glyphicon-search"></span></a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+{% endblock content %}

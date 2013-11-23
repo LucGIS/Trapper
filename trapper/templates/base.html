@@ -25,6 +25,9 @@
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
 	<link type="text/css" href="{% static "bootstrap_extra.css" %}"  media="all" rel="stylesheet" />
 
+	{# Header block for extra scripts and css styles #}
+	{% block header %}{% endblock header %}
+
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -50,9 +53,6 @@
 
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-
-			<li><a href="#">Tutorial</a></li>
-			<li><a href="#">About</a></li>
 
 			{% if user.is_staff %}
 			<li><a href="{% url "admin:index" %}"><span class="glyphicon glyphicon-briefcase"></span> Admin Site</a></li>
@@ -106,6 +106,8 @@
 				<li><a href="{% url "animal_observation:cs_resource_list" %}">Classify material</a></li>
               </ul>
             </li>
+
+			<li><a href="{% url "geomap:index" %}"><span class="glyphicon glyphicon-globe"></span> GeoMap</a></li>
 
           </ul>
           <ul class="nav navbar-nav navbar-right">

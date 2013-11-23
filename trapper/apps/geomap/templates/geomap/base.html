@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block master_content %}
+<p>
+<ul class="nav nav-pills">
+	<li {% block geomap_index %}{% endblock %}><a href="{% url "geomap:index" %}">Map</a></li>
+	<li {% block geomap_location_list %}{% endblock %}><a href="{% url "geomap:location_list" %}">Locations</a></li>
+</ul>
+</p>
+<p>
+{% block content %}{% endblock content %}
+</p>
+{% endblock master_content %}
