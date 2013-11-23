@@ -1,5 +1,5 @@
-./env/bin/python manage.py flush --noinput
-./env/bin/python manage.py syncdb --noinput
-./env/bin/python manage.py shell_plus < init_db.py
-./env/bin/python manage.py shell_plus < debug_db.py
-./env/bin/python manage.py runserver 0.0.0.0:8000
+#!/bin/bash
+# Resets the database by flushing all data and setting it up again
+
+./flush_database.sh
+./setup_database.sh
