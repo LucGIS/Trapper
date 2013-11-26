@@ -2,18 +2,19 @@
 {% load staticfiles %}
 {% block content %}
 <h1>{{ project.name }}</h1>
-<h3>
-Your role in this project:
-	{% if role %}
-	{{role.get_name_display}}
-	{% else %}
-	None
-	{% endif %}
-</h3>
 <br/>
+
+<h3>Researchers in this project:</h3>
+<table class="table">
+<th>User</th>
+<th>Role</th>
+{% for role in roles %}
+<tr><td>{{role.user.username}}</td><td>{{role.get_name_display}}</td></tr>
+{% endfor %}
+</table>
 <h3>Resource Collections:</h3>
 <div class="panel-group" id="accordion">
-	{% for collection in project.resource_collections.all %}
+	{% for collection in project.collections.all %}
 	<div class="panel panel-default">
 		<a data-toggle="collapse" data-parent="#accordion" href="#collection{{collection.pk}}">
 		<div class="panel-heading">

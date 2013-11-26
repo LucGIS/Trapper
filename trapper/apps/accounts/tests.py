@@ -22,8 +22,8 @@ class UserTestsViews(TestCase):
 		self.assertContains(response, "Admin Site")
 
 	def setUp(self):
-		User.objects.create_user('user1', 'user1@trapper.com', 'user1_pass')
-		staff = User.objects.create_user('staff1', 'staff1@trapper.com', 'staff1_pass')
+		User.objects.create_user('user1', 'user1@trapper.com', 'user1')
+		staff = User.objects.create_user('staff1', 'staff1@trapper.com', 'staff1')
 		staff.is_staff=True;
 		staff.save()
 
@@ -34,14 +34,14 @@ class UserTestsViews(TestCase):
 		self.anonymous_menu(response)
 
 	def test_index_logged_in(self):
-		self.client.login(username='user1', password='user1_pass')
+		self.client.login(username='user1', password='user1')
 		response = self.client.get(reverse('index'))
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, "Welcome to Tr@pper!")
 		self.logged_in_menu(response)
 
 	def test_index_staff(self):
-		self.client.login(username='staff1', password='staff1_pass')
+		self.client.login(username='staff1', password='staff1')
 		response = self.client.get(reverse('index'))
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, "Welcome to Tr@pper!")

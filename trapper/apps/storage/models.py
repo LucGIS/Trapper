@@ -13,7 +13,6 @@ class Resource(models.Model):
 	name = models.CharField(max_length=255)
 	file = models.FileField(upload_to='storage/resource/file/')
 
-	# TODO: mime_type as choices
 	MIME_CHOICES = (
 		('audio/ogg', 'audio/ogg'),
 		('audio/mp3', 'audio/mp3'),
@@ -26,8 +25,10 @@ class Resource(models.Model):
 	thumbnail = models.ImageField(upload_to='storage/resource/thumbnail/', null=True, blank=True)
 	resource_type = models.ForeignKey(ResourceType)
 	date_uploaded = models.DateTimeField(auto_now_add=True)
+
 	uploader = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')
 	owner = models.ForeignKey(User, null=True, blank=True, related_name='owned_resources')
+	managers = models.ManyToManyField(User, null=True, blank=True, related_name='managed_resources')
 
 	def __unicode__(self):
 		return unicode(self.resource_type.name + ":" + self.name)
@@ -35,9 +36,10 @@ class Resource(models.Model):
 	def get_absolute_url(self):
 		return reverse('storage:resource_detail', kwargs={'pk':self.pk})
 
-class ResourceCollection(models.Model):
+class Collection(models.Model):
 	name = models.CharField(max_length=255)
 	resources = models.ManyToManyField(Resource)
+
 	owner = models.ForeignKey(User, related_name='owned_collections')
 	managers = models.ManyToManyField(User, null=True, blank=True, related_name='managed_collections')
 

@@ -1,52 +1,50 @@
 from django.contrib import admin
-from trapper.apps.animal_observation.models import AnimalFeatureScope, AnimalFeature, ResourceFeatureSet, ResourceClassification, ResourceClassificationItem, ClassificationProject, AnimalFeatureAnswer, ResourceExtra, ClassificationProjectRole, ClassificationProjectCollection
-
-class AnimalFeatureScopeInline(admin.StackedInline):
-	model = AnimalFeatureScope
-
-class AnimalFeatureAdmin(admin.ModelAdmin):
-	inlines = [AnimalFeatureScopeInline,]
+from trapper.apps.animal_observation.models import FeatureScope, Feature, FeatureSet, Classification, ClassificationRow, Project, FeatureAnswer, ResourceExtra, ProjectRole, ProjectCollection
 
 
-class AnimalFeatureAnswerInline(admin.StackedInline):
-	model = AnimalFeatureAnswer
+class FeatureScopeInline(admin.StackedInline):
+	model = FeatureScope
+
+class FeatureAdmin(admin.ModelAdmin):
+	inlines = [FeatureScopeInline,]
+
+class FeatureAnswerInline(admin.StackedInline):
+	model = FeatureAnswer
 	extra = 0
 
-class ResourceClassificationItemAdmin(admin.ModelAdmin):
-	inlines = [AnimalFeatureAnswerInline,]
+class ClassificationRowAdmin(admin.ModelAdmin):
+	inlines = [FeatureAnswerInline,]
 	
-class ResourceClassificationItemInline(admin.StackedInline):
-	model = ResourceClassificationItem
+class ClassificationRowInline(admin.StackedInline):
+	model = ClassificationRow
 	extra = 0
 
-class ResourceClassificationAdmin(admin.ModelAdmin):
-	inlines = [ResourceClassificationItemInline,]
+class ClassificationAdmin(admin.ModelAdmin):
+	inlines = [ClassificationRowInline,]
 
-class ClassificationProjectRoleInline(admin.TabularInline):
-	model = ClassificationProjectRole
+class ProjectRoleInline(admin.TabularInline):
+	model = ProjectRole
 	extra = 0
 
-class ClassificationProjectResourceCollectionInline(admin.TabularInline):
-	model = ClassificationProjectCollection
+class ProjectCollectionInline(admin.TabularInline):
+	model = ProjectCollection
 	extra = 0
 
-class ClassificationProjectAdmin(admin.ModelAdmin):
-	inlines = [ClassificationProjectRoleInline, ClassificationProjectResourceCollectionInline]
-	filter_horizontal = ('resource_collections','resource_feature_sets',)
+class ProjectAdmin(admin.ModelAdmin):
+	inlines = [ProjectRoleInline, ProjectCollectionInline]
+	filter_horizontal = ('collections','feature_sets',)
 
 	def get_form(self, request, obj=None, **kwargs):
-		form = super(ClassificationProjectAdmin, self).get_form(request, obj, **kwargs)
-		# TODO: filter the resources by project availability
-		#form.base_fields['resources'].queryset = form.base_fields['resources'].queryset.filter(name=u'VIDEO001.mp4')
+		form = super(ProjectAdmin, self).get_form(request, obj, **kwargs)
 		return form
 
-admin.site.register(AnimalFeature, AnimalFeatureAdmin)
-admin.site.register(AnimalFeatureAnswer)
-admin.site.register(AnimalFeatureScope)
-admin.site.register(ResourceFeatureSet)
+admin.site.register(Feature, FeatureAdmin)
+admin.site.register(FeatureAnswer)
+admin.site.register(FeatureScope)
+admin.site.register(FeatureSet)
 admin.site.register(ResourceExtra)
-admin.site.register(ClassificationProjectCollection)
-admin.site.register(ResourceClassification, ResourceClassificationAdmin)
-admin.site.register(ResourceClassificationItem, ResourceClassificationItemAdmin)
-admin.site.register(ClassificationProjectRole)
-admin.site.register(ClassificationProject, ClassificationProjectAdmin)
+admin.site.register(ProjectCollection)
+admin.site.register(Classification, ClassificationAdmin)
+admin.site.register(ClassificationRow, ClassificationRowAdmin)
+admin.site.register(ProjectRole)
+admin.site.register(Project, ProjectAdmin)

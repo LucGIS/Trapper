@@ -1,14 +1,14 @@
 from datetime import datetime
 
 from django import forms
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.views import generic
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect
 
-from trapper.apps.messaging.models import Message, ResourceCollectionRequest
+from trapper.apps.messaging.models import Message, CollectionRequest
 from trapper.commons.decorators import object_access_required
 
 
@@ -68,7 +68,7 @@ class MessageOutboxView(MessageListView):
 		return self.request.user.sent_messages.all().order_by('-date_sent')
 
 class SystemNotificationListView(generic.ListView):
-	model=ResourceCollectionRequest
+	model=CollectionRequest
 	context_object_name='notifications'
 	template_name='messaging/notification_list.html'
 
@@ -82,10 +82,10 @@ class SystemNotificationListView(generic.ListView):
 class ResolveClassificaionResourceRequestView(generic.DetailView):
 	template_name="messaging/resource_request_resolve.html"
 	context_object_name = "notification"
-	model = ResourceCollectionRequest
+	model = CollectionRequest
 
 	@method_decorator(login_required)
-	@method_decorator(object_access_required(ResourceCollectionRequest, lambda u, o: u==o.user))
+	@method_decorator(object_access_required(CollectionRequest, lambda u, o: u==o.user))
 	def dispatch(self, *args, **kwargs):
 		return super(ResolveClassificaionResourceRequestView, self).dispatch(*args, **kwargs)
 

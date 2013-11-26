@@ -4,7 +4,9 @@ from functools import wraps
 
 def object_access_required(modelname, access_func):
 	"""
-	1. Verifies whether user is authenticated
+	At the moment this decorator checks whether request.user passes certain access_func.
+
+	TODO: It should also check whether the user is authenticated:
 	2. Verifies the access for request.user to an instance of 'modelname' class object using the access_func.
 	Object is identified by the 'pk' item from the request.GET
 	"""

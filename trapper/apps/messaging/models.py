@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-from trapper.apps.storage.models import ResourceCollection
-from trapper.apps.animal_observation.models import ClassificationProject, ClassificationProjectCollection
+from trapper.apps.storage.models import Collection
+from trapper.apps.animal_observation.models import Project, ProjectCollection
 
 class Message(models.Model):
 	subject = models.CharField(max_length=50)
@@ -37,15 +37,14 @@ class SystemNotification(models.Model):
 	class Meta:
 		abstract = True
 
-class ResourceCollectionRequest(SystemNotification):
+class CollectionRequest(SystemNotification):
 	message = models.ForeignKey(Message)
-	project = models.ForeignKey(ClassificationProject)
-	collection = models.ForeignKey(ResourceCollection)
+	project = models.ForeignKey(Project)
+	collection = models.ForeignKey(Collection)
 
 	def resolve_yes(self):
 		self.resolve()
-		ClassificationProjectCollection.objects.create(project=self.project, collection=self.collection, active=True)
-		# Add the actual collection
+		ProjectCollection.objects.create(project=self.project, collection=self.collection, active=True)
 
 	def resolve_no(self):
 		self.resolve()

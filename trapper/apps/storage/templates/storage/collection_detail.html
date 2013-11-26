@@ -3,18 +3,18 @@
 {% block content %}
 <ul>
 	<li>
-Name: {{ resourcecollection.name }}
+Name: {{ collection.name }}
 	</li>
 	<li>
-Owner: {{ resourcecollection.owner}}
+Owner: {{ collection.owner}}
 	</li>
 	<li>
-Public: {{ resourcecollection.resourceextra.public}}
+Public: {{ collection.resourceextra.public}}
 	</li>
 	<li>
 Resources:
 		<table border=1>
-		{% for resource in resourcecollection.resources.all %}
+		{% for resource in collection.resources.all %}
 		{% include "storage/resource_iter.html" %}
 		{% endfor %}
 		</table>

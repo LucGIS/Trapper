@@ -15,7 +15,7 @@ Project:
 		last_row.id = rowId;
 		var cells = last_row.getElementsByTagName('td');
 		for(var i = 0 ; i < cells.length - 1 ; ++i) {
-			var features = cells[i].getElementsByClassName('AnimalFeature');
+			var features = cells[i].getElementsByClassName('Feature');
 			for(var j = 0 ; j < features.length ; ++j) {
 				var feature = features[j];
 				var f_name = feature.name.split("__")[1];
@@ -52,17 +52,17 @@ Project:
 	<td>
 	<label>{{feature.get_short_name}}:</label>
 	{% if feature.feature_type == "S" %}
-		<select name="1__{{feature.id}}" class="AnimalFeature" >
+		<select name="1__{{feature.id}}" class="Feature" >
 			<option value="0" selected> - </option>
 			{% for state in scope %}
 			<option value="{{state.id}}"> {{state.name}} </option>
 			{% endfor %}
 		</select>
 	{% elif feature.feature_type == "I" or feature.feature_type == "F" %} 
-		<input type="text" name="1__{{feature.id}}" value="" class="AnimalFeature" />
+		<input type="text" name="1__{{feature.id}}" value="" class="Feature" />
 	{% elif feature.feature_type == "B" %}
-		<input type="hidden" value="0" name="1__{{feature.id}}" class="AnimalFeature" /> 
-		<input type="checkbox" value="1" name="1__{{feature.id}}" class="AnimalFeature" /> 
+		<input type="hidden" value="0" name="1__{{feature.id}}" class="Feature" /> 
+		<input type="checkbox" value="1" name="1__{{feature.id}}" class="Feature" /> 
 	{% endif %}
 	</td>
 {% endfor %}

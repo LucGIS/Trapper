@@ -2,20 +2,27 @@
 {% load staticfiles %}
 {% block content %}
 {% if items %}
-	Available projects:
-	<ul>
-	{% for project, can_view, can_edit in items %}
-	<li>
-	<b>{{ project.name }}</b>
-	{% if can_view %}
-	<a href="{% url "animal_observation:project_details" project.id %}"><span class="glyphicon glyphicon-search"></span></a>
-	{% endif %}
+Available projects:
+<table class="table">
+<th>Project Name</th>
+<th>Details</th>
+<th>Edit</th>
+{% for project, can_view, can_edit in items %}
+<tr>
+	<td>{{ project.name }}</td>
+	<td>
+		{% if can_view %}
+		<a href="{% url "animal_observation:project_detail" project.id %}"><span class="glyphicon glyphicon-search"></span></a>
+		{% endif %}
+	</td>
+	<td>
 	{% if can_edit %}
 	<a href="{% url "animal_observation:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
 	{% endif %}
-	</li>
-	{% endfor %}
-	</ul>
+	</td>
+</tr>
+{% endfor %}
+</table>
 {% else %}
 No project available. Start one now!
 {% endif %}
