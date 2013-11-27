@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^geomap/', include('trapper.apps.geomap.urls', namespace='geomap')),
 
     url(r'^ajax_select/', include(ajax_select_urls)),
+    url(r'^tinymce/', include('tinymce.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^admin_gis/', include(admin_gis.site.urls)),
 )

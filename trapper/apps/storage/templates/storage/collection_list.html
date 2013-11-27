@@ -5,8 +5,8 @@
 {% block content %}
 <p>
 {% if collections %}
-	Available collections:
-	<table border=1>
+	<h3>Available collections:</h3>
+	<table class="table">
 	<tr>
 	<th>Collection name</th>
 	<th>Details</th>
@@ -17,7 +17,7 @@
 	
 	{% for collection in collections %}
 	<tr>
-	<td> <label> {{collection.name}} </label> </td>
+	<td> {{collection.name}} </td>
 	<td> <a title="Show details"      href="{% url "storage:collection_detail" collection.id %}"><span class="glyphicon glyphicon-search"></span></a> </td>
 	<td> <a title="Update collection" href="{% url "storage:collection_update" collection.id %}"><span class="glyphicon glyphicon-pencil"></span></a> </td>
 	<td> <a title="Delete collection" href="{% url "storage:collection_delete" collection.id %}"><span class="glyphicon glyphicon-trash"></span></a> </td>

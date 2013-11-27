@@ -1,11 +1,28 @@
 {% load staticfiles %}
-<div class="media panel panel-default">
-	<a class="pull-left" href="{% url "storage:resource_detail" resource.id %}">
-		<img class="media-object" alt="{{resource.name}}" src="{% if resource.thumbnail %}{{resource.thumbnail.url}}{% endif %}" />
-	</a>
-	<div class="media-body">
-		<h4 class="media-heading">{{resource.name}}</h4>
-		<a title="Update resource" href="{% url "storage:resource_update" resource.id %}"><span class="glyphicon glyphicon-pencil"></a>
-		<a title="Delete resource" href="{% url "storage:resource_delete" resource.id %}"><span class="glyphicon glyphicon-trash"></a>
-	</div>
-</div>
+<table class="table">
+<th>Media</th>
+<th>Name</th>
+<th>Type</th>
+<th>Update</th>
+<th>Delete</th>
+{% for resource in resources %}
+<tr>
+	<td><a class="pull-left" href="{% url "storage:resource_detail" resource.id %}">
+		<img class="media-object" alt="{{resource.name}}" src="{% if resource.thumbnail %}{{ resource.thumbnail.url }}{% endif %}" />
+		</a></td>
+	<td><h4>{{resource.name}}</h4></td>
+	<td>
+	{% if resource.resource_type.name == "Audio" %}
+	<span class="glyphicon glyphicon-music"></span>Audio
+	{% elif resource.resource_type.name == "Video" %}
+	<span class="glyphicon glyphicon-film"></span>Video
+	{% elif resource.resource_type.name == "Image" %}
+	<span class="glyphicon glyphicon-picture"></span>Image
+	{% else %}
+	{{resource.resource_type.name}}
+	{% endif %}
+	<td><a title="Update resource" href="{% url "storage:resource_update" resource.id %}"><span class="glyphicon glyphicon-pencil"></a></td>
+	<td><a title="Delete resource" href="{% url "storage:resource_delete" resource.id %}"><span class="glyphicon glyphicon-trash"></a></td>
+</tr>
+{% endfor %}
+</table>

@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 
 from trapper.apps.messaging.models import Message, CollectionRequest
+from trapper.apps.messaging.forms import MessageForm
 from trapper.commons.decorators import object_access_required
 
 
@@ -28,20 +29,13 @@ class MessageDetailView(generic.DetailView):
 		return message
 
 class MessageCreateView(generic.CreateView):
-	model = Message
+	form_class = MessageForm
 	template_name = 'messaging/message_create.html'
 	fields = ['subject','text','user_to']
 
 	@method_decorator(login_required)
 	def dispatch(self, *args, **kwargs):
 		return super(MessageCreateView, self).dispatch(*args, **kwargs)
-
-	def get_form(self, *args, **kwargs):
-		form = super(MessageCreateView, self).get_form(*args, **kwargs)
-		form.fields['text'].widget=forms.Textarea()
-		form.fields['text'].label = 'Body'
-		form.fields['user_to'].label = 'Recipient'
-		return form
 
 	def form_valid(self, form):
 		form.instance.user_from = self.request.user

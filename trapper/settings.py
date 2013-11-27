@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 	'django_extensions',
 	'ajax_select',
+	'tinymce',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

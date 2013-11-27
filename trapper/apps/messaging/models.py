@@ -7,7 +7,7 @@ from trapper.apps.animal_observation.models import Project, ProjectCollection
 
 class Message(models.Model):
 	subject = models.CharField(max_length=50)
-	text = models.CharField(max_length=1000)
+	text = models.TextField(max_length=1000)
 	user_from = models.ForeignKey(User, related_name='sent_messages')
 	user_to = models.ForeignKey(User, related_name='received_messages')
 	date_sent = models.DateTimeField(auto_now_add=True)

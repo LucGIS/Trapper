@@ -4,10 +4,8 @@
 {% block content %}
 <p>
 {% if resources %}
-	Available resources:
-	{% for resource in resources %}
+<h3>Available resources:</h3>
 	{% include "storage/resource_iter.html" %}
-	{% endfor %}
 {% else %}
 No resources available.
 {% endif %}
