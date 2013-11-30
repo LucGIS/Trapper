@@ -2,12 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.forms.models import inlineformset_factory
 from django.views import generic
+from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
+
+from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesView, NamedFormsetsMixin
 
 from trapper.apps.animal_observation.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection
 from trapper.apps.storage.models import Resource
-from trapper.apps.animal_observation.decorators import project_role_required
-from trapper.apps.animal_observation.forms import ProjectForm, ProjectCollectionForm
+from trapper.apps.animal_observation.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset
 from trapper.commons.decorators import object_access_required
 
 
@@ -36,51 +38,78 @@ class ProjectDetailView(generic.DetailView):
 	def dispatch(self, *args, **kwargs):
 		return super(ProjectDetailView, self).dispatch(*args, **kwargs)
 
-	def get_context_data(self, *args, **kwargs):
-		context = super(ProjectDetailView, self).get_context_data(*args, **kwargs)
-		context['roles'] = ProjectRole.objects.filter(project=self.get_object())
-		return context
-
 
 def can_update_project(user, project):
 	return ProjectRole.objects.filter(user=user, project=project, name=ProjectRole.ROLE_PROJECT_ADMIN).count() > 0
 
-class ProjectUpdateView(generic.UpdateView):
+class ProjectRoleInline(InlineFormSet):
+	model = ProjectRole
+	extra = 2
+
+class CollectionInline(InlineFormSet):
+	model = ProjectCollection
+	extra = 2
+
+class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 	model = Project
-	context_object_name = 'project'
+	form_class = ProjectForm
+	template_name = 'animal_observation/project_create.html'
+	inlines = [ProjectRoleInline, CollectionInline]
+	inlines_names = ['projectrole_formset', 'collection_formset']
+
+	def forms_valid(self, form, inlines):
+		self.object = form.save(commit=False)
+		self.object.save()
+		projectrole_formset, collection_formset = inlines
+		projectrole_formset.save()
+		# Save collection formset manually as it is defined using intermediate model
+		for pc in collection_formset:
+			pc_obj = pc.save(commit=False)
+			pc_obj.project_id = self.object.id
+			pc_obj.save()
+		return HttpResponseRedirect(self.object.get_absolute_url())
+
+class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
+	model = Project
+	form_class = ProjectForm
 	template_name = 'animal_observation/project_update.html'
+	inlines = [ProjectRoleInline, CollectionInline]
+	inlines_names = ['projectrole_formset', 'collection_formset']
 
-	@method_decorator(login_required)
-	@method_decorator(object_access_required(Project, can_update_project))
-	def dispatch(self, *args, **kwargs):
-		return super(ProjectUpdateView, self).dispatch(*args, **kwargs)
+	def forms_valid(self, form, inlines):
+		self.object = form.save(commit=False)
+		self.object.save()
+		projectrole_formset, collection_formset = inlines
+		projectrole_formset.save()
+		# Save collection formset manually as it is defined using the intermediate model
+		for pc in collection_formset:
+			pc_obj = pc.save(commit=False)
+			pc_obj.project_id = self.object.id
+			pc_obj.collection_id = pc_obj.collection.id
+			pc_obj.save()
+		return HttpResponseRedirect(self.object.get_absolute_url())
 
-
-@project_role_required([ProjectRole.ROLE_PROJECT_ADMIN,], access_denied_page='/message/1/')
-def project_update(request, project_id):
-	project = Project.objects.get(id=project_id)
+def project_update(request, pk):
+	project = Project.objects.get(pk=pk)
 
 	form = ProjectForm(instance=project)
-	CPRCFormset = inlineformset_factory(Project, ProjectCollection, extra=0, form=ProjectCollectionForm)
-	CPCPRFormset = inlineformset_factory(Project, ProjectRole, extra=1)
 
 	if request.method == "POST":
 		form = ProjectForm(request.POST, instance=project)
-		resources_formset = CPRCFormset(request.POST, instance=project)
-		roles_formset = CPCPRFormset(request.POST, instance=project)
-		if form.is_valid() and resources_formset.is_valid() and roles_formset.is_valid():
+		collection_formset = ProjectCollectionFormset(request.POST, instance=project)
+		projectrole_formset = ProjectRoleFormset(request.POST, instance=project)
+		if form.is_valid() and collection_formset.is_valid() and projectrole_formset.is_valid():
 			form.save()
-			resources_formset.save()
-			roles_formset.save()
+			collection_formset.save()
+			projectrole_formset.save()
 
-	resources_formset = CPRCFormset(instance=project)
-	roles_formset = CPCPRFormset(instance=project)
+	collection_formset = ProjectCollectionFormset(instance=project)
+	projectrole_formset = ProjectRoleFormset(instance=project)
 
 	context = {'project': project,
 			'form': form,
-			'resources_formset': resources_formset,
-			'roles_formset': roles_formset,
-			}
+			'collection_formset': collection_formset,
+			'projectrole_formset': projectrole_formset,}
 
 	return render(request, 'animal_observation/project_update.html', context)
 

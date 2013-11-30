@@ -1,5 +1,6 @@
 from django.db import models
 from trapper.apps.storage.models import Resource, ResourceType, Collection
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 class Feature(models.Model):
@@ -104,6 +105,9 @@ class Project(models.Model):
 		"""
 		return [r.name for r in self.projectrole_set.filter(user=user)]
 
+	def get_absolute_url(self):
+		return reverse('animal_observation:project_detail', kwargs={'pk':self.pk})
+
 class ProjectCollection(models.Model):
 	"""
 	ManyToMany model for Project-Collection relationship.
@@ -112,10 +116,11 @@ class ProjectCollection(models.Model):
 	"""
 	project = models.ForeignKey(Project)
 	collection = models.ForeignKey(Collection)
-	active = models.BooleanField(default=True)
+	active = models.BooleanField("Active", default=True)
+	cs_enabled = models.BooleanField("Crowd-Sourcing", default=True)
 
 	def __unicode__(self):
-		return unicode("%s <-> %s (%s)" % (self.project.name, self.collection.name, self.active))
+		return unicode("%s <-> %s (Active: %s, CS: %s)" % (self.project.name, self.collection.name, self.active, self.cs_enabled))
 
 class ProjectRole(models.Model):
 	ROLE_PROJECT_ADMIN = "A"

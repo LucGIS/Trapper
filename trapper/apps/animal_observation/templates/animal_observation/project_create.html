@@ -1,10 +1,12 @@
 {% extends "animal_observation/base.html" %}
 {% load staticfiles %}
+{% block content %}
 
-{# Extra header: django-dynamic-formset #}
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
 {% block header %}
 <script type="text/javascript" src="{% static "jquery.formset.js" %}"></script>
-<script type="text/javascript">
+<script type="text/javascrip">
 	$(function() {
 		$('#collectionForm tbody tr').formset({
 			prefix: '{{ collection_formset.prefix }}',
@@ -18,57 +20,56 @@
 </script>
 {% endblock header %}
 
-{% block content %}
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-<form action="" method="post">
+<form id="projectForm" action="" method="post">
 {% csrf_token %}
 
 <h2>Name: {{form.name}}</h2>
 <h3>Feature sets:</h3>
 {{form.feature_sets}}
 <h3>CS-Enabled for this project: {{form.cs_enabled}}</h3>
+
 <h3>Collections:</h3>
+<br />
+{{ collection_formset.management_form }}
 <table id="collectionForm" class="table">
 	<thead>
 		<th>Name</th>
 		<th>Is active ?</th>
 		<th>Crowd Sourcing enabled ?</th>
-		<th>Delete</th>
 	</thead>
 	<tbody>
 	{% for form in collection_formset.forms %}
-		<tr id="{{form.prefix}}-row">
-			{{form.id}}
-			<td>{{form.col_name}}</td>
+		{{form.id}}
+		<tr>
+			<td>{{form.collection}}</td>
 			<td>{{form.active}}</td>
 			<td>{{form.cs_enabled}}</td>
-			<td>{% if form.instance.pk %}{{ form.DELETE }}{% endif %}</td>
-		</tr>
-	{% endfor %}
-	</tbody>
-</table>
-{{ collection_formset.management_form }}
-
-<h3>Roles:</h3>
-<table id="projectroleForm" class="table">
-	<thead>
-		<th>User</th>
-		<th>Role</th>
-		<th>Delete</th>
-	</thead>
-	<tbody>
-	{% for form in projectrole_formset.forms %}
-		 <tr id="{{form.prefix}}-row">
-			{{form.id}}
-			<td>{{form.user}}</td>
-			<td>{{form.name}}</td>
 			<td>{% if form.instance.pk %}{{form.DELETE}}{% endif %}</td>
 		</tr>
 	{% endfor %}
 	</tbody>
 </table>
+<br />
+
+<h3>Roles:</h3>
+<br />
 {{ projectrole_formset.management_form }}
+<table id="projectroleForm" class="table">
+	<thead>
+		<th>User</th>
+		<th>Role</th>
+	</thead>
+	<tbody>
+{% for form in projectrole_formset.forms %}
+	{{form.id}}
+	<tr>
+		<td>{{form.user}}</td>
+		<td>{{form.name}}</td>
+		<td>{% if form.instance.pk %}{{form.DELETE}}{% endif %}</td>
+	</tr>
+	</tbody>
+{% endfor %}
+</table>
 
 <input class="btn btn-primary" type="submit" value="Update" />
 </form>

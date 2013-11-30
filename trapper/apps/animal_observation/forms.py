@@ -1,15 +1,16 @@
 from django import forms
+from django.forms.models import inlineformset_factory
 
-from trapper.apps.animal_observation.models import Project, ProjectCollection, FeatureSet
+from trapper.apps.animal_observation.models import Project, ProjectCollection, ProjectRole, FeatureSet
 
 class ProjectForm(forms.ModelForm):
 	class Meta:
 		model = Project
-		exclude = ['resource_collections']
+		exclude = ['collections']
 
-	def __init__(self, *args, **kwargs):
-		super(ProjectForm, self).__init__(*args,**kwargs)
-		self.fields['cs_enabled'].label='Enabled for Crowd-Sourcing ?'
+	#def __init__(self, *args, **kwargs):
+	#	super(ProjectForm, self).__init__(*args,**kwargs)
+	#	self.fields['cs_enabled'].label='Enabled for Crowd-Sourcing ?'
 	
 class ProjectCollectionForm(forms.ModelForm):
 	class Meta:
@@ -25,3 +26,6 @@ class ProjectCollectionForm(forms.ModelForm):
 class FeatureSetForm(forms.ModelForm):
 	class Meta:
 		model = FeatureSet
+
+ProjectCollectionFormset = inlineformset_factory(Project, ProjectCollection, extra=0, form=ProjectCollectionForm)
+ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra = 1)

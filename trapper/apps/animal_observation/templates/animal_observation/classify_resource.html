@@ -45,7 +45,7 @@ Project:
 <input type="hidden" name="project_id" value="{{project.id}}" />
 <input type="hidden" name="resource_id" value="{{resource.id}}" />
 {% csrf_token %}
-<table border=1>
+<table class="table">
 <tbody id="classifyTable">
 <tr id="row_1">
 {% for feature, scope in features %}

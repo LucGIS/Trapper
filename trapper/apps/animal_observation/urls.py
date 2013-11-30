@@ -11,7 +11,9 @@ urlpatterns = patterns('',
 	# Display project list and the details about given project
 	url(r'project/list/$', views.ProjectListView.as_view(), name='project_list'),
 	url(r'project/detail/(?P<pk>\d+)/$', views.ProjectDetailView.as_view(), name='project_detail'),
-	url(r'project/update/(?P<pk>\d+)/$', views.ProjectUpdateView.as_view(), name='project_update'),
+#	url(r'project/update/(?P<pk>\d+)/$', views.ProjectUpdateView.as_view(), name='project_update'),
+	url(r'project/update/(?P<pk>\d+)/$', views.project_update, name='project_update'),
+	url(r'project/create/$', views.ProjectCreateView.as_view(), name='project_create'),
 
 	# Display the classification form and process (action) it
 	url(r'classify/(?P<project_id>\d+)/(?P<resource_id>\d+)/$', views.classify_resource, name='classify'),

@@ -8,29 +8,27 @@
 <table class="table">
 <th>User</th>
 <th>Role</th>
-{% for role in roles %}
+{% for role in project.projectrole_set.all %}
 <tr><td>{{role.user.username}}</td><td>{{role.get_name_display}}</td></tr>
 {% endfor %}
 </table>
-<h3>Resource Collections:</h3>
+<h3>Resource Collections for this project:</h3>
 <div class="panel-group" id="accordion">
-	{% for collection in project.collections.all %}
+	{% for pc in project.projectcollection_set.all %}
 	<div class="panel panel-default">
-		<a data-toggle="collapse" data-parent="#accordion" href="#collection{{collection.pk}}">
 		<div class="panel-heading">
-			<h4 class="panel-title">
-				{{collection.name}}
-			</h4>
+		<a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}">{{pc.collection.name}}</a>
+		Active: <span class="glyphicon glyphicon-{% if pc.active %}ok{% else %}remove{% endif %}"></span>
+		Crowd-Sourcing: <span class="glyphicon glyphicon-{% if pc.cs_enabled %}ok{% else %}remove{% endif %}"></span>
 		</div>
-		</a>
-		<div id="collection{{collection.pk}}" class="panel-collapse collapse out">
+		<div id="collection{{pc.pk}}" class="panel-collapse collapse out">
 			<table class="table">
 			<th>Name</th>
 			<th>Owner</th>
 			<th>Uploader</th>
 			<th>Details</th>
 			<th>Classify</th>
-			{% for resource in collection.resources.all %}
+			{% for resource in pc.collection.resources.all %}
 			<tr>
 			<td>{{ resource.name }}</td>
 			<td>{{ resource.owner.username }}</td>

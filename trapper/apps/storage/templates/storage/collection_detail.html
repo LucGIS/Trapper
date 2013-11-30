@@ -13,11 +13,7 @@ Public: {{ collection.resourceextra.public}}
 	</li>
 	<li>
 Resources:
-		<table border=1>
-		{% for resource in collection.resources.all %}
-		{% include "storage/resource_iter.html" %}
-		{% endfor %}
-		</table>
+	{% include "storage/resource_iter.html" with resources=collection.resources.all %}
 	</li>
 </ul>
 {% endblock content %}

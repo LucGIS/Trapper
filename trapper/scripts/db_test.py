@@ -42,7 +42,6 @@ def init():
 	fs3_3 = FeatureScope.objects.create(name="6+", feature = f4)
 	
 	# ResourceType, Resource
-	
 	rt1 = ResourceType.objects.create(name="Video")
 	rt2 = ResourceType.objects.create(name="Audio")
 	rt3 = ResourceType.objects.create(name="Image")
@@ -97,9 +96,9 @@ def init():
 	# Project
 	p1 = Project.objects.create(name="PhDProject1")
 	p1.feature_sets.add(fs1, fs2, fs3)
-	pc1 = ProjectCollection.objects.create(project=p1, collection=c1, active=True)
-	pc2 = ProjectCollection.objects.create(project=p1, collection=c2, active=True)
-	pc3 = ProjectCollection.objects.create(project=p1, collection=c3, active=True)
+	pc1 = ProjectCollection.objects.create(project=p1, collection=c1, active=True, cs_enabled=True)
+	pc2 = ProjectCollection.objects.create(project=p1, collection=c2, active=True, cs_enabled=False)
+	pc3 = ProjectCollection.objects.create(project=p1, collection=c3, active=False, cs_enabled=True)
 	
 	pr0 = ProjectRole.objects.create(name=ProjectRole.ROLE_PROJECT_ADMIN, user=u0, project=p1)
 	pr2 = ProjectRole.objects.create(name=ProjectRole.ROLE_EXPERT, user=u4, project=p1)
