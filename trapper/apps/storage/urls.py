@@ -12,7 +12,7 @@ urlpatterns = patterns('',
 	url(r'^$', TemplateView.as_view(template_name='storage/index.html'), name='index'),
 
 	# Resource views:
-	url(r'resource/list/$', ListView.as_view(model=Resource, context_object_name='resources'), name='resource_list'),
+	url(r'resource/list/$', views.ResourceListView.as_view(), name='resource_list'),
 	url(r'resource/list/(?P<user_pk>\d+)/$', views.UserResourceListView.as_view(), name='user_resource_list'),
 	url(r'resource/detail/(?P<pk>\d+)/$', DetailView.as_view(model=Resource), name='resource_detail'),
 	url(r'resource/update/(?P<pk>\d+)/$', views.ResourceUpdateView.as_view(), name='resource_update'),

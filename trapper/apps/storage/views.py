@@ -14,17 +14,23 @@ from trapper.commons.decorators import object_access_required
 
 
 # Resource views
-class UserResourceListView(generic.ListView):
+
+class ResourceListView(generic.ListView):
 	"""
-	Displays the list of resources of given request.user
+	Displays the list of resources
 	"""
 	model = Resource
 	context_object_name = 'resources'
+	paginate_by=10
 
 	@method_decorator(login_required)
 	def dispatch(self, *args, **kwargs):
-		return super(UserResourceListView, self).dispatch(*args, **kwargs)
+		return super(ResourceListView, self).dispatch(*args, **kwargs)
 
+class UserResourceListView(ResourceListView):
+	"""
+	Displays the list of resources of given request.user
+	"""
 	def get_queryset(self):
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Resource.objects.filter(owner=user)
