@@ -8,10 +8,6 @@ class ProjectForm(forms.ModelForm):
 		model = Project
 		exclude = ['collections']
 
-	#def __init__(self, *args, **kwargs):
-	#	super(ProjectForm, self).__init__(*args,**kwargs)
-	#	self.fields['cs_enabled'].label='Enabled for Crowd-Sourcing ?'
-	
 class ProjectCollectionForm(forms.ModelForm):
 	class Meta:
 		model = ProjectCollection
@@ -26,6 +22,7 @@ class ProjectCollectionForm(forms.ModelForm):
 class FeatureSetForm(forms.ModelForm):
 	class Meta:
 		model = FeatureSet
+		exclude = ['features',]
 
 ProjectCollectionFormset = inlineformset_factory(Project, ProjectCollection, extra=0, form=ProjectCollectionForm)
 ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra = 1)

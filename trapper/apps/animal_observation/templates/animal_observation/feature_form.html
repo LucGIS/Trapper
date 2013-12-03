@@ -1,0 +1,31 @@
+{% extends "animal_observation/base.html" %}
+{% load staticfiles %}
+
+{# Extra header: django-dynamic-formset #}
+{% block content %}
+<form action="" method="post">
+	{% csrf_token %}
+	<h3>{{form.name.label}}: {{form.name}}</h3>
+	<h3>{{form.resource_type.label}}: {{form.resource_type}}</h3>
+	<h3>Features:</h3>
+	<table id="featuresTable" class="table">
+		<thead>
+			<tr>
+				<th>Feature</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for form in features_formset.forms %}
+			{{form.id}}
+			<tr>
+				<td>{{form.feature}}</td><td>{{form.DELETE}}</td>
+			<tr>
+		{% endfor %}
+		</tbody>
+		{{features_formset.management_form}}
+	</table>
+	<input class="btn btn-primary" type="submit" value="Update" />
+</form>
+
+{% endblock content %}

@@ -1,0 +1,23 @@
+{% extends "animal_observation/base.html" %}
+{% load staticfiles %}
+{% block content %}
+{% if featuresets %}
+	<table class="table">
+	<th>Name</th>
+	<th>Resource type</th>
+	<th>Detail</th>
+	<th>Update</th>
+	{% for featureset in featuresets %}
+	<tr>
+		<td>{{featureset.name}}</td>
+		<td>{{featureset.resource_type.name}}</td>
+		<td><a href="{% url "animal_observation:featureset_detail" featureset.pk %}"><span class="glyphicon glyphicon-search"></span></a></td>
+		<td><a href="{% url "animal_observation:featureset_update" featureset.pk %}"><span class="glyphicon glyphicon-pencil"></span></a></td>
+	</tr>
+	{% endfor %}
+	</table>
+{% else %}
+No project available. Start one now!
+{% endif %}
+
+{% endblock content %}

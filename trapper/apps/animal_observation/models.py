@@ -43,6 +43,9 @@ class FeatureSet(models.Model):
 	def __unicode__(self):
 		return unicode("Name: %s | Type: %s" %(self.name, self.resource_type.name))
 
+	def get_absolute_url(self):
+		return reverse('animal_observation:featureset_detail', kwargs={'pk':self.pk})
+
 class ResourceExtra(models.Model):
 	"""
 	Extends the default storage.models.Resource model with the information relevant to the animal_observation app.

@@ -15,6 +15,18 @@ urlpatterns = patterns('',
 	url(r'project/update/(?P<pk>\d+)/$', views.project_update, name='project_update'),
 	url(r'project/create/$', views.ProjectCreateView.as_view(), name='project_create'),
 
+	# FeatureSet views
+	url(r'featureset/detail/(?P<pk>\d+)/$', views.FeatureSetDetailView.as_view(), name='featureset_detail'),
+	url(r'featureset/list/$', views.FeatureSetListView.as_view(), name='featureset_list'),
+	url(r'featureset/create/$', views.FeatureSetCreateView.as_view(), name='featureset_create'),
+	url(r'featureset/update/(?P<pk>\d+)/$', views.FeatureSetUpdateView.as_view(), name='featureset_update'),
+
+	# Feature views
+	url(r'feature/detail/(?P<pk>\d+)/$', views.FeatureDetailView.as_view(), name='feature_detail'),
+	url(r'feature/list/$', views.FeatureListView.as_view(), name='feature_list'),
+	url(r'feature/create/$', views.FeatureCreateView.as_view(), name='feature_create'),
+	url(r'feature/update/(?P<pk>\d+)/$', views.FeatureUpdateView.as_view(), name='feature_update'),
+
 	# Display the classification form and process (action) it
 	url(r'classify/(?P<project_id>\d+)/(?P<resource_id>\d+)/$', views.classify_resource, name='classify'),
 	url(r'classify/action/$', views.process_classify, name='classify_action'),

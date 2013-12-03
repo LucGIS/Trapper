@@ -67,6 +67,13 @@ class ResourceCreateView(generic.CreateView):
 		form.instance.uploader = self.request.user
 		return super(ResourceCreateView, self).form_valid(form)
 
+	def detect_mime_type(self, form):
+		return 'video/ogg'
+
+	def create_thumbnail(self, form):
+		print type(form.instance.file)
+		print form.instance.file.url
+		print form.instance.resource_type
 
 class UserCollectionListView(generic.ListView):
 	model = Collection

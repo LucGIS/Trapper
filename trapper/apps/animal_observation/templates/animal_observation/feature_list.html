@@ -1,0 +1,23 @@
+{% extends "animal_observation/base.html" %}
+{% load staticfiles %}
+{% block content %}
+{% if features %}
+	<table class="table">
+	<th>Name</th>
+	<th>Short Name</th>
+	<th>Detail</th>
+	<th>Update</th>
+	{% for feature in features %}
+	<tr>
+		<td>{{feature.name}}</td>
+		<td>{{feature.short_name}}</td>
+		<td><a href="{% url "animal_observation:feature_detail" feature.pk %}"><span class="glyphicon glyphicon-search"></span></a></td>
+		<td><a href="{% url "animal_observation:feature_update" feature.pk %}"><span class="glyphicon glyphicon-pencil"></span></a></td>
+	</tr>
+	{% endfor %}
+	</table>
+{% else %}
+No features available.
+{% endif %}
+
+{% endblock content %}

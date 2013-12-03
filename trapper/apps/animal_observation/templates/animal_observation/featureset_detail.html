@@ -1,0 +1,23 @@
+{% extends "animal_observation/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<h3>Name: {{ featureset.name }}</h3>
+<h3>Resource type: {{featureset.resource_type.name}}</h3>
+<h3>Features:</h3>
+<table class="table">
+	<thead>
+		<th>Full Name</th>
+		<th>Short name</th>
+		<th>Type</th>
+	</thead>
+	<tbody>
+	{% for feature in featureset.features.all %}
+		<tr>
+			<td>{{feature.name}}</td>
+			<td>{{feature.short_name}}</td>
+			<td>{{feature.get_feature_type_display}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endblock content %}

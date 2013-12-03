@@ -3,15 +3,59 @@ from django.shortcuts import redirect, render
 from django.forms.models import inlineformset_factory
 from django.views import generic
 from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 
 from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesView, NamedFormsetsMixin
 
-from trapper.apps.animal_observation.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection
+from trapper.apps.animal_observation.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet
 from trapper.apps.storage.models import Resource
-from trapper.apps.animal_observation.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset
+from trapper.apps.animal_observation.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset, FeatureSetForm
 from trapper.commons.decorators import object_access_required
 
+
+
+# FeatureSet views
+
+class FeatureSetDetailView(generic.DetailView):
+	model = FeatureSet
+
+class FeatureSetListView(generic.ListView):
+	model = FeatureSet
+	context_object_name = 'featuresets'
+
+class FeatureInline(InlineFormSet):
+	model = FeatureSet.features.through
+	extra = 2
+
+class FeatureSetUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
+	model = FeatureSet
+	form_class = FeatureSetForm
+	inlines = [FeatureInline,]
+	inlines_names = ['features_formset',]
+
+class FeatureSetCreateView(CreateWithInlinesView, NamedFormsetsMixin):
+	model = FeatureSet
+	form_class = FeatureSetForm
+	inlines = [FeatureInline,]
+	inlines_names = ['features_formset',]
+
+# Features views
+
+class FeatureDetailView(generic.DetailView):
+	model = Feature
+
+class FeatureListView(generic.ListView):
+	model = Feature
+	context_object_name = 'features'
+
+class FeatureUpdateView(generic.UpdateView):
+	model = Feature
+
+class FeatureCreateView(generic.CreateView):
+	model = Feature
+
+# Project views
 
 class ProjectListView(generic.ListView):
 	model = Project
@@ -29,6 +73,7 @@ class ProjectListView(generic.ListView):
 
 def can_detail_project(user, project):
 	return ProjectRole.objects.filter(user=user, project=project).count() > 0
+
 
 class ProjectDetailView(generic.DetailView):
 	model = Project
@@ -112,6 +157,9 @@ def project_update(request, pk):
 			'projectrole_formset': projectrole_formset,}
 
 	return render(request, 'animal_observation/project_update.html', context)
+
+
+# Classify / CS views
 
 def cs_resource_list(request):
 	projects = Project.objects.filter(cs_enabled=True)

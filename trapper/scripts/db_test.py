@@ -47,29 +47,27 @@ def init():
 	rt3 = ResourceType.objects.create(name="Image")
 	
 	r_data = (
-		("video_mp4", rt1, u1, u2, 'video_1.mp4', "video/mp4" , 'video_1_thumb.jpg'),
-		("video_ogv", rt1, u2, u2, 'video_1.ogv', "video/ogg" , 'video_1_thumb.jpg'),
-		("audio_mp3", rt2, u3, u4, 'audio_1.mp3', "audio/mpeg", None),
-		("audio_ogg", rt2, u1, u3, 'audio_2.wav', "audio/ogg" , None),
-		("audio_wav", rt2, u3, u3, 'audio_3.ogg', "audio/wav" , None),
-		("image_jpg", rt3, u3, u3, 'image_1.jpg', "image/jpeg", None),
+		("video_mp4", rt1, u1, u2, 'video_1.mp4',),
+		("video_ogv", rt1, u2, u2, 'video_1.ogv',),
+		("audio_mp3", rt2, u3, u4, 'audio_1.mp3',),
+		("audio_ogg", rt2, u1, u3, 'audio_2.wav',),
+		("audio_wav", rt2, u3, u3, 'audio_3.ogg',),
+		("image_jpg", rt3, u3, u3, 'image_1.jpg',),
+		("video_webm", rt1, u2, u2, 'video_1.webm',),
 	)
 	
 	r_filepath = "trapper/media_samples/"
 	
 	from django.core.files import File
 	
-	for name, rt, owner, uploader, filename, mime, thumb in r_data:
-		r = Resource(name=name, resource_type=rt, owner=owner, uploader=uploader, mime_type=mime)
-		if filename:
-			with open(r_filepath + filename,'rb') as r_file:
-				r.file.save(filename, File(r_file), save=False)
-		if thumb:
-			with open(r_filepath + thumb,'rb') as r_file:
-				r.thumbnail.save(thumb, File(r_file), save=False)
+	for name, rt, owner, uploader, filename in r_data:
+		r = Resource(name=name, resource_type=rt, owner=owner, uploader=uploader)
+		with open(r_filepath + filename,'rb') as r_file:
+			r.file.save(filename, File(r_file), save=False)
 		r.save()
+		r.update_thumbnail(commit=True)
 	
-	r1, r2, r3, r4, r5, r6 = Resource.objects.all()
+	r1, r2, r3, r4, r5, r6, r7 = Resource.objects.all()
 	
 	ResourceExtra.objects.filter(resource__in=[r1,r2,r3,r6]).update(public=True, cs_enabled=True)
 	

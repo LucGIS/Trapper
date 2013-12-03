@@ -1,0 +1,21 @@
+{% extends "animal_observation/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<h3>Name: {{ feature.name }}</h3>
+<h3>Short name: {{feature.short_name}}</h3>
+<h3>Type: {{feature.get_feature_type_display}}</h3>
+{% if feature.feature_type == "S" %}
+<h3>Scope:</h3>
+<table class="table">
+	<tbody>
+	{% for scope in feature.featurescope_set.all %}
+		<tr>
+			<td>{{scope.name}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endif %}
+
+
+{% endblock content %}
