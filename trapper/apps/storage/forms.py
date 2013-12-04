@@ -22,13 +22,13 @@ class ResourceForm(forms.ModelForm):
 	class Meta:
 		model = Resource
 		# exclude the 'uploader' field as it is always the request.user
-		exclude=['uploader', 'thumbnail', 'mime_type']
+		exclude=['uploader', 'thumbnail', 'mime_type', 'resource_type']
 
 	def save(self, force_insert=False, force_update=False, commit=True):
 		r = super(ResourceForm, self).save(commit=False)
 		if commit:
 			r.save()
-			r.update_thumbnail(commit=True)
+			r.update_metadata(commit=True)
 		return r
 	
 	owner = make_ajax_field(Collection, 'owner', 'user', help_text=None, plugin_options={'autoFocus':True,})

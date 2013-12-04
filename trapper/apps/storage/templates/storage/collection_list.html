@@ -4,32 +4,49 @@
 {% block storage_collection_list %}class="active"{% endblock %}
 {% block content %}
 <p>
-{% if collections %}
+	{% if collections %}
 	<h3>Available collections:</h3>
 	<table class="table">
-	<tr>
-	<th>Collection name</th>
-	<th>Details</th>
-	<th>Update</th>
-	<th>Delete</th>
-	<th>AO Request</th>
-	</tr>
-	
-	{% for collection in collections %}
-	<tr>
-	<td> {{collection.name}} </td>
-	<td> <a title="Show details"      href="{% url "storage:collection_detail" collection.id %}"><span class="glyphicon glyphicon-search"></span></a> </td>
-	<td> <a title="Update collection" href="{% url "storage:collection_update" collection.id %}"><span class="glyphicon glyphicon-pencil"></span></a> </td>
-	<td> <a title="Delete collection" href="{% url "storage:collection_delete" collection.id %}"><span class="glyphicon glyphicon-trash"></span></a> </td>
-	<td> <a title="Request for Animal Observation project" href="{% url "storage:collection_request" collection.id %}"><span class="glyphicon glyphicon-eye-open"></span></a> </td>
-	</tr>
-	{% endfor %}
+		<tr>
+			<th>Collection name</th>
+			<th>Details</th>
+			<th>Update</th>
+			<th>Delete</th>
+			<th>Request for project</th>
+		</tr>
+		{% for collection in collections %}
+		<tr>
+			<td>{{collection.name}}</td>
+			<td>
+				<a title="Show details" href="{% url "storage:collection_detail" collection.id %}">
+					<span class="glyphicon glyphicon-search"></span>
+				</a>
+			</td>
+			<td>
+				<a title="Update collection" href="{% url "storage:collection_update" collection.id %}">
+					<span class="glyphicon glyphicon-pencil"></span>
+				</a> 
+			</td>
+			<td>
+				<a title="Delete collection" href="{% url "storage:collection_delete" collection.id %}">
+					<span class="glyphicon glyphicon-trash"></span>
+				</a>
+			</td>
+			<td>
+				<a title="Request for Animal Observation project" href="{% url "storage:collection_request" collection.id %}">
+					<span class="glyphicon glyphicon-eye-open"></span>
+				</a>
+			</td>
+		</tr>
+		{% endfor %}
 	</table>
-{% else %}
-No collections available.
-{% endif %}
+	{% else %}
+	No collections available.
+	{% endif %}
 </p>
 <p>
-	<a class="btn btn-sm btn-success" href="{% url "storage:collection_create" %}" role="button">Create new collection <span class="glyphicon glyphicon-plus"></span></a>
+	<a class="btn btn-sm btn-success" href="{% url "storage:collection_create" %}" role="button">
+		Create new collection <span class="glyphicon glyphicon-plus"></span>
+	</a>
 </p>
 {% endblock content %}

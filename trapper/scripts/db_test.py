@@ -42,33 +42,33 @@ def init():
 	fs3_3 = FeatureScope.objects.create(name="6+", feature = f4)
 	
 	# ResourceType, Resource
-	rt1 = ResourceType.objects.create(name="Video")
-	rt2 = ResourceType.objects.create(name="Audio")
-	rt3 = ResourceType.objects.create(name="Image")
+	rt1, created = ResourceType.objects.get_or_create(name="Video")
+	rt2, created = ResourceType.objects.get_or_create(name="Audio")
+	rt3, created = ResourceType.objects.get_or_create(name="Image")
 	
 	r_data = (
-		("video_mp4", rt1, u1, u2, 'video_1.mp4',),
-		("video_ogv", rt1, u2, u2, 'video_1.ogv',),
-		("audio_mp3", rt2, u3, u4, 'audio_1.mp3',),
-		("audio_ogg", rt2, u1, u3, 'audio_2.wav',),
-		("audio_wav", rt2, u3, u3, 'audio_3.ogg',),
-		("image_jpg", rt3, u3, u3, 'image_1.jpg',),
-		("video_webm", rt1, u2, u2, 'video_1.webm',),
+		("video_mp4",  u1, u2, 'video_1.mp4',),
+		("video_ogv",  u2, u2, 'video_1.ogv',),
+		("audio_mp3",  u3, u4, 'audio_1.mp3',),
+		("audio_ogg",  u1, u3, 'audio_2.wav',),
+		("audio_wav",  u3, u3, 'audio_3.ogg',),
+		("image_jpg",  u3, u3, 'image_1.jpg',),
+		("video_webm", u2, u2, 'video_1.webm',),
 	)
+	r_data += tuple(("image_jpg_{id}".format(id=i), u3, u3, 'image_1.jpg') for i in xrange(30))
 	
 	r_filepath = "trapper/media_samples/"
 	
 	from django.core.files import File
 	
-	for name, rt, owner, uploader, filename in r_data:
-		r = Resource(name=name, resource_type=rt, owner=owner, uploader=uploader)
+	for name, owner, uploader, filename in r_data:
+		r = Resource(name=name, owner=owner, uploader=uploader)
 		with open(r_filepath + filename,'rb') as r_file:
 			r.file.save(filename, File(r_file), save=False)
-		r.save()
-		r.update_thumbnail(commit=True)
+		r.update_metadata(commit=True)
 	
 	Resource.objects.all().update(is_public=True)
-	r1, r2, r3, r4, r5, r6, r7 = Resource.objects.all()
+	r1, r2, r3, r4, r5, r6 = Resource.objects.filter(pk__in=xrange(1,7))
 	
 	
 	# Collection

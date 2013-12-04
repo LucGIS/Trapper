@@ -7,6 +7,8 @@ from django.db.models import Q
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
+from trapper.apps.storage.models import ResourceType
+
 def init():
 	# Users
 	u0 = User.objects.create_user('alice','alice@alice.alice','alice') # 'alice' is a superadmin
@@ -21,6 +23,11 @@ def init():
 	# Add group permissions
 	admin_cts = ContentType.objects.filter(app_label__in=['animal_observation','accounts','storage','auth'])
 	staff_cts = ContentType.objects.filter(app_label__in=['animal_observation','storage'])
+	
+	# ResourceTypes
+	rt1, created = ResourceType.objects.get_or_create(name="Video")
+	rt2, created = ResourceType.objects.get_or_create(name="Audio")
+	rt3, created = ResourceType.objects.get_or_create(name="Image")
 	
 	for g, cts in zip([g0, g1], [admin_cts, staff_cts]):
 		query = Q()

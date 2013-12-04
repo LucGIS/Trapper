@@ -26,10 +26,6 @@ class ResourceListView(generic.ListView):
 	paginate_by=10
 	template_name = "storage/resource_list.html"
 
-	@method_decorator(login_required)
-	def dispatch(self, *args, **kwargs):
-		return super(ResourceListView, self).dispatch(*args, **kwargs)
-
 	def get_context_data(self, *args, **kwargs):
 		context = super(ResourceListView, self).get_context_data(*args, **kwargs)
 		filtered_queryset = ResourceFilter(self.request.GET, queryset=self.get_queryset())
@@ -40,6 +36,11 @@ class UserResourceListView(ResourceListView):
 	"""
 	Displays the list of resources of given request.user
 	"""
+
+	@method_decorator(login_required)
+	def dispatch(self, *args, **kwargs):
+		return super(ResourceListView, self).dispatch(*args, **kwargs)
+
 	def get_queryset(self):
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Resource.objects.filter(owner=user)
@@ -82,13 +83,6 @@ class ResourceCreateView(generic.CreateView):
 		form.instance.uploader = self.request.user
 		return super(ResourceCreateView, self).form_valid(form)
 
-	def detect_mime_type(self, form):
-		return 'video/ogg'
-
-	def create_thumbnail(self, form):
-		print type(form.instance.file)
-		print form.instance.file.url
-		print form.instance.resource_type
 
 class UserCollectionListView(generic.ListView):
 	model = Collection

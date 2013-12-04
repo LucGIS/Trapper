@@ -3,6 +3,7 @@
 <th>Media</th>
 <th>Name</th>
 <th>Type</th>
+<th>Detail</th>
 <th>Update</th>
 <th>Delete</th>
 {% for resource in resources %}
@@ -21,6 +22,7 @@
 	{% else %}
 	{{resource.resource_type.name}}
 	{% endif %}
+	<td><a title="Detail resource" href="{% url "storage:resource_detail" resource.id %}"><span class="glyphicon glyphicon-search"></a></td>
 	<td><a title="Update resource" href="{% url "storage:resource_update" resource.id %}"><span class="glyphicon glyphicon-pencil"></a></td>
 	<td><a title="Delete resource" href="{% url "storage:resource_delete" resource.id %}"><span class="glyphicon glyphicon-trash"></a></td>
 </tr>
