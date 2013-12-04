@@ -12,6 +12,8 @@ from trapper.apps.animal_observation.models import Project, ProjectRole
 from trapper.apps.messaging.models import Message, CollectionRequest
 from trapper.commons.decorators import object_access_required
 
+from trapper.apps.storage.filters import ResourceFilter
+
 
 # Resource views
 
@@ -22,10 +24,17 @@ class ResourceListView(generic.ListView):
 	model = Resource
 	context_object_name = 'resources'
 	paginate_by=10
+	template_name = "storage/resource_list.html"
 
 	@method_decorator(login_required)
 	def dispatch(self, *args, **kwargs):
 		return super(ResourceListView, self).dispatch(*args, **kwargs)
+
+	def get_context_data(self, *args, **kwargs):
+		context = super(ResourceListView, self).get_context_data(*args, **kwargs)
+		filtered_queryset = ResourceFilter(self.request.GET, queryset=self.get_queryset())
+		context['resources'] = filtered_queryset
+		return context
 
 class UserResourceListView(ResourceListView):
 	"""

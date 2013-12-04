@@ -35,6 +35,7 @@ class Resource(models.Model):
 	thumbnail = models.ImageField(upload_to='storage/resource/thumbnail/', null=True, blank=True)
 	resource_type = models.ForeignKey(ResourceType)
 	date_uploaded = models.DateTimeField(auto_now_add=True)
+	is_public = models.BooleanField("Publicly available", default=False)
 
 	uploader = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')
 	owner = models.ForeignKey(User, null=True, blank=True, related_name='owned_resources')

@@ -46,17 +46,6 @@ class FeatureSet(models.Model):
 	def get_absolute_url(self):
 		return reverse('animal_observation:featureset_detail', kwargs={'pk':self.pk})
 
-class ResourceExtra(models.Model):
-	"""
-	Extends the default storage.models.Resource model with the information relevant to the animal_observation app.
-	"""
-	resource = models.OneToOneField(Resource)
-	public = models.BooleanField()
-	cs_enabled = models.BooleanField()
-
-	def __unicode__(self):
-		return unicode("%s | public: %s | cs_enabled: %s" % (self.resource.name, self.public, self.cs_enabled))
-
 class Classification(models.Model):
 	resource = models.ForeignKey(Resource)
 	feature_set = models.ForeignKey(FeatureSet)
@@ -96,10 +85,10 @@ class Project(models.Model):
 		"""
 
 		resources = []
-		for c in self.collections.filter(projectcollection__active=True):
-			print c.name
-			new = [r.resource for r in ResourceExtra.objects.filter(cs_enabled=True, resource__in=c.resources.all())]
-			resources.extend(new)
+		#for c in self.collections.filter(projectcollection__active=True):
+		#	print c.name
+		#	new = [r.resource for r in ResourceExtra.objects.filter(cs_enabled=True, resource__in=c.resources.all())]
+		#	resources.extend(new)
 		return list(set(resources))
 
 	def determine_roles(self, user):
@@ -143,9 +132,3 @@ class ProjectRole(models.Model):
 
 	def __unicode__(self):
 		return unicode("%s | Project: %s | Role: %s " % (self.user.username, self.project.name, self.get_name_display()))
-
-def create_resource_extra(sender, instance, created, **kwargs):
-	if created:
-		resource_extra, created = ResourceExtra.objects.get_or_create(resource=instance, public=False, cs_enabled=False)
-
-models.signals.post_save.connect(create_resource_extra, sender=Resource)

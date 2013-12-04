@@ -7,7 +7,7 @@
 from django.contrib.auth.models import User, Group
 from django.contrib.gis.geos import Point
 from trapper.apps.storage.models import ResourceType, Resource, Collection
-from trapper.apps.animal_observation.models import Feature, FeatureScope, FeatureSet, Project, ResourceExtra, ProjectRole, ProjectCollection
+from trapper.apps.animal_observation.models import Feature, FeatureScope, FeatureSet, Project, ProjectRole, ProjectCollection
 #from trapper.apps.geomap.models import Location
 
 def init():
@@ -67,9 +67,9 @@ def init():
 		r.save()
 		r.update_thumbnail(commit=True)
 	
+	Resource.objects.all().update(is_public=True)
 	r1, r2, r3, r4, r5, r6, r7 = Resource.objects.all()
 	
-	ResourceExtra.objects.filter(resource__in=[r1,r2,r3,r6]).update(public=True, cs_enabled=True)
 	
 	# Collection
 	c1 = Collection.objects.create(name="Video2013", owner=u3)

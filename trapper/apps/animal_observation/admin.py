@@ -1,5 +1,5 @@
 from django.contrib import admin
-from trapper.apps.animal_observation.models import FeatureScope, Feature, FeatureSet, Classification, ClassificationRow, Project, FeatureAnswer, ResourceExtra, ProjectRole, ProjectCollection
+from trapper.apps.animal_observation.models import FeatureScope, Feature, FeatureSet, Classification, ClassificationRow, Project, FeatureAnswer, ProjectRole, ProjectCollection
 
 
 class FeatureScopeInline(admin.StackedInline):
@@ -42,7 +42,6 @@ admin.site.register(Feature, FeatureAdmin)
 admin.site.register(FeatureAnswer)
 admin.site.register(FeatureScope)
 admin.site.register(FeatureSet)
-admin.site.register(ResourceExtra)
 admin.site.register(ProjectCollection)
 admin.site.register(Classification, ClassificationAdmin)
 admin.site.register(ClassificationRow, ClassificationRowAdmin)

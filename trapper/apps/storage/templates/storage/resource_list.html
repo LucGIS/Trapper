@@ -2,6 +2,20 @@
 {% load staticfiles %}
 {% block storage_resource_list %}class="active"{% endblock %}
 {% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">Filter results:</div>
+	<div class="panel-body">
+	<form class="navbar-form" role="search" action="" method="get">
+		<div class="form-group">
+			{% for field in resources.form %}
+			<label>{{field.label}}</label> {{field}}
+			{% endfor %}
+		</div>
+		<button class="btn btn-primary" type="submit">Filter</button>
+	</form>
+	</div>
+</div>
 <p>
 {% if resources %}
 <h3>Available resources:</h3>
@@ -14,7 +28,6 @@
 		{% else %}
 		<li class="disabled"><span>&laquo;<span class="sr-only">(current)</span></span></li>
 		{% endif %}
-
 
 		{% if page_obj.number > 2 %}
 		<li class="disabled"><span>...<span class="sr-only">(current)</span></span></li>
