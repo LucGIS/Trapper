@@ -8,7 +8,7 @@
 	<div class="panel-body">
 	<form class="navbar-form" role="search" action="" method="get">
 		<div class="form-group">
-			{% for field in resources.form %}
+			{% for field in filtering_form %}
 			<label>{{field.label}}</label> {{field}}
 			{% endfor %}
 		</div>
@@ -24,7 +24,7 @@
 	{% if is_paginated %}
 	<ul class="pagination">
 		{% if page_obj.has_previous %}
-		<li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+		<li><a href="?{{filter_url}}&page={{ page_obj.previous_page_number }}">&laquo;</a></li>
 		{% else %}
 		<li class="disabled"><span>&laquo;<span class="sr-only">(current)</span></span></li>
 		{% endif %}
@@ -34,13 +34,13 @@
 		{% endif %}
 
 		{% if page_obj.number > 1 %}
-		<li><a href="?page={{ page_obj.number|add:"-1" }}">{{ page_obj.number|add:"-1" }}</a></li>
+		<li><a href="?{{filter_url}}&page={{ page_obj.number|add:"-1" }}">{{ page_obj.number|add:"-1" }}</a></li>
 		{% endif %}
 
 		<li class="active"><span>{{ page_obj.number }}<span class="sr-only">(current)</span></span></li>
 
 		{% if page_obj.number|add:"1" <= page_obj.paginator.num_pages %}
-		<li><a href="?page={{ page_obj.number|add:"1" }}">{{ page_obj.number|add:"1" }}</a></li>
+		<li><a href="?{{filter_url}}&page={{ page_obj.number|add:"1" }}">{{ page_obj.number|add:"1" }}</a></li>
 		{% endif %}
 
 		{% if page_obj.number|add:"2" <= page_obj.paginator.num_pages %}
@@ -48,7 +48,7 @@
 		{% endif %}
 
 		{% if page_obj.has_next %}
-		<li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+		<li><a href="?{{filter_url}}&page={{ page_obj.next_page_number }}">&raquo;</a></li>
 		{% else %}
 		<li class="disabled"><span>&raquo;<span class="sr-only">(current)</span></span></li>
 		{% endif %}

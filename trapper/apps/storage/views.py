@@ -26,10 +26,15 @@ class ResourceListView(generic.ListView):
 	paginate_by = 10
 	template_name = "storage/resource_list.html"
 
+	def get_queryset(self, *args, **kwargs):
+		qs = super(ResourceListView, self).get_queryset(*args, **kwargs)
+		filtered_queryset = ResourceFilter(self.request.GET, queryset=qs)
+		return filtered_queryset
+
 	def get_context_data(self, *args, **kwargs):
 		context = super(ResourceListView, self).get_context_data(*args, **kwargs)
-		filtered_queryset = ResourceFilter(self.request.GET, queryset=self.get_queryset())
-		context['resources'] = filtered_queryset
+		context['filtering_form'] = ResourceFilter(self.request.GET).form
+		context['filter_url'] = self.request.GET.urlencode()
 		return context
 
 class UserResourceListView(ResourceListView):
