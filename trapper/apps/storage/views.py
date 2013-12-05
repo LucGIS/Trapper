@@ -34,7 +34,10 @@ class ResourceListView(generic.ListView):
 	def get_context_data(self, *args, **kwargs):
 		context = super(ResourceListView, self).get_context_data(*args, **kwargs)
 		context['filtering_form'] = ResourceFilter(self.request.GET).form
-		context['filter_url'] = self.request.GET.urlencode()
+		request_params = self.request.GET.copy()
+		if 'page' in request_params:
+			del request_params['page']
+		context['filter_url'] = request_params.urlencode()
 		return context
 
 class UserResourceListView(ResourceListView):
