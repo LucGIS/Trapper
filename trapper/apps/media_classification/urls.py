@@ -1,12 +1,12 @@
 from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 
-from trapper.apps.animal_observation import views
+from trapper.apps.media_classification import views
 
 
 urlpatterns = patterns('',
 	# Home page of animal observation app
-	url(r'^$', TemplateView.as_view(template_name='animal_observation/index.html'), name='index'),
+	url(r'^$', TemplateView.as_view(template_name='media_classification/index.html'), name='index'),
 
 	# Display project list and the details about given project
 	url(r'project/list/$', views.ProjectListView.as_view(), name='project_list'),

@@ -1,4 +1,4 @@
-from trapper.apps.animal_observation.models import Project, ProjectRole
+from trapper.apps.media_classification.models import Project, ProjectRole
 from django.shortcuts import redirect
 
 from functools import wraps

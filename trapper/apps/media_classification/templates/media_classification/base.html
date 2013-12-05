@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block master_content %}
+|
+<a href="{% url "media_classification:cs_resource_list" %}">Crowd Sourcing</a> |
+<a href="{% url "media_classification:project_list" %}">All projects</a> |
+{% if user.is_authenticated %}
+<a href="{% url "media_classification:project_list" %}">My projects</a> |
+{% endif %}
+<br/>
+<br/>
+{% block content %}{% endblock content %}
+{% endblock master_content %}

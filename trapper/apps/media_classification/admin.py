@@ -1,5 +1,5 @@
 from django.contrib import admin
-from trapper.apps.animal_observation.models import FeatureScope, Feature, FeatureSet, Classification, ClassificationRow, Project, FeatureAnswer, ProjectRole, ProjectCollection
+from trapper.apps.media_classification.models import FeatureScope, Feature, FeatureSet, Classification, ClassificationRow, Project, FeatureAnswer, ProjectRole, ProjectCollection
 
 
 class FeatureScopeInline(admin.StackedInline):

@@ -58,7 +58,7 @@ class FeatureSet(models.Model):
 		return unicode("Name: %s | Type: %s" %(self.name, self.resource_type.name))
 
 	def get_absolute_url(self):
-		return reverse('animal_observation:featureset_detail', kwargs={'pk':self.pk})
+		return reverse('media_classification:featureset_detail', kwargs={'pk':self.pk})
 
 
 class Classification(models.Model):
@@ -118,7 +118,7 @@ class Project(models.Model):
 		return [r.name for r in self.projectrole_set.filter(user=user)]
 
 	def get_absolute_url(self):
-		return reverse('animal_observation:project_detail', kwargs={'pk':self.pk})
+		return reverse('media_classification:project_detail', kwargs={'pk':self.pk})
 
 
 class Sequence(models.Model):

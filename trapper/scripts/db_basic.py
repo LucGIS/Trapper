@@ -21,8 +21,8 @@ def init():
 	g1, created = Group.objects.get_or_create(name='Staff')
 	
 	# Add group permissions
-	admin_cts = ContentType.objects.filter(app_label__in=['animal_observation','accounts','storage','auth'])
-	staff_cts = ContentType.objects.filter(app_label__in=['animal_observation','storage'])
+	admin_cts = ContentType.objects.filter(app_label__in=['media_classification','accounts','storage','auth'])
+	staff_cts = ContentType.objects.filter(app_label__in=['media_classification','storage'])
 	
 	# ResourceTypes
 	rt1, created = ResourceType.objects.get_or_create(name="Video")

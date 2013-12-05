@@ -10,8 +10,8 @@ class ViewTests(TestCase):
 		response = self.client.get(reverse('storage:index'))
 		self.assertEqual(response.status_code, 200)
 
-	def test_animal_observation_view(self):
-		response = self.client.get(reverse('animal_observation:index'))
+	def test_media_classification_view(self):
+		response = self.client.get(reverse('media_classification:index'))
 		self.assertEqual(response.status_code, 200)
 
 	def test_messaging_view(self):

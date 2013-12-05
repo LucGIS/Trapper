@@ -7,7 +7,7 @@
 from django.contrib.auth.models import User, Group
 from django.contrib.gis.geos import Point
 from trapper.apps.storage.models import ResourceType, Resource, Collection
-from trapper.apps.animal_observation.models import Feature, FeatureScope, FeatureSet, Project, ProjectRole, ProjectCollection
+from trapper.apps.media_classification.models import Feature, FeatureScope, FeatureSet, Project, ProjectRole, ProjectCollection
 #from trapper.apps.geomap.models import Location
 
 def init():

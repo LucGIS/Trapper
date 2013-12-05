@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 
 from trapper.apps.storage.models import Resource, Collection
 from trapper.apps.storage.forms import ResourceForm, CollectionForm, CollectionRequestForm
-from trapper.apps.animal_observation.models import Project, ProjectRole
+from trapper.apps.media_classification.models import Project, ProjectRole
 from trapper.apps.messaging.models import Message, CollectionRequest
 from trapper.commons.decorators import object_access_required
 
@@ -23,7 +23,7 @@ class ResourceListView(generic.ListView):
 	"""
 	model = Resource
 	context_object_name = 'resources'
-	paginate_by=10
+	paginate_by = 10
 	template_name = "storage/resource_list.html"
 
 	def get_context_data(self, *args, **kwargs):

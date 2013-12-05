@@ -1,4 +1,4 @@
-{% extends "animal_observation/base.html" %}
+{% extends "media_classification/base.html" %}
 {% load staticfiles %}
 {% block content %}
 <h1>{{ project.name }}</h1>
@@ -34,7 +34,7 @@
 			<td>{{ resource.owner.username }}</td>
 			<td>{{ resource.uploader.username }}</td>
 			<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
-			<td><a href="{% url "animal_observation:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+			<td><a href="{% url "media_classification:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
 			</tr>
 			{% endfor %}
 			</table>

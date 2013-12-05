@@ -8,9 +8,9 @@ from django.utils.decorators import method_decorator
 
 from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesView, NamedFormsetsMixin
 
-from trapper.apps.animal_observation.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet
+from trapper.apps.media_classification.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet
 from trapper.apps.storage.models import Resource
-from trapper.apps.animal_observation.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset, FeatureSetForm
+from trapper.apps.media_classification.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset, FeatureSetForm
 from trapper.commons.decorators import object_access_required
 
 
@@ -60,7 +60,7 @@ class FeatureCreateView(generic.CreateView):
 class ProjectListView(generic.ListView):
 	model = Project
 	context_object_name = 'items'
-	template_name = 'animal_observation/project_list.html'
+	template_name = 'media_classification/project_list.html'
 
 	def get_queryset(self, *args, **kwargs):
 		projects = super(ProjectListView, self).get_queryset(*args, **kwargs)
@@ -98,7 +98,7 @@ class CollectionInline(InlineFormSet):
 class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 	model = Project
 	form_class = ProjectForm
-	template_name = 'animal_observation/project_create.html'
+	template_name = 'media_classification/project_create.html'
 	inlines = [ProjectRoleInline, CollectionInline]
 	inlines_names = ['projectrole_formset', 'collection_formset']
 
@@ -117,7 +117,7 @@ class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
 	model = Project
 	form_class = ProjectForm
-	template_name = 'animal_observation/project_update.html'
+	template_name = 'media_classification/project_update.html'
 	inlines = [ProjectRoleInline, CollectionInline]
 	inlines_names = ['projectrole_formset', 'collection_formset']
 
@@ -156,7 +156,7 @@ def project_update(request, pk):
 			'collection_formset': collection_formset,
 			'projectrole_formset': projectrole_formset,}
 
-	return render(request, 'animal_observation/project_update.html', context)
+	return render(request, 'media_classification/project_update.html', context)
 
 
 # Classify / CS views
@@ -168,7 +168,7 @@ def cs_resource_list(request):
 		resources = project.get_all_cs_resources()
 		data.append((project, resources))
 	context = {'data': data}
-	return render(request, 'animal_observation/cs_resource_list.html', context)
+	return render(request, 'media_classification/cs_resource_list.html', context)
 
 @login_required
 def classify_resource(request, resource_id, project_id):
@@ -177,7 +177,7 @@ def classify_resource(request, resource_id, project_id):
 	feature_set = project.feature_sets.filter(resource_type=resource.resource_type)[0]
 	features = [[feature, FeatureScope.objects.filter(feature=feature.pk)] for feature in feature_set.features.all()]
 	context = {'resource': resource, 'project': project, 'features': features}
-	return render(request, 'animal_observation/classify_resource.html', context)
+	return render(request, 'media_classification/classify_resource.html', context)
 
 @login_required
 def process_classify(request):
@@ -207,7 +207,7 @@ def process_classify(request):
 			afs = FeatureAnswer(value=v[0], feature=feature, resource_classification_item=rci)
 			afs.save()
 
-	return redirect('trapper.apps.animal_observation.classification_details', pk=r.pk)
+	return redirect('trapper.apps.media_classification.classification_details', pk=r.pk)
 
 def classification_details(request, pk):
 	c = Classification.objects.get(pk=pk)
@@ -216,4 +216,4 @@ def classification_details(request, pk):
 		'c': c,
 	}
 
-	return render(request, 'animal_observation/classification_details.html', context)
+	return render(request, 'media_classification/classification_details.html', context)

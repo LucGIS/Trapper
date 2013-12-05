@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from trapper.apps.storage.models import Collection
-from trapper.apps.animal_observation.models import Project, ProjectCollection
+from trapper.apps.media_classification.models import Project, ProjectCollection
 
 class Message(models.Model):
 	subject = models.CharField(max_length=50)

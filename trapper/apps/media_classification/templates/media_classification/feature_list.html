@@ -1,4 +1,4 @@
-{% extends "animal_observation/base.html" %}
+{% extends "media_classification/base.html" %}
 {% load staticfiles %}
 {% block content %}
 {% if features %}
@@ -11,8 +11,8 @@
 	<tr>
 		<td>{{feature.name}}</td>
 		<td>{{feature.short_name}}</td>
-		<td><a href="{% url "animal_observation:feature_detail" feature.pk %}"><span class="glyphicon glyphicon-search"></span></a></td>
-		<td><a href="{% url "animal_observation:feature_update" feature.pk %}"><span class="glyphicon glyphicon-pencil"></span></a></td>
+		<td><a href="{% url "media_classification:feature_detail" feature.pk %}"><span class="glyphicon glyphicon-search"></span></a></td>
+		<td><a href="{% url "media_classification:feature_update" feature.pk %}"><span class="glyphicon glyphicon-pencil"></span></a></td>
 	</tr>
 	{% endfor %}
 	</table>

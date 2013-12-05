@@ -1,4 +1,4 @@
-{% extends "animal_observation/base.html" %}
+{% extends "media_classification/base.html" %}
 {% load staticfiles %}
 {% block content %}
 {% if items %}
@@ -12,12 +12,12 @@ Available projects:
 	<td>{{ project.name }}</td>
 	<td>
 		{% if can_view %}
-		<a href="{% url "animal_observation:project_detail" project.id %}"><span class="glyphicon glyphicon-search"></span></a>
+		<a href="{% url "media_classification:project_detail" project.id %}"><span class="glyphicon glyphicon-search"></span></a>
 		{% endif %}
 	</td>
 	<td>
 	{% if can_edit %}
-	<a href="{% url "animal_observation:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
+	<a href="{% url "media_classification:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
 	{% endif %}
 	</td>
 </tr>

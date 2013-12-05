@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.models import inlineformset_factory
 
-from trapper.apps.animal_observation.models import Project, ProjectCollection, ProjectRole, FeatureSet
+from trapper.apps.media_classification.models import Project, ProjectCollection, ProjectRole, FeatureSet
 
 class ProjectForm(forms.ModelForm):
 	class Meta:

@@ -1,4 +1,4 @@
-{% extends "animal_observation/base.html" %}
+{% extends "media_classification/base.html" %}
 {% load staticfiles %}
 {% block content %}
 {% if featuresets %}
@@ -11,8 +11,8 @@
 	<tr>
 		<td>{{featureset.name}}</td>
 		<td>{{featureset.resource_type.name}}</td>
-		<td><a href="{% url "animal_observation:featureset_detail" featureset.pk %}"><span class="glyphicon glyphicon-search"></span></a></td>
-		<td><a href="{% url "animal_observation:featureset_update" featureset.pk %}"><span class="glyphicon glyphicon-pencil"></span></a></td>
+		<td><a href="{% url "media_classification:featureset_detail" featureset.pk %}"><span class="glyphicon glyphicon-search"></span></a></td>
+		<td><a href="{% url "media_classification:featureset_update" featureset.pk %}"><span class="glyphicon glyphicon-pencil"></span></a></td>
 	</tr>
 	{% endfor %}
 	</table>

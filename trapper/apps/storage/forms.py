@@ -2,7 +2,7 @@ from ajax_select import make_ajax_field
 
 from django import forms
 
-from trapper.apps.animal_observation.models import Project
+from trapper.apps.media_classification.models import Project
 from trapper.apps.storage.models import Resource, Collection
 
 class CollectionRequestForm(forms.Form):

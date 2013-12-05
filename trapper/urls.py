@@ -14,8 +14,8 @@ urlpatterns = patterns('',
 	# Trapper homepage
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
 
-	# Animal Observation urls
-    url(r'^animal_observation/', include('trapper.apps.animal_observation.urls', namespace='animal_observation')),
+	# Media classification urls
+    url(r'^media_classification/', include('trapper.apps.media_classification.urls', namespace='media_classification')),
 
 	# Storage urls
     url(r'^storage/', include('trapper.apps.storage.urls', namespace='storage')),

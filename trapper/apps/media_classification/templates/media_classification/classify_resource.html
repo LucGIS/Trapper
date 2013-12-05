@@ -1,4 +1,4 @@
-{% extends "animal_observation/base.html" %}
+{% extends "media_classification/base.html" %}
 {% load staticfiles %}
 {% block content %}
 Project:
@@ -41,7 +41,7 @@ Project:
 		}
 	}
 </script>
-<form action="{% url "animal_observation:classify_action" %}" method="post">
+<form action="{% url "media_classification:classify_action" %}" method="post">
 <input type="hidden" name="project_id" value="{{project.id}}" />
 <input type="hidden" name="resource_id" value="{{resource.id}}" />
 {% csrf_token %}
