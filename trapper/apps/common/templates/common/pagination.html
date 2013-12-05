@@ -1,0 +1,42 @@
+<ul class="pagination">
+	{% if render_fastforward %}
+	<li><a href="?{{ a_href_prefix }}page=1">&laquo;</a></li>
+	{% endif %}
+	{% if render_prevnext %}
+		{% if page_obj.has_previous %}
+		<li><a href="?{{ a_href_prefix }}page={{ page_obj.previous_page_number }}">&lsaquo;</a></li>
+		{% else %}
+		<li class="disabled"><span>&lsaquo;<span class="sr-only">(current)</span></span></li>
+		{% endif %}
+	{% endif %}
+
+	{% if dots_pre %}
+	<li class="disabled"><span>...<span class="sr-only">(current)</span></span></li>
+	{% endif %}
+
+	{% for p_idx in items_pre %}
+	<li><a href="?{{ a_href_prefix }}page={{ p_idx }}">{{ p_idx }}</a></li>
+	{% endfor %}
+
+	<li class="active"><span>{{ page_obj.number }}<span class="sr-only">(current)</span></span></li>
+
+	{% for p_idx in items_post %}
+	<li><a href="?{{ a_href_prefix }}page={{ p_idx }}">{{ p_idx }}</a></li>
+	{% endfor %}
+
+	{% if dots_post %}
+	<li class="disabled"><span>...<span class="sr-only">(current)</span></span></li>
+	{% endif %}
+
+	{% if render_prevnext %}
+		{% if page_obj.has_next %}
+		<li><a href="?{{ a_href_prefix }}page={{ page_obj.next_page_number }}">&rsaquo;</a></li>
+		{% else %}
+		<li class="disabled"><span>&rsaquo;<span class="sr-only">(current)</span></span></li>
+		{% endif %}
+	{% endif %}
+
+	{% if render_fastforward %}
+	<li><a href="?{{ a_href_prefix }}page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+	{% endif %}
+</ul>

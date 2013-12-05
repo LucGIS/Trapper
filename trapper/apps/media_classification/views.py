@@ -11,7 +11,7 @@ from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesV
 from trapper.apps.media_classification.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet
 from trapper.apps.storage.models import Resource
 from trapper.apps.media_classification.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset, FeatureSetForm
-from trapper.commons.decorators import object_access_required
+from trapper.apps.common.decorators import object_access_required
 
 
 

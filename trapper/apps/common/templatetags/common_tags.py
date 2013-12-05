@@ -1,0 +1,86 @@
+from django import template
+
+register = template.Library()
+
+class RenderPaginationMenuNode(template.Node):
+	"""
+	Renders the pagination menu
+
+	USAGE:
+		{% load common_tags %}
+		{% pagination_menu page_obj 3 url_prefix_var %}
+
+		only first argument is mandatory:
+		{% pagination_menu page_obj %}
+	
+		where
+		* page_obj - pagination object
+		* 3 (optional) - number of extra items displayed before and after current page
+		* url_prefix_var (optional) - variable holding extra GET parameters string for appending to each pagination link (e.g. list filtering params)
+	"""
+
+	def __init__(self, page_obj, num_extra="2", a_href_prefix=None, render_fastforward=True, render_prevnext=True):
+		self.page_obj = template.Variable(page_obj)
+		self.num_extra = int(num_extra)
+		self.render_fastforward = render_fastforward
+		self.render_prevnext = render_prevnext
+		if a_href_prefix:
+			self.a_href_prefix = template.Variable(a_href_prefix)
+		else:
+			self.a_href_prefix = None
+
+	def get_items(self):
+		current_page = self.page_obj_val.number
+		num_pages = self.page_obj_val.paginator.num_pages
+		
+		dots_pre = (current_page - self.num_extra > 1)
+		dots_post = (current_page + self.num_extra < num_pages)
+
+		items_pre = range(max(current_page - self.num_extra, 1), current_page)
+		items_post = range(current_page + 1, min(num_pages, current_page + self.num_extra) + 1)
+
+		return dots_pre, items_pre, items_post, dots_post
+
+	def render(self, context):
+		try:
+			self.page_obj_val = self.page_obj.resolve(context)
+			if self.a_href_prefix:
+				self.extra_get_url_val = self.a_href_prefix.resolve(context)
+			else:
+				self.extra_get_url_val = u""
+
+			# Add ampersand if there are some preceeding filter arguments
+			if len(self.extra_get_url_val) > 0:
+				self.extra_get_url_val += "&"
+
+			dots_pre, items_pre, items_post, dots_post = self.get_items()
+			print self.get_items()
+
+			context = template.Context({
+				'page_obj': self.page_obj_val,
+				'a_href_prefix': self.extra_get_url_val,
+				'render_fastforward':self.render_fastforward,
+				'render_prevnext':self.render_prevnext,
+				'items_pre': items_pre,
+				'items_post': items_post,
+			})
+
+			if dots_pre:
+				context['dots_pre'] = True
+			if dots_post:
+				context['dots_post'] = True
+
+			tmpl = template.loader.get_template('common/pagination.html')
+			return tmpl.render(context)
+
+		except template.VariableDoesNotExist:
+			return ''
+
+def pagination_menu(parser, token):
+	splitted_token = token.contents.split()[1:]
+	if len(splitted_token) < 1:
+		raise template.TemplateSyntaxError("%r tag requires at least one argument" % token.contents.split()[0])
+
+	return RenderPaginationMenuNode(*splitted_token)
+
+register.tag('pagination_menu', pagination_menu)

@@ -10,7 +10,7 @@ from trapper.apps.storage.models import Resource, Collection
 from trapper.apps.storage.forms import ResourceForm, CollectionForm, CollectionRequestForm
 from trapper.apps.media_classification.models import Project, ProjectRole
 from trapper.apps.messaging.models import Message, CollectionRequest
-from trapper.commons.decorators import object_access_required
+from trapper.apps.common.decorators import object_access_required
 
 from trapper.apps.storage.filters import ResourceFilter
 
@@ -37,7 +37,7 @@ class ResourceListView(generic.ListView):
 		request_params = self.request.GET.copy()
 		if 'page' in request_params:
 			del request_params['page']
-		context['filter_url'] = request_params.urlencode()
+		context['previous_filter_params'] = request_params.urlencode()
 		return context
 
 class UserResourceListView(ResourceListView):

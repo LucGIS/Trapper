@@ -133,6 +133,7 @@ INSTALLED_APPS = (
 	'trapper.apps.storage',
 	'trapper.apps.accounts',
 	'trapper.apps.messaging',
+	'trapper.apps.common',
 #	'trapper.apps.geomap',
 
     'django.contrib.admin',

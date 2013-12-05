@@ -9,54 +9,23 @@
 	<form class="navbar-form" role="search" action="" method="get">
 		<div class="form-group">
 			{% for field in filtering_form %}
-			<label>{{field.label}}</label> {{field}}
+			<label>{{ field.label }}</label> {{ field }}
 			{% endfor %}
 		</div>
-		<button class="btn btn-primary" type="submit">Apply</button>
+		<button class="btn btn-sm btn-primary" type="submit">Apply</button>
 	</form>
 	</div>
 </div>
 <p>
 {% if resources %}
 <h3>Available resources:</h3>
-	{% include "storage/resource_iter.html" %}
 
 	{% if is_paginated %}
-	<ul class="pagination">
-		<li><a href="?{{filter_url}}&page=1">&laquo;</a></li>
-		{% if page_obj.has_previous %}
-		<li><a href="?{{filter_url}}&page={{ page_obj.previous_page_number }}">&lsaquo;</a></li>
-		{% else %}
-		<li class="disabled"><span>&lsaquo;<span class="sr-only">(current)</span></span></li>
-		{% endif %}
-
-		{% if page_obj.number > 2 %}
-		<li class="disabled"><span>...<span class="sr-only">(current)</span></span></li>
-		{% endif %}
-
-		{% if page_obj.number > 1 %}
-		<li><a href="?{{filter_url}}&page={{ page_obj.number|add:"-1" }}">{{ page_obj.number|add:"-1" }}</a></li>
-		{% endif %}
-
-		<li class="active"><span>{{ page_obj.number }}<span class="sr-only">(current)</span></span></li>
-
-		{% if page_obj.number|add:"1" <= page_obj.paginator.num_pages %}
-		<li><a href="?{{filter_url}}&page={{ page_obj.number|add:"1" }}">{{ page_obj.number|add:"1" }}</a></li>
-		{% endif %}
-
-		{% if page_obj.number|add:"2" <= page_obj.paginator.num_pages %}
-		<li class="disabled"><span>...<span class="sr-only">(current)</span></span></li>
-		{% endif %}
-
-		{% if page_obj.has_next %}
-		<li><a href="?{{filter_url}}&page={{ page_obj.next_page_number }}">&rsaquo;</a></li>
-		{% else %}
-		<li class="disabled"><span>&rsaquo;<span class="sr-only">(current)</span></span></li>
-		{% endif %}
-
-		<li><a href="?{{filter_url}}&page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
-	</ul>
+	{% load common_tags %}
+	{% pagination_menu page_obj 4 "foo_bar" %}
 	{% endif %}
+
+	{% include "storage/resource_iter.html" %}
 {% else %}
 No resources available.
 {% endif %}

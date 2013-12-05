@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 
 from trapper.apps.messaging.models import Message, CollectionRequest
 from trapper.apps.messaging.forms import MessageForm
-from trapper.commons.decorators import object_access_required
+from trapper.apps.common.decorators import object_access_required
 
 
 class MessageDetailView(generic.DetailView):
