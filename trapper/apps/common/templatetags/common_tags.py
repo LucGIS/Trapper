@@ -42,39 +42,35 @@ class RenderPaginationMenuNode(template.Node):
 		return dots_pre, items_pre, items_post, dots_post
 
 	def render(self, context):
-		try:
-			self.page_obj_val = self.page_obj.resolve(context)
-			if self.a_href_prefix:
-				self.extra_get_url_val = self.a_href_prefix.resolve(context)
-			else:
-				self.extra_get_url_val = u""
+		self.page_obj_val = self.page_obj.resolve(context)
+		if self.a_href_prefix:
+			self.extra_get_url_val = self.a_href_prefix.resolve(context)
+		else:
+			self.extra_get_url_val = u""
 
-			# Add ampersand if there are some preceeding filter arguments
-			if len(self.extra_get_url_val) > 0:
-				self.extra_get_url_val += "&"
+		# Add ampersand if there are some preceeding filter arguments
+		if len(self.extra_get_url_val) > 0:
+			self.extra_get_url_val += "&"
 
-			dots_pre, items_pre, items_post, dots_post = self.get_items()
-			print self.get_items()
+		dots_pre, items_pre, items_post, dots_post = self.get_items()
+		print self.get_items()
 
-			context = template.Context({
-				'page_obj': self.page_obj_val,
-				'a_href_prefix': self.extra_get_url_val,
-				'render_fastforward':self.render_fastforward,
-				'render_prevnext':self.render_prevnext,
-				'items_pre': items_pre,
-				'items_post': items_post,
-			})
+		context = template.Context({
+			'page_obj': self.page_obj_val,
+			'a_href_prefix': self.extra_get_url_val,
+			'render_fastforward':self.render_fastforward,
+			'render_prevnext':self.render_prevnext,
+			'items_pre': items_pre,
+			'items_post': items_post,
+		})
 
-			if dots_pre:
-				context['dots_pre'] = True
-			if dots_post:
-				context['dots_post'] = True
+		if dots_pre:
+			context['dots_pre'] = True
+		if dots_post:
+			context['dots_post'] = True
 
-			tmpl = template.loader.get_template('common/pagination.html')
-			return tmpl.render(context)
-
-		except template.VariableDoesNotExist:
-			return ''
+		tmpl = template.loader.get_template('common/pagination.html')
+		return tmpl.render(context)
 
 def pagination_menu(parser, token):
 	splitted_token = token.contents.split()[1:]
