@@ -117,6 +117,9 @@ class Project(models.Model):
 		"""
 		return [r.name for r in self.projectrole_set.filter(user=user)]
 
+	def can_edit(self, user):
+		return self.projectrole_set.filter(user=user, name__in=ProjectRole.ROLE_EDIT).count() > 0
+
 	def get_absolute_url(self):
 		return reverse('media_classification:project_detail', kwargs={'pk':self.pk})
 
@@ -161,6 +164,7 @@ class ProjectRole(models.Model):
 	ROLE_COLLABORATOR = "C"
 
 	ROLE_ANY = (ROLE_PROJECT_ADMIN, ROLE_EXPERT, ROLE_COLLABORATOR, )
+	ROLE_EDIT = (ROLE_PROJECT_ADMIN, ROLE_EXPERT, )
 
 	ROLE_CHOICES = (
 		(ROLE_PROJECT_ADMIN, "Admin"),

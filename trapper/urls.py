@@ -13,6 +13,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
 	# Trapper homepage
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
+    url(r'^msg/$', TemplateView.as_view(template_name='base.html'), name='msg'),
 
 	# Media classification urls
     url(r'^media_classification/', include('trapper.apps.media_classification.urls', namespace='media_classification')),

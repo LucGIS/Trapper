@@ -1,14 +1,55 @@
 {% extends "storage/base.html" %}
 {% block content %}
-{% include "storage/resource_display.html" %}
-<ul>
-	<li> Name: {{ resource.name }} </li>
-	<li> Type: {{ resource.resource_type.name }} </li>
-	<li> Date Uploaded: {{ resource.date_uploaded}} </li>
-	<li> Owner: {{ resource.owner}} </li>
-	<li> Uploader: {{ resource.uploader}} </li>
-	<li> Public: {{ resource.resourceextra.public}} </li>
-	<li> Crowd-Sourcing enabled: {{ resource.resourceextra.cs_enabled}} </li>
-	<li> Mime: {{ resource.mime_type}} </li>
-<ul>
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#show_media" data-toggle="tab">Media</a></li>
+  <li><a href="#show_details" data-toggle="tab">Details</a></li>
+  <li><a href="#show_map" data-toggle="tab">Map</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+	<div class="tab-pane fade in active" id="show_media">
+	{% include "storage/resource_display.html" %}
+	</div>
+	<div class="tab-pane fade" id="show_details">
+	<table class="table">
+		<tr>
+			<td>Name:</td>
+			<td>{{ resource.name }}</td>
+		</tr>
+		<tr>
+			<td>Type:</td>
+			<td>{{ resource.resource_type.name }}</td>
+		</tr>
+		<tr>
+			<td>Date Uploaded:</td>
+			<td>{{ resource.date_uploaded}}</td>
+		</tr>
+		<tr>
+			<td>Owner:</td>
+			<td>{{ resource.owner }}</td></tr>
+		<tr>
+			<td>Uploader:</td>
+			<td>{{ resource.uploader }}</td></tr>
+		<tr>
+			<td>Public:</td>
+			<td>{{ resource.is_public }}</td></tr>
+		<tr>
+			<td>Mime:</td>
+			<td>{{ resource.mime_type }}</td></tr>
+	</table>
+	</div>
+	<div class="tab-pane fade" style="width:100%;" id="show_map">
+
+	{% if resource.location %}
+	{% include "geomap/location_display.html" with location=resource.location  %}
+	{% else %}
+	Map not available
+	{% endif %}
+
+	</div>
+</div>
+
+
 {% endblock content %}

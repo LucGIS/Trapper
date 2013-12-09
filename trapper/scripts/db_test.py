@@ -70,7 +70,6 @@ def init():
 	Resource.objects.all().update(is_public=True)
 	r1, r2, r3, r4, r5, r6 = Resource.objects.filter(pk__in=xrange(1,7))
 	
-	
 	# Collection
 	c1 = Collection.objects.create(name="Video2013", owner=u3)
 	c1.resources.add(r1, r2, r3)

@@ -8,13 +8,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+from trapper.apps.geomap.models import Location
+
 
 class ResourceType(models.Model):
 	name = models.CharField(max_length=255)
 
 	def __unicode__(self):
 		return unicode(self.name)
-
 
 class Resource(models.Model):
 	name = models.CharField(max_length=255)
@@ -35,9 +36,9 @@ class Resource(models.Model):
 	thumbnail = models.ImageField(upload_to='storage/resource/thumbnail/', null=True, blank=True)
 	resource_type = models.ForeignKey(ResourceType, null=True, blank=True)
 	date_uploaded = models.DateTimeField(auto_now_add=True)
-	is_public = models.BooleanField("Publicly available", default=False)
-	#location = models.ForeignKey(Location, null=True, blank=True)
+	location = models.ForeignKey(Location, null=True, blank=True)
 
+	is_public = models.BooleanField("Publicly available", default=False)
 	uploader = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')
 	owner = models.ForeignKey(User, null=True, blank=True, related_name='owned_resources')
 	managers = models.ManyToManyField(User, null=True, blank=True, related_name='managed_resources')
@@ -115,6 +116,15 @@ class Resource(models.Model):
 		if commit:
 			self.save()
 
+class CollectionUploadJob(models.Model):
+	gpx_file = models.FileField(upload_to='storage/collection/jobs/')
+	resources_archive = models.FileField(upload_to='storage/collection/jobs/', null=True, blank=True)
+	date_added = models.DateTimeField(auto_now_add=True)
+	date_resolved = models.DateTimeField(null=True, blank=True)
+	owner = models.ForeignKey(User)
+
+	def __unicode__(self):
+		return unicode("Added on: %s. Resolved on: %s"%(self.date_added, self.date_resolved,))
 
 class Collection(models.Model):
 	"""

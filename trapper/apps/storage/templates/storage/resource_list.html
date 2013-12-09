@@ -18,14 +18,20 @@
 </div>
 <p>
 {% if resources %}
-<h3>Available resources:</h3>
+<h3>Resources:</h3>
+
+	{# Displays pagination at the top and the bottom of the resources list #}
 
 	{% if is_paginated %}
 	{% load common_tags %}
-	{% pagination_menu page_obj 4 "foo_bar" %}
+	{% pagination_menu page_obj 4 previous_filter_params %}
 	{% endif %}
 
 	{% include "storage/resource_iter.html" %}
+
+	{% if is_paginated %}
+	{% pagination_menu page_obj 4 previous_filter_params %}
+	{% endif %}
 {% else %}
 No resources available.
 {% endif %}

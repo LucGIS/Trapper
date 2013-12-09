@@ -5,7 +5,7 @@ from trapper.scripts.db_basic import init as init_basic
 from trapper.scripts.db_test import init as init_test
 
 
-class StorageViewsTestDBTest(TestCase):
+class ProjectViewsTestDBTest(TestCase):
 
 	def setUp(self):
 		init_basic()

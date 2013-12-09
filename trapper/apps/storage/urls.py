@@ -25,6 +25,8 @@ urlpatterns = patterns('',
 	url(r'collection/detail/(?P<pk>\d+)/$', DetailView.as_view(model=Collection), name='collection_detail'),
 	url(r'collection/update/(?P<pk>\d+)/$', views.CollectionUpdateView.as_view(), name='collection_update'),
 	url(r'collection/create/$', views.CollectionCreateView.as_view(), name='collection_create'),
+	url(r'collection/upload/$', views.CollectionUploadView.as_view(), name='collection_upload'),
+	url(r'collection/upload/(?P<pk>\d+)$', views.CollectionUploadViewPart2.as_view(), name='collection_upload_2'),
 	url(r'collection/delete/(?P<pk>\d+)$', views.CollectionDeleteView.as_view(), name='collection_delete'),
 	url(r'collection/request/(?P<pk>\d+)/$', views.CollectionRequestView.as_view(), name='collection_request'),
 )

@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 
+from braces.views import LoginRequiredMixin
 from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesView, NamedFormsetsMixin
 
 from trapper.apps.media_classification.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet
@@ -75,10 +76,9 @@ def can_detail_project(user, project):
 	return ProjectRole.objects.filter(user=user, project=project).count() > 0
 
 
-class ProjectDetailView(generic.DetailView):
+class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
 	model = Project
 
-	@method_decorator(login_required)
 	@method_decorator(object_access_required(Project, can_detail_project))
 	def dispatch(self, *args, **kwargs):
 		return super(ProjectDetailView, self).dispatch(*args, **kwargs)

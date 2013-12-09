@@ -9,4 +9,5 @@ urlpatterns = patterns('',
 	url(r'^$', TemplateView.as_view(template_name='geomap/index.html'), name='index'),
 	url(r'location/detail/(?P<pk>\d+)/$', views.LocationDetailView.as_view(), name='location_detail'),
 	url(r'location/list/$', views.LocationListView.as_view(), name='location_list'),
+	url(r'location/upload/$', views.LocationUploadView.as_view(), name='location_upload'),
 )

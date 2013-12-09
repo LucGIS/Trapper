@@ -90,6 +90,7 @@
 				{% if user.is_authenticated %}
                 <li><a href="{% url "storage:user_collection_list" user.id %}">My collections</a></li>
 				<li><a href="{% url "storage:collection_create" %}">Add collection <span class="glyphicon glyphicon-plus create_item"></span></a></li>
+				<li><a href="{% url "storage:collection_upload" %}">Upload collection <span class="glyphicon glyphicon-plus create_item"></span></a></li>
 				{% endif %}
               </ul>
             </li>
@@ -108,7 +109,13 @@
               </ul>
             </li>
 
-			<li><a href="{% url "geomap:index" %}"><span class="glyphicon glyphicon-globe"></span> GeoMap</a></li>
+			<li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-globe"></span> GeoMap<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+				<li><a href="{% url "geomap:index" %}">Projects</a></li>
+				<li><a href="{% url "geomap:location_upload" %}">Upload locations</a></li>
+              </ul>
+			</li>
 
           </ul>
           <ul class="nav navbar-nav navbar-right">
@@ -125,6 +132,13 @@
         </div><!--/.nav-collapse -->
 
       </div>
+	{% if messages %}
+		{% for message in messages %}
+		<div class="alert alert-{{ message.tags }}">
+		{{ message|safe }}
+		</div>
+		{% endfor %}
+	{% endif %}
 	{% block master_content %}{% endblock master_content %}
     </div> <!-- /container -->
 

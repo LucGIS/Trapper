@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block master_content %}
+<div class="panel panel-primary">
+	<div class="panel-heading">Upload locations</div>
+	<div class="panel-body">
+		<form role="form" action="" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		
+		<div class="form-group">
+			{% for error in form.non_field_errors %}
+			<div class='alert alert-danger'>{{error}}</div>
+			{% endfor %}
+			<label for="id_{{form.gpx_file.name}}">Upload GPX file</label>
+			<input type="file" id="id_{{ form.gpx_file.name }}" name="{{form.gpx_file.name}}"></input>
+			{% for e in form.gpx_file.errors %} {{e}} {% endfor %}
+			<p class="help-block">Select the GPX file above and click submit.</p>
+			<label for="id_{{form.is_public.name}}">Make publicly available ?</label>
+			{{form.is_public}}
+			{% for e in form.is_public.errors %} {{e}} {% endfor %}
+			<p class="help-block">When selected, location will be publicly visible.</p>
+		
+		</div>
+		<input class="btn btn-primary" type="submit" value="Submit" />
+		</form>
+	</div>
+</div>
+{% endblock master_content %}

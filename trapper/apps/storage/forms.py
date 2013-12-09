@@ -4,11 +4,27 @@ from django import forms
 
 from trapper.apps.media_classification.models import Project
 from trapper.apps.storage.models import Resource, Collection
+from trapper.apps.geomap.models import Location
+
+from trapper.tools.batch_uploading import ConfigFileValidator
 
 class CollectionRequestForm(forms.Form):
 	text = forms.CharField(widget=forms.Textarea)
 	project = forms.ModelChoiceField(queryset=Project.objects.none())
 	collection_pk = forms.IntegerField(widget=forms.HiddenInput())
+
+class CollectionUploadForm(forms.Form):
+	definition_file = forms.FileField()
+
+	def validate_config_file(self, user):
+		errors = ConfigFileValidator(self.cleaned_data['definition_file'], user).check_errors()
+		if errors:
+			return errors
+		return "OK"
+
+class CollectionUploadFormPart2(forms.Form):
+	resources_file = forms.FileField()
+	job_pk = forms.IntegerField(widget=forms.HiddenInput)
 
 class CollectionForm(forms.ModelForm):
 	class Meta:
