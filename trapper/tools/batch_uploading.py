@@ -206,7 +206,7 @@ class ResourceArchiveUploader(YAMLReader):
 				for r in resources:
 					directory, file_name = os.path.split(r)
 					raw_name, extension = os.path.splitext(file_name)
-					if extension in self.EXTENSIONS:
+					if extension.lower() in self.EXTENSIONS:
 						resource_names.append(r)
 
 		resource_names = list(set(resource_names))
@@ -214,7 +214,7 @@ class ResourceArchiveUploader(YAMLReader):
 		for r in resource_names:
 			directory, file_name = os.path.split(r)
 			raw_name, extension = os.path.splitext(file_name)
-			if extension in self.EXTENSIONS:
+			if extension.lower() in self.EXTENSIONS:
 				bin_data = archive.read(r)
 				f2 = StringIO()
 				f2.write(bin_data)
@@ -224,12 +224,13 @@ class ResourceArchiveUploader(YAMLReader):
 				else:
 					res_obj = Resource(name=raw_name, uploader=self.user, owner=self.user)
 					resource_objects[raw_name] = res_obj
-				if extension in self.FILE_EXTENSIONS:
+				if extension.lower() in self.FILE_EXTENSIONS:
 					res_obj.file.save(file_name, File(f2), save=False)
-				elif extension in self.FILE_EXTRA_EXTENSIONS:
+				elif extension.lower() in self.FILE_EXTRA_EXTENSIONS:
 					res_obj.extra_file.save(file_name, File(f2), save=False)
 
 		for name, obj in resource_objects.iteritems():
+			print name
 			obj.update_metadata(commit=True)
 
 		for c in cfg['collections']:

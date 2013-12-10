@@ -10,7 +10,7 @@
 	<source src="{{resource.file.url}}" type="{{resource.mime_type}}" />
 </audio>
 {% elif resource.resource_type.name == "Image" %}
-<img src="{{resource.file.url}}" title="{{resource_type.name}}" />
+<img width=100% src="{{resource.file.url}}" title="{{resource_type.name}}" />
 {% else %}
 Unrecognized resource type
 {% endif %}

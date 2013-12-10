@@ -14,7 +14,8 @@ class CollectionAdmin(admin.ModelAdmin):
 
 def run_collection_upload_task(modeladmin, request, queryset):
 	for job in queryset:
-		process_collection_upload.delay(job.pk)
+		#process_collection_upload.delay(job.pk)
+		process_collection_upload(job.pk)
 
 run_collection_upload_task.short_description = "Retry the uploading task for selected jobs"
 
