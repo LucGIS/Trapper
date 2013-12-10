@@ -55,7 +55,7 @@ def init():
 		("image_jpg",  u3, u3, 'image_1.jpg',),
 		("video_webm", u2, u2, 'video_1.webm',),
 	)
-	r_data += tuple(("image_jpg_{id}".format(id=i), u3, u3, 'image_1.jpg') for i in xrange(30))
+	#r_data += tuple(("image_jpg_{id}".format(id=i), u3, u3, 'image_1.jpg') for i in xrange(30))
 	
 	r_filepath = "trapper/media_samples/"
 	

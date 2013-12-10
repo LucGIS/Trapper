@@ -6,9 +6,6 @@
 	<div class="panel-body">
 		{% csrf_token %}
 		{{ form.as_p }}
-		{% if job_pk %}
-		<input type="hidden" value="{{job_pk}}"</input>
-		{% endif %}
 		<input type="submit" value="Submit" />
 	</div>
 </div>

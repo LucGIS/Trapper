@@ -2,6 +2,7 @@ from ffvideo import VideoStream
 import StringIO
 from PIL import Image, ImageOps
 from mimetypes import guess_type
+import datetime
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
@@ -19,7 +20,8 @@ class ResourceType(models.Model):
 
 class Resource(models.Model):
 	name = models.CharField(max_length=255)
-	file = models.FileField(upload_to='storage/resource/file/')
+	file = models.FileField(upload_to='storage/resource/file/', null=True, blank=True)
+	extra_file = models.FileField(upload_to='storage/resource/file/', null=True, blank=True)
 
 	THUMBNAIL_SIZE = (96,96)
 
@@ -29,10 +31,12 @@ class Resource(models.Model):
 		('audio/x-wav', 'audio/x-wav'),
 		('audio/wav', 'audio/wav'),
 		('video/mp4', 'video/mp4'),
+		('video/webm', 'video/webm'),
 		('video/ogg', 'video/ogg'),
 		('image/jpeg', 'image/jpeg'),
 	)
 	mime_type = models.CharField(choices=MIME_CHOICES, max_length=255, null=True, blank=True)
+	extra_mime_type = models.CharField(choices=MIME_CHOICES, max_length=255, null=True, blank=True)
 	thumbnail = models.ImageField(upload_to='storage/resource/thumbnail/', null=True, blank=True)
 	resource_type = models.ForeignKey(ResourceType, null=True, blank=True)
 	date_uploaded = models.DateTimeField(auto_now_add=True)
@@ -117,14 +121,42 @@ class Resource(models.Model):
 			self.save()
 
 class CollectionUploadJob(models.Model):
-	gpx_file = models.FileField(upload_to='storage/collection/jobs/')
-	resources_archive = models.FileField(upload_to='storage/collection/jobs/', null=True, blank=True)
+	definition = models.FileField(upload_to='storage/collection/jobs/')
+	archive = models.FileField(upload_to='storage/collection/jobs/', null=True, blank=True)
 	date_added = models.DateTimeField(auto_now_add=True)
 	date_resolved = models.DateTimeField(null=True, blank=True)
 	owner = models.ForeignKey(User)
 
+	STATUS_NEW				= 1
+	STATUS_PENDING			= 2
+	STATUS_RESOLVED_OK		= 3
+	STATUS_RESOLVED_ERROR	= 4
+
+	STATUS_CHIOCES = (
+		(STATUS_NEW, 'New'),
+		(STATUS_PENDING, 'Pending'),
+		(STATUS_RESOLVED_OK, 'Resolved OK'),
+		(STATUS_RESOLVED_ERROR, 'Resolved Err'),
+	)
+	status = models.IntegerField(choices=STATUS_CHIOCES, default=STATUS_NEW)
+	error_message = models.TextField(max_length=255, null=True, blank=True)
+
+	def set_status(self, status, error_message=None):
+		self.status=status
+		if error_message:
+			self.error_message=error_message
+		self.save()
+
+	def resolve_as_error(self, error_message):
+		self.date_resolved = datetime.datetime.now()
+		self.set_status(self.STATUS_RESOLVED_ERROR, error_message)
+
+	def resolve_as_ok(self):
+		self.date_resolved = datetime.datetime.now()
+		self.set_status(self.STATUS_RESOLVED_OK)
+
 	def __unicode__(self):
-		return unicode("Added on: %s. Resolved on: %s"%(self.date_added, self.date_resolved,))
+		return unicode("Added on: %s, Status: %s"%(self.date_added, self.get_status_display(),))
 
 class Collection(models.Model):
 	"""

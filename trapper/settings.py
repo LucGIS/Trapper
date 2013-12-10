@@ -140,8 +140,6 @@ INSTALLED_APPS = (
 	'django_extensions',
 	'ajax_select',
 	'tinymce',
-	# Uncomment the next line to enable admin documentation:
-	# 'django.contrib.admindocs',
 )
 
 AJAX_LOOKUP_CHANNELS = {

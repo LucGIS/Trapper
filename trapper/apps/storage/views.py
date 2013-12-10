@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin
 
 from trapper.apps.storage.models import Resource, Collection, CollectionUploadJob
+from trapper.apps.storage.tasks import process_collection_upload
 from trapper.apps.storage.forms import ResourceForm, CollectionForm, CollectionRequestForm, CollectionUploadForm, CollectionUploadFormPart2
 from trapper.apps.media_classification.models import Project, ProjectRole
 from trapper.apps.messaging.models import Message, CollectionRequest
@@ -127,10 +128,11 @@ class CollectionUploadViewPart2(LoginRequiredMixin, generic.FormView):
 		return initial
 
 	def form_valid(self, form):
-		messages.success(self.request, "<strong>Resources uploaded!</strong> Please await for the system to process your request.")
+		messages.success(self.request, "<strong>Resources uploaded!</strong> System will process your request soon.")
 		job = CollectionUploadJob.objects.get(pk=form.cleaned_data['job_pk'])
-		job.resources_archive = form.cleaned_data['resources_file']
+		job.archive = form.cleaned_data['archive_file']
 		job.save()
+		process_collection_upload.delay(job.pk)
 		return super(CollectionUploadViewPart2, self).form_valid(form)
 
 class CollectionUploadView(LoginRequiredMixin, generic.FormView):
@@ -144,8 +146,8 @@ class CollectionUploadView(LoginRequiredMixin, generic.FormView):
 			messages.error(self.request, "<strong>Definition file error!</strong> %s" % (err,))
 			return super(CollectionUploadView, self).form_valid(form)
 		else:
-			messages.success(self.request, "<strong>Success!</strong> Definition file is valid.")
-			job = CollectionUploadJob.objects.create(gpx_file=form.cleaned_data['definition_file'], owner=self.request.user)
+			messages.success(self.request, "<strong>Success!</strong> Definition file is valid, please upload the archive file (.zip)")
+			job = CollectionUploadJob.objects.create(definition=form.cleaned_data['definition_file'], owner=self.request.user)
 			return HttpResponseRedirect(reverse('storage:collection_upload_2',kwargs={'pk':job.pk}))
 
 class CollectionDeleteView(LoginRequiredMixin, generic.DeleteView):

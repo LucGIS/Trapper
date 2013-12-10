@@ -23,7 +23,7 @@ class CollectionUploadForm(forms.Form):
 		return "OK"
 
 class CollectionUploadFormPart2(forms.Form):
-	resources_file = forms.FileField()
+	archive_file = forms.FileField()
 	job_pk = forms.IntegerField(widget=forms.HiddenInput)
 
 class CollectionForm(forms.ModelForm):
