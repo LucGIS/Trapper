@@ -6,8 +6,14 @@ from trapper.apps.storage.models import Collection
 from trapper.apps.media_classification.models import Project, ProjectCollection
 
 class Message(models.Model):
+	"""E-mail like messaging features among the users."""
+
 	subject = models.CharField(max_length=50)
+	"""Message subject"""
+
 	text = models.TextField(max_length=1000)
+	"""Message text (body)"""
+
 	user_from = models.ForeignKey(User, related_name='sent_messages')
 	user_to = models.ForeignKey(User, related_name='received_messages')
 	date_sent = models.DateTimeField(auto_now_add=True)
@@ -20,9 +26,8 @@ class Message(models.Model):
 		return reverse('messaging:message_detail', kwargs={'pk':self.pk})
 
 class SystemNotification(models.Model):
-	"""
-	Abstract class for various types of system notifications directed towards a user.
-	"""
+	"""Abstract class for various types of system notifications directed towards a user."""
+
 	name = models.CharField(max_length=50)
 	user = models.ForeignKey(User, related_name='system_notifications')
 	resolved = models.BooleanField(default=False)
@@ -38,13 +43,18 @@ class SystemNotification(models.Model):
 		abstract = True
 
 class CollectionRequest(SystemNotification):
+	"""Notification about an incoming collection request for the media classification project"""
+
 	message = models.ForeignKey(Message)
 	project = models.ForeignKey(Project)
 	collection = models.ForeignKey(Collection)
 
 	def resolve_yes(self):
+		"""Resolves the request positively and creates a ProjectCollection object."""
+
 		self.resolve()
 		ProjectCollection.objects.create(project=self.project, collection=self.collection, active=True)
 
 	def resolve_no(self):
+		"""Resolves the request negatively."""
 		self.resolve()

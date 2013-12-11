@@ -4,9 +4,16 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 class Feature(models.Model):
-	"""
-	Model describing given feature of an animal.
+	"""Model describing given feature of an animal.
 	Used for defining given "set" of features we are interested in identifying from given resource.
+
+	.. note::
+		Feature can be of given type, which at the moment can be either:
+
+		* String (enum)
+		* Integer
+		* Float
+		* Boolean
 	"""
 
 	TYPE_STR = 'S'
@@ -22,10 +29,19 @@ class Feature(models.Model):
 	}
 
 	name = models.CharField(max_length=255)
+	"""Long name of feature"""
+
 	short_name = models.CharField(max_length=255)
+	"""Short name of feature displayed on a form"""
+
 	feature_type = models.CharField(max_length=1, choices=TYPE_CHOICES)
+	"""Type of the feature"""
 
 	def get_short_name(self):
+		"""Get short name of the feature.
+		It is used for displaying a shorter name in the form.
+		"""
+
 		return unicode(self.short_name)
 
 	def __unicode__(self):
@@ -34,11 +50,13 @@ class Feature(models.Model):
 
 
 class FeatureScope(models.Model):
+	"""Model describing the scope of given feature.
+	Only relevant if the feature is of type 'String'.
 	"""
-	Model describing the scope of given feature.
-	Only relevant if the feature type is 'String'.
-	"""
+
 	name = models.CharField(max_length=255)
+	"""Name of the scope's item"""
+
 	feature = models.ForeignKey(Feature)
 
 	def __unicode__(self):
@@ -46,10 +64,10 @@ class FeatureScope(models.Model):
 
 
 class FeatureSet(models.Model):
+	"""Defined group of features describing given classification table.
+	Such set is defined per-resource type, and is defined in given classification project.
 	"""
-	Defined group of features describing given classification table.
-	Such set is defined per-resource type, as given classification project.
-	"""
+
 	name = models.CharField(max_length=255)
 	resource_type = models.ForeignKey(ResourceType)
 	features = models.ManyToManyField(Feature)
@@ -60,11 +78,20 @@ class FeatureSet(models.Model):
 	def get_absolute_url(self):
 		return reverse('media_classification:featureset_detail', kwargs={'pk':self.pk})
 
-
 class Classification(models.Model):
+	"""Classification made by the Crowd-sourcing user.
+	
+	.. note::
+
+		This model is a top-most object in a single classification.
+		It's tightly connected with :class:`.ClassificationRow` and :class:`.FeatureAnswer` models.
+
+		Since classification table is composed of rows (which are defined dynamically),
+		the rows themselves are stored in database as entries of ClassificationRow model.
+		Each row on the other hand can contain a set of *states* for each feature, be it a numerical value,
+		or a certain state of the FeatureScope model.
 	"""
-	Classification made by the Crowd-sourcing user.
-	"""
+
 	resource = models.ForeignKey(Resource)
 	feature_set = models.ForeignKey(FeatureSet)
 	user = models.ForeignKey(User)
@@ -74,6 +101,14 @@ class Classification(models.Model):
 
 
 class ClassificationRow(models.Model):
+	"""Describes a single "row" in a classification table.
+	The instances of this model is aggregated by an instance Classification model.
+	
+	.. seealso::
+
+		* :class:`Classification`
+	"""
+
 	classification = models.ForeignKey(Classification)
 
 	def __unicode__(self):
@@ -81,6 +116,14 @@ class ClassificationRow(models.Model):
 
 
 class FeatureAnswer(models.Model):
+	"""A single state of the :class:`.Feature` model.
+	The instances of this model are aggregated by an instance ClassificationRow model.
+
+	.. seealso::
+
+		* :class:`ClassificationRow`
+	"""
+
 	value = models.CharField(max_length=255)
 	feature = models.ForeignKey(Feature)
 	classification_row = models.ForeignKey(ClassificationRow)
@@ -90,19 +133,27 @@ class FeatureAnswer(models.Model):
 
 
 class Project(models.Model):
+	"""Describes a single classification project existing withing the system
+	"""
+
 	name = models.CharField(max_length=255)
+
 	collections = models.ManyToManyField(Collection, through='ProjectCollection', blank=True, null=True)
+	"""Collections assigned to the project"""
+
 	feature_sets = models.ManyToManyField(FeatureSet, blank=True, null=True)
+	"""Feature sets definitions"""
+
 	date_created = models.DateTimeField(auto_now_add=True)
+
 	cs_enabled = models.BooleanField(default=True)
+	"""Is crowd-sourcing enabled for the project ?"""
 
 	def __unicode__(self):
 		return unicode(self.name)
 
 	def get_all_cs_resources(self):
-		"""
-		A list of crowd-sourcing enabled resources.
-		"""
+		"""Returns a list of crowd-sourcing enabled resources for given project."""
 
 		resources = []
 		#for c in self.collections.filter(projectcollection__active=True):
@@ -112,12 +163,25 @@ class Project(models.Model):
 		return list(set(resources))
 
 	def determine_roles(self, user):
+		"""Returns a tuple of project roles for given user.
+
+		:param user: user for which the roles are determined
+		:type user: :py:class:`django.contrib.auth.models.User`
+		:return: list of role names of given user withing the project
+		:rtype: str
 		"""
-		Returns a tuple of project roles for given user.
-		"""
+
 		return [r.name for r in self.projectrole_set.filter(user=user)]
 
 	def can_edit(self, user):
+		"""Determines whether given user can edit the project.
+
+		:param user: user for which the test is made
+		:type user: :py:class:`django.contrib.auth.models.User`
+		:return: True if user can edit the project, False otherwise
+		:rtype: bool
+		"""
+
 		return self.projectrole_set.filter(user=user, name__in=ProjectRole.ROLE_EDIT).count() > 0
 
 	def get_absolute_url(self):
@@ -125,8 +189,7 @@ class Project(models.Model):
 
 
 class Sequence(models.Model):
-	"""
-	Sequence of resources identified by an expert.
+	"""Sequence of resources identified by an expert.
 	"""
 
 	name = models.CharField(max_length=255, null=True, blank=True)
@@ -142,23 +205,23 @@ class Sequence(models.Model):
 
 
 class ProjectCollection(models.Model):
-	"""
-	ManyToMany model for Project-Collection relationship.
-
-	* active - states whether given collection is "enabled" for the project.
-	* cs_enabled - when True, given collection will take part in the crowd-sourcing classification
-	"""
+	"""Many-To-Many model for Project-Collection relationship."""
 
 	project = models.ForeignKey(Project)
 	collection = models.ForeignKey(Collection)
 	active = models.BooleanField("Active", default=True)
+	"""Is collection "active" within the project at given moment ?"""
+
 	cs_enabled = models.BooleanField("Crowd-Sourcing", default=True)
+	"""Is collection available for the crowd-sourcing ?"""
 
 	def __unicode__(self):
 		return unicode("%s <-> %s (Active: %s, CS: %s)" % (self.project.name, self.collection.name, self.active, self.cs_enabled))
 
 
 class ProjectRole(models.Model):
+	"""Model describing the user's role withing given :class:`.Project`"""
+
 	ROLE_PROJECT_ADMIN = "A"
 	ROLE_EXPERT = "E"
 	ROLE_COLLABORATOR = "C"
@@ -171,9 +234,15 @@ class ProjectRole(models.Model):
 		(ROLE_EXPERT, "Expert"),
 		(ROLE_COLLABORATOR, "Collaborator"),
 	)
+
 	user = models.ForeignKey(User)
+	"""User for which the role is defined"""
+
 	name = models.CharField(max_length=1, choices=ROLE_CHOICES)
+	"""Role name"""
+
 	project = models.ForeignKey(Project)
+	"""Project for which the role is defined"""
 
 	def __unicode__(self):
 		return unicode("%s | Project: %s | Role: %s " % (self.user.username, self.project.name, self.get_name_display()))

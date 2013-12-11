@@ -19,23 +19,33 @@ from trapper.apps.common.decorators import object_access_required
 # FeatureSet views
 
 class FeatureSetDetailView(generic.DetailView):
+	"""Detail view of a single FeatureSet model"""
+
 	model = FeatureSet
 
 class FeatureSetListView(generic.ListView):
+	"""List view of a FeatureSet model"""
+
 	model = FeatureSet
 	context_object_name = 'featuresets'
 
 class FeatureInline(InlineFormSet):
+	"""Utility-class: Features displayed as a InlineFormset"""
+
 	model = FeatureSet.features.through
 	extra = 2
 
 class FeatureSetUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
+	"""Update view of the FeatureSet model"""
+
 	model = FeatureSet
 	form_class = FeatureSetForm
 	inlines = [FeatureInline,]
 	inlines_names = ['features_formset',]
 
 class FeatureSetCreateView(CreateWithInlinesView, NamedFormsetsMixin):
+	"""Create view of the FeatureSet model"""
+
 	model = FeatureSet
 	form_class = FeatureSetForm
 	inlines = [FeatureInline,]
@@ -44,26 +54,42 @@ class FeatureSetCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 # Features views
 
 class FeatureDetailView(generic.DetailView):
+	"""Detail view of the Feature model"""
+
 	model = Feature
 
 class FeatureListView(generic.ListView):
+	"""List view of the Feature model"""
+
 	model = Feature
 	context_object_name = 'features'
 
 class FeatureUpdateView(generic.UpdateView):
+	"""Update view of the Feature model"""
+
 	model = Feature
 
 class FeatureCreateView(generic.CreateView):
+	"""Create view of the Feature model"""
+
 	model = Feature
 
 # Project views
 
 class ProjectListView(generic.ListView):
+	"""List view of the Project model"""
+
 	model = Project
 	context_object_name = 'items'
 	template_name = 'media_classification/project_list.html'
 
 	def get_queryset(self, *args, **kwargs):
+		"""Besides getting the queryset, determines the permissions for request.user.
+
+		:return: a list of tuples, each containing the following: (:class:`.Project`, user_can_view, user_can_edit)
+		:rtype: list
+		"""
+
 		projects = super(ProjectListView, self).get_queryset(*args, **kwargs)
 		user = self.request.user
 		items = []
@@ -77,6 +103,8 @@ def can_detail_project(user, project):
 
 
 class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
+	"""Detail view for the Project model"""
+
 	model = Project
 
 	@method_decorator(object_access_required(Project, can_detail_project))
@@ -88,14 +116,20 @@ def can_update_project(user, project):
 	return ProjectRole.objects.filter(user=user, project=project, name=ProjectRole.ROLE_PROJECT_ADMIN).count() > 0
 
 class ProjectRoleInline(InlineFormSet):
+	"""Utility-class: ProjectRoles displayed as a InlineFormset"""
+
 	model = ProjectRole
 	extra = 2
 
 class CollectionInline(InlineFormSet):
+	"""Utility-class: Collections displayed as a InlineFormset"""
+
 	model = ProjectCollection
 	extra = 2
 
 class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
+	"""Create view for the Project model"""
+
 	model = Project
 	form_class = ProjectForm
 	template_name = 'media_classification/project_create.html'
@@ -103,6 +137,8 @@ class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 	inlines_names = ['projectrole_formset', 'collection_formset']
 
 	def forms_valid(self, form, inlines):
+		"""Saves the formsets and redirects to Project's detail page."""
+
 		self.object = form.save(commit=False)
 		self.object.save()
 		projectrole_formset, collection_formset = inlines
@@ -115,6 +151,8 @@ class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 		return HttpResponseRedirect(self.object.get_absolute_url())
 
 class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
+	"""Update view for the Project model"""
+
 	model = Project
 	form_class = ProjectForm
 	template_name = 'media_classification/project_update.html'
@@ -122,6 +160,8 @@ class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
 	inlines_names = ['projectrole_formset', 'collection_formset']
 
 	def forms_valid(self, form, inlines):
+		"""Saves the formsets and redirects to Project's detail page."""
+
 		self.object = form.save(commit=False)
 		self.object.save()
 		projectrole_formset, collection_formset = inlines
@@ -135,6 +175,13 @@ class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
 		return HttpResponseRedirect(self.object.get_absolute_url())
 
 def project_update(request, pk):
+	"""Project update view function.
+
+	.. warning::
+		This view is marked for depreciation. It still handles the requests, but is to be replaced
+		by its class-based equivalent :class:`.ProjectUpdateView`.
+	"""
+
 	project = Project.objects.get(pk=pk)
 
 	form = ProjectForm(instance=project)
@@ -162,6 +209,8 @@ def project_update(request, pk):
 # Classify / CS views
 
 def cs_resource_list(request):
+	"""Displays the crowd-sourcing enabled resources list."""
+
 	projects = Project.objects.filter(cs_enabled=True)
 	data = []
 	for project in projects:
@@ -172,6 +221,8 @@ def cs_resource_list(request):
 
 @login_required
 def classify_resource(request, resource_id, project_id):
+	"""Prepares the context for the classification table (i.e. feature sets), and renders it on a template."""
+
 	resource = Resource.objects.get(id=resource_id)
 	project = Project.objects.get(id=project_id)
 	feature_set = project.feature_sets.filter(resource_type=resource.resource_type)[0]
@@ -181,6 +232,13 @@ def classify_resource(request, resource_id, project_id):
 
 @login_required
 def process_classify(request):
+	"""Processes the classification POST request.
+	Breaks down the POST kwargs describing the classification table and adds saves the corresponding model instances:
+
+	* :class:`.Classification`
+	* :class:`.ClassificationRow`
+	* :class:`.FeatureAnswer`
+	"""
 	project_id = int(request.POST['project_id'])
 	resource_id = int(request.POST['resource_id'])
 

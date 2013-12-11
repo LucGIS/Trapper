@@ -6,10 +6,18 @@ import trapper.tools.gpxpy.gpx
 from django.contrib.gis.geos import Point
 
 class LocationUploadForm(forms.Form):
+	"""Upload form for the locations file."""
+
 	gpx_file=forms.FileField()
 	is_public = forms.BooleanField(initial=False, required=False)
 
 	def add_locations(self, user):
+		"""Parses the .gpx file and looks for the locations which aren't available in the system yet.
+
+		:param user: user adding the locations (made the Location's owner)
+		:type user: :py:class:`django.contrib.auth.models.User`
+		"""
+
 		print self.cleaned_data
 		gpx_file = self.cleaned_data['gpx_file']
 		gpx = gpxpy.parse(gpx_file)

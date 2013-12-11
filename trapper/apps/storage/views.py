@@ -22,20 +22,28 @@ from trapper.apps.storage.filters import ResourceFilter
 # Resource views
 
 class ResourceListView(generic.ListView):
+	"""Displays the list of :class:`.Resource` objects.
+
+	This view employs the filtering features.
+	For that reason, the :py:meth:`django.views.generic.ListView.get_queryset` was overloaded.
+	The method filters the standard result according to the passed GET parameters.
 	"""
-	Displays the list of resources
-	"""
+
 	model = Resource
 	context_object_name = 'resources'
 	paginate_by = 10
 	template_name = "storage/resource_list.html"
 
 	def get_queryset(self, *args, **kwargs):
+		"""Get the queryset filtered by the GET parameters (see :class:`.ResourceFilter`)."""
+
 		qs = super(ResourceListView, self).get_queryset(*args, **kwargs)
 		filtered_queryset = ResourceFilter(self.request.GET, queryset=qs)
 		return filtered_queryset
 
 	def get_context_data(self, *args, **kwargs):
+		"""Returns the context data supplemented by the filtering form as well as previous filtering parameters for the initial values."""
+
 		context = super(ResourceListView, self).get_context_data(*args, **kwargs)
 		context['filtering_form'] = ResourceFilter(self.request.GET).form
 		request_params = self.request.GET.copy()
@@ -45,11 +53,14 @@ class ResourceListView(generic.ListView):
 		return context
 
 class UserResourceListView(LoginRequiredMixin, ResourceListView):
-	"""
-	Displays the list of resources of given request.user
+	"""Displays the list of resources of given :py:class:`django.contrib.auth.models.User`
+	It mirrors the functionality of :class:`.ResourceListView`,
+	except it filters the queryset initally according to the resource ownership.
 	"""
 
 	def get_queryset(self):
+		"""Return the queryset filtered by the resources which are owned by given user.
+		"""
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Resource.objects.filter(owner=user)
 
@@ -57,9 +68,10 @@ def can_update_or_delete_resource(user, resource):
 	return user in (resource.owner, resource.uploader) or user in resource.managers.all()
 
 class ResourceDeleteView(LoginRequiredMixin, generic.DeleteView):
-	"""
+	"""Delete view of the resource object.
 	Given resource can be removed when user is the owner or the uploader of the resource.
 	"""
+
 	model=Resource
 	success_url='resource/list/'
 	context_object_name='object'
@@ -70,6 +82,10 @@ class ResourceDeleteView(LoginRequiredMixin, generic.DeleteView):
 		return super(ResourceDeleteView, self).dispatch(*args, **kwargs)
 
 class ResourceUpdateView(LoginRequiredMixin, generic.CreateView):
+	"""Update view of the resource object.
+	Given resource can be updated when user passes :func:`.can_update_or_delete_resource` function.
+	"""
+
 	model = Resource
 	form_class= ResourceForm
 
@@ -78,6 +94,10 @@ class ResourceUpdateView(LoginRequiredMixin, generic.CreateView):
 		return super(ResourceUpdateView, self).dispatch(*args, **kwargs)
 
 class ResourceCreateView(LoginRequiredMixin, generic.CreateView):
+	"""Update view of the resource object.
+	Given resource can be updated when user passes :func:`.can_update_or_delete_resource` function.
+	"""
+
 	model = Resource
 	form_class= ResourceForm
 
@@ -87,15 +107,24 @@ class ResourceCreateView(LoginRequiredMixin, generic.CreateView):
 
 
 class UserCollectionListView(LoginRequiredMixin, generic.ListView):
+	"""Collection list, initially filtered by the collections owned by given user.
+	"""
+
 	model = Collection
 	context_object_name = 'collections'
 
 	def get_queryset(self):
-		# check if user exists and return the filtered queryset
+		"""Filters the queryset according to the user's id.
+		"""
+
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Collection.objects.filter(owner=user)
 
 class CollectionCreateView(LoginRequiredMixin, generic.CreateView):
+	"""Collection's create view.
+	Handles the creation of the Collection object.
+	"""
+
 	model = Collection
 	form_class= CollectionForm
 
@@ -104,6 +133,10 @@ def can_update_or_delete_collection(user, collection):
 	return user == collection.owner or user in collection.managers.all()
 
 class CollectionUpdateView(LoginRequiredMixin, generic.UpdateView):
+	"""Collection's update view.
+	Handles the update of the Collection object.
+	"""
+
 	model = Collection
 	form_class= CollectionForm
 
@@ -112,13 +145,19 @@ class CollectionUpdateView(LoginRequiredMixin, generic.UpdateView):
 		return super(CollectionUpdateView, self).dispatch(*args, **kwargs)
 
 class CollectionUploadViewPart2(LoginRequiredMixin, generic.FormView):
+	"""Collection's upload view.
+	This is the second part of the collection upload process.
+	See :class:`.CollectionUploadView` for more details.
+	This view handles the processing of the uploaded archive file, as well as its validation and the final
+	uploading action.
+	"""
+
 	template_name = "storage/collection_upload.html"
 	form_class = CollectionUploadFormPart2
 	success_url = reverse_lazy('msg')
 
 	def get_context_data(self, *args, **kwargs):
 		context = super(CollectionUploadViewPart2, self).get_context_data(*args, **kwargs)
-		#context['job_pk']=self.kwargs['pk']
 		return context
 
 	def get_initial(self, *args, **kwargs):
@@ -128,6 +167,10 @@ class CollectionUploadViewPart2(LoginRequiredMixin, generic.FormView):
 		return initial
 
 	def form_valid(self, form):
+		"""Processes the uploaded archive file and delegates a
+		:func:`.process_collection_upload` task.
+		"""
+
 		messages.success(self.request, "<strong>Resources uploaded!</strong> System will process your request soon.")
 		job = CollectionUploadJob.objects.get(pk=form.cleaned_data['job_pk'])
 		job.archive = form.cleaned_data['archive_file']
@@ -136,11 +179,20 @@ class CollectionUploadViewPart2(LoginRequiredMixin, generic.FormView):
 		return super(CollectionUploadViewPart2, self).form_valid(form)
 
 class CollectionUploadView(LoginRequiredMixin, generic.FormView):
+	"""This is the first controller of the two-step process of uploading a collection data (also called **batch_uploading**).
+	This view displays a form with a single file upload input for the definition file.
+	The file is validated and then the :class:`.CollectionUploadJob` object is created.
+	"""
+
 	template_name = "storage/collection_upload.html"
 	form_class= CollectionUploadForm
 	success_url = reverse_lazy('storage:collection_upload')
 
 	def form_valid(self, form):
+		"""Validates the configuration file using :meth:`.CollectionUploadForm.validate_config_file`,
+		and creates the :class:`.CollectionUploadJob` object.
+		"""
+
 		err = form.validate_config_file(self.request.user)
 		if err != "OK":
 			messages.error(self.request, "<strong>Definition file error!</strong> %s" % (err,))
@@ -151,6 +203,10 @@ class CollectionUploadView(LoginRequiredMixin, generic.FormView):
 			return HttpResponseRedirect(reverse('storage:collection_upload_2',kwargs={'pk':job.pk}))
 
 class CollectionDeleteView(LoginRequiredMixin, generic.DeleteView):
+	"""This class handles the deletion of the :class:`.Collection` object.
+	The collection object can be deleted by the managers and the owner of the collection.
+	"""
+
 	model = Collection
 	success_url='collection/list/'
 	context_object_name='object'
@@ -161,11 +217,9 @@ class CollectionDeleteView(LoginRequiredMixin, generic.DeleteView):
 		return super(CollectionDeleteView, self).dispatch(*args, **kwargs)
 
 class CollectionRequestView(LoginRequiredMixin, generic.FormView):
-	"""
-	This is the view generating the request page for a Collection.
-	It will only display the Projects in which the user is the Project Admin
+	"""This is the view generating the collction request page for the :class:`.Project`.
+	It will only display the projects in which the user has the admin :class:`.ProjectRole`.
 
-	TODO: Check for the permission only for the authentication
 	"""
 
 	template_name = "storage/collection_request.html"
@@ -186,6 +240,8 @@ class CollectionRequestView(LoginRequiredMixin, generic.FormView):
 		return context
 
 	def get_initial(self, *args, **kwargs):
+		"""Initialize the form with the projects query, as well as the collection in question.
+		"""
 		self.collection = get_object_or_404(Collection, pk=self.kwargs['pk'])
 		projects = Project.objects.all()
 		initial = {
@@ -200,25 +256,25 @@ class CollectionRequestView(LoginRequiredMixin, generic.FormView):
 		return initial
 
 	def get_form(self, form_class, *args, **kwargs):
+		"""Gets the form the request view.
+
+		FEATURE REQUEST:
+		Logic below should be in :meth:`self.get_initial` method.
+		For some reason, the initial data for 'project' does not work as expected.
+		Specifically, ModelChoiceField does not initialize with a QuerySet through the constructor.
+		"""
 		form = super(CollectionRequestView, self).get_form(form_class, *args, **kwargs)
 
-		##
-		# FIXME:
-		# Logic below should be in get_initial method.
-		# For some reason, the initial for 'projects' does not work as expected
-		# Specifically, ModelChoiceField is hard to initialize with a QuerySet through the constructor
-		##
 
 		project_pks = set(role.project.pk for role in self.request.user.projectrole_set.filter(name__in=self.REQUIRED_PROJECT_ROLES))
 		projects = Project.objects.filter(pk__in=project_pks)
 		form.fields['project'].queryset = projects
 		return form
 
-	def form_invalid(self, form):
-		print "Invalid form"
-		return super(CollectionRequestView, self).form_invalid(form)
-
 	def form_valid(self, form):
+		"""Create a :class:`.Message` and :class:`.CollectionRequest` objects
+		directed at the owner of the collection.
+		"""
 		print "Send email, add message"
 		collection = get_object_or_404(Collection, pk=form.cleaned_data['collection_pk'])
 		project = form.cleaned_data['project']

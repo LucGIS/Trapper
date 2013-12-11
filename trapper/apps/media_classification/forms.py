@@ -4,11 +4,15 @@ from django.forms.models import inlineformset_factory
 from trapper.apps.media_classification.models import Project, ProjectCollection, ProjectRole, FeatureSet
 
 class ProjectForm(forms.ModelForm):
+	"""Project ModelForm for the Update/Create views"""
+
 	class Meta:
 		model = Project
 		exclude = ['collections']
 
 class ProjectCollectionForm(forms.ModelForm):
+	"""ProjectCollection ModelForm for the Update/Create views"""
+
 	class Meta:
 		model = ProjectCollection
 
@@ -25,4 +29,7 @@ class FeatureSetForm(forms.ModelForm):
 		exclude = ['features',]
 
 ProjectCollectionFormset = inlineformset_factory(Project, ProjectCollection, extra=0, form=ProjectCollectionForm)
+"""Formset for the ProjectCollection model"""
+
 ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra = 1)
+"""Formset for the ProjectRole model"""

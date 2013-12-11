@@ -7,15 +7,21 @@ from django.views import generic
 from django.core.urlresolvers import reverse, reverse_lazy
 
 class UserProfileDetailView(generic.DetailView):
+	"""Displays the profile details about an arbitrary user."""
+
 	model = User
 	template_name = "accounts/user_detail.html"
 	context_object_name = 'u'
 
 class SessionUserProfileDetailView(UserProfileDetailView):
+	"""Displays the profile details about user stored in session."""
+
 	def get_object(self):
 		return self.request.user
 
 class UserProfileUpdateView(generic.UpdateView):
+	"""Update view for the user profile."""
+
 	model = User
 	template_name = "accounts/user_update.html"
 	context_object_name = 'u'

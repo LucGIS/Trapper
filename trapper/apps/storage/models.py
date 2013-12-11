@@ -1,3 +1,7 @@
+"""Module for storage application.
+
+"""
+
 from ffvideo import VideoStream
 import StringIO
 from PIL import Image, ImageOps
@@ -11,14 +15,24 @@ from django.core.urlresolvers import reverse
 
 from trapper.apps.geomap.models import Location
 
-
 class ResourceType(models.Model):
+	"""This model contains all possible types given Resource can take.
+	It is modelled this way instead of a choice field so more types of resource can be recognized in future.
+	Typical examples are "Video", "Image" and "Audio" types.
+	"""
+
 	name = models.CharField(max_length=255)
 
 	def __unicode__(self):
 		return unicode(self.name)
 
 class Resource(models.Model):
+	"""Model describing a single resource.
+	Resource is usually a video or an image.
+	In order to provide some robust playback features, it is possible to upload
+	up to two separate resource files (e.g. in both *.mp4* and *.webm* format for better browser compatibility).
+	"""
+
 	name = models.CharField(max_length=255)
 	file = models.FileField(upload_to='storage/resource/file/', null=True, blank=True)
 	extra_file = models.FileField(upload_to='storage/resource/file/', null=True, blank=True)
@@ -51,6 +65,8 @@ class Resource(models.Model):
 		return unicode(self.resource_type.name + ":" + self.name)
 
 	def get_absolute_url(self):
+		"""Get the absolute url for an instance of this model."""
+
 		return reverse('storage:resource_detail', kwargs={'pk':self.pk})
 
 	def _set_thumbnail(self, image):
@@ -61,12 +77,10 @@ class Resource(models.Model):
 		self.thumbnail = thumb_file
 
 	def update_metadata(self, commit=False):
-		"""
-		Updates the internal metadata about the resource:
+		"""Updates the internal metadata about the resource.
 
-		* mime_type - based on uploaded filetype
-		* resource_type - based on the mime_type
-		* thumbnail - generated from the file itself (correct mime_type is required)
+		:param commit: States whether to perform self.save() at the end of this method
+		:type commit: bool
 		"""
 
 		self.update_mimetype(commit=False)
@@ -77,8 +91,10 @@ class Resource(models.Model):
 			self.save()
 
 	def update_thumbnail(self, commit=False):
-		"""
-		Generates the thumbnail for video and image resources.
+		"""Generates the thumbnail for video and image resources
+
+		:param commit: States whether to perform self.save() at the end of this method
+		:type commit: bool
 		"""
 		if not self.mime_type:
 			self.update_mimetype()
@@ -97,8 +113,10 @@ class Resource(models.Model):
 			self.save()
 
 	def update_resource_type(self, commit=False):
-		"""
-		Sets resource_type based on mime_type
+		"""Sets resource_type based on mime_type.
+
+		:param commit: States whether to perform self.save() at the end of this method
+		:type commit: bool
 		"""
 
 		if not self.mime_type:
@@ -115,12 +133,22 @@ class Resource(models.Model):
 			self.save()
 
 	def update_mimetype(self, commit=False):
+		"""Sets the mime_type for the resource.
+		This is obtained by trying to *guess* the mime type based on the resource file.
+
+		:param commit: States whether to perform self.save() at the end of this method
+		:type commit: bool
+		"""
 		self.mime_type = guess_type(self.file.path)[0]
 
 		if commit:
 			self.save()
 
 class CollectionUploadJob(models.Model):
+	"""Job-like model for the collection upload requests.
+	A single CollectionUploadJob instance contains both the definition of the collections, as well as the archive file with the data.
+
+	"""
 	definition = models.FileField(upload_to='storage/collection/jobs/')
 	archive = models.FileField(upload_to='storage/collection/jobs/', null=True, blank=True)
 	date_added = models.DateTimeField(auto_now_add=True)
@@ -142,16 +170,33 @@ class CollectionUploadJob(models.Model):
 	error_message = models.TextField(max_length=255, null=True, blank=True)
 
 	def set_status(self, status, error_message=None):
+		"""Sets the status for the job.
+
+		:param status: status code
+		:type status: int
+		:param error_message: optional error message
+		:type error_message: str
+		"""
+
 		self.status=status
 		if error_message:
 			self.error_message=error_message
 		self.save()
 
 	def resolve_as_error(self, error_message):
+		"""Shortcut function for resolving given job with an error.
+
+		:param error_message: mandatory error_message
+		:type error_message: str
+		"""
+
 		self.date_resolved = datetime.datetime.now()
 		self.set_status(self.STATUS_RESOLVED_ERROR, error_message)
 
 	def resolve_as_ok(self):
+		"""Shortcut function for resolving given job with a success.
+		"""
+
 		self.date_resolved = datetime.datetime.now()
 		self.set_status(self.STATUS_RESOLVED_OK)
 
@@ -159,8 +204,10 @@ class CollectionUploadJob(models.Model):
 		return unicode("Added on: %s, Status: %s"%(self.date_added, self.get_status_display(),))
 
 class Collection(models.Model):
-	"""
-	Collection of resources sharing a common origin (e.g. ownership or a recording session).
+	"""Collection of resources sharing a common origin (e.g. ownership or a recording session).
+
+	At core, this model is just an aggregation of :class:`.Resource` objects.
+	Additionally, permissions to alter given collection are given only to the users belonging to *managers* or the *owner*.
 	"""
 
 	name = models.CharField(max_length=255)
@@ -173,4 +220,6 @@ class Collection(models.Model):
 		return unicode("%s | %s" % (self.name, self.owner.username))
 
 	def get_absolute_url(self):
+		"""Get the absolute url for an instance of this model."""
+
 		return reverse('storage:collection_detail', kwargs={'pk':self.pk})

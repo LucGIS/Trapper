@@ -7,6 +7,14 @@ from trapper.tools.batch_uploading import ResourceArchiveValidator, ResourceArch
 
 @shared_task
 def process_collection_upload(job_pk):
+	"""Performs a final validation and uploads the collection.
+
+	:param job_pk: Primary key of the job to process.
+	:type job_pk: int
+	:returns: A bar
+	:rtype: int
+	"""
+
 	job = CollectionUploadJob.objects.get(pk=job_pk)
 	job.set_status(CollectionUploadJob.STATUS_PENDING)
 
