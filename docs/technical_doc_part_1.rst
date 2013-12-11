@@ -35,4 +35,4 @@ Coding style
 *******************************
 
 * We aim to follow `PEP-8 <http://www.python.org/dev/peps/pep-0008/>`_ coding style guide, although at this stage of development it wasn't as carefully abiden.
-* Exception to the rule above is using tabs instead of four spaces for indentation, and allowing for a line lengths longer than 79 characters.
+* Exception to the rule above is using tabs instead of four spaces for indentation, and allowing for a line longer than 79 characters.

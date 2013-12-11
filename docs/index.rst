@@ -21,6 +21,7 @@ Documentation contents
    tutorials
    technical_doc_part_1
    technical_doc_part_2
+   authors
 
 Indices and tables
 ==================
