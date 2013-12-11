@@ -15,11 +15,12 @@ Documentation contents
 ===================================
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    installation
    tutorials
-   technical_doc
+   technical_doc_part_1
+   technical_doc_part_2
 
 Indices and tables
 ==================

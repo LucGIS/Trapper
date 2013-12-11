@@ -1,6 +1,6 @@
-**************************
+##############################################
 Installation guide
-**************************
+##############################################
 
 The project is developed using:
 
@@ -15,6 +15,7 @@ System requirements:
 * Geospatial libraries: GEOS and PROJ.4
 * PostGIS (preferably 2.0.x)
 
+******************************
 System requirements
 ******************************
 
@@ -39,6 +40,7 @@ Command below will install virtualenv, postgresql, geospatial libraries, PostGIS
     * `Installing geospatial libraries <https://docs.djangoproject.com/en/1.6/ref/contrib/gis/install/geolibs/>`_
     * `Installing PostGIS <https://docs.djangoproject.com/en/1.6/ref/contrib/gis/install/postgis/>`_
 
+*******************************
 Preparing PostgreSQL database
 *******************************
 
@@ -104,8 +106,9 @@ Snipplet above does the following:
 
     In order to run trapper's automated unit tests user might need some additional privileges for creating databases. In order to resolve that without assigning him superuser provileges, see `Obtaining sufficient privileges <https://docs.djangoproject.com/en/dev/ref/contrib/gis/testing/#obtaining-sufficient-privileges>`_ section of the Django documentation.
 
+************************************
 Preparing the project
-*********************
+************************************
 
 Next step is cloning the repository and installing python the requirements.
 
@@ -116,8 +119,9 @@ Next step is cloning the repository and installing python the requirements.
     user@home:~$ virtualenv env
     user@home:~$ ./env/bin/pip install -r requirements.txt
 
+************************************
 Running Trapper
-*******************
+************************************
 
 The project is now set up and ready to use.
 Initialize the database along with the dummy data and run the server:
@@ -133,6 +137,7 @@ Additionally, execute a celery worker in a separate shell:
 
     user@home:~$ ./run_celery.sh
 
+************************************
 Extra: Generating this documentation
 ************************************
 
