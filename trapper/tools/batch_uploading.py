@@ -178,10 +178,10 @@ class ResourceArchiveUploader(YAMLReader):
 	)
 
 	# Extesion which will be uploaded to the Resource.file field
-	FILE_EXTENSIONS = ('.mp4', '.jpg',)
+	FILE_EXTENSIONS = ('.webm', '.jpg',)
 
 	# Extesion which will be uploaded to the Resource.extra_file field
-	FILE_EXTRA_EXTENSIONS = ('.webm',)
+	FILE_EXTRA_EXTENSIONS = ('.mp4',)
 
 	EXTENSIONS = FILE_EXTENSIONS + FILE_EXTRA_EXTENSIONS
 
