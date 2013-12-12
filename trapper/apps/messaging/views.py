@@ -31,7 +31,6 @@ class MessageDetailView(generic.DetailView):
 class MessageCreateView(generic.CreateView):
 	form_class = MessageForm
 	template_name = 'messaging/message_create.html'
-	fields = ['subject','text','user_to']
 
 	@method_decorator(login_required)
 	def dispatch(self, *args, **kwargs):
@@ -40,6 +39,10 @@ class MessageCreateView(generic.CreateView):
 	def form_valid(self, form):
 		form.instance.user_from = self.request.user
 		return super(MessageCreateView, self).form_valid(form)
+
+	def form_invalid(self, form):
+		print "Invalid", form.errors
+		return super(MessageCreateView, self).form_invalid(form)
 
 class MessageListView(generic.ListView):
 	model = Message
@@ -54,10 +57,14 @@ class MessageListView(generic.ListView):
 		return Message.objects.filter(Q(user_from=user) | Q(user_to=user))
 
 class MessageInboxView(MessageListView):
+	template_name = "messaging/message_inbox.html"
+
 	def get_queryset(self):
 		return self.request.user.received_messages.all().order_by('-date_sent')
 
 class MessageOutboxView(MessageListView):
+	template_name = "messaging/message_outbox.html"
+
 	def get_queryset(self):
 		return self.request.user.sent_messages.all().order_by('-date_sent')
 

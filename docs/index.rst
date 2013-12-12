@@ -21,6 +21,8 @@ Documentation contents
    tutorials
    technical_doc_part_1
    technical_doc_part_2
+   troubleshooting
+   contribute
    authors
 
 Indices and tables

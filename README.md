@@ -1,6 +1,6 @@
 # Trapper
 
-Welcome to Tr@pper!
+Welcome to Trapper!
 
 The project is developed using:
 

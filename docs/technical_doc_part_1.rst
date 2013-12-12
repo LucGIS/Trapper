@@ -34,5 +34,48 @@ Core applications of Trapper are following:
 Coding style
 *******************************
 
+General rules
+===============================
+
 * We aim to follow `PEP-8 <http://www.python.org/dev/peps/pep-0008/>`_ coding style guide, although at this stage of development it wasn't as carefully abiden.
-* Exception to the rule above is using tabs instead of four spaces for indentation, and allowing for a line longer than 79 characters.
+* Exception to the rule above is using **tabs** instead of spaces for indentation, and allowing for a line longer than 79 characters.
+
+Strings: single vs double quotes
+================================
+
+Use double quotes:
+
+* When the string is a sentence, message or a word: ``"Four Torkshiremen."``, ``"Shoebox"``
+
+Use single quotes:
+
+* When the string is a regexp: ``r'spam/detail/(?P<pk>\d+)/$'``
+* When the string is an identifier, kwarg which is not a sentence or a dict key:
+
+.. code-block:: python
+
+    FRUIT_CHOICES = {
+        'A': "Apples",
+        'B': "Banana",
+    }
+
+    def set_color(color='red'):
+        """Sets the color."""
+
+Intentation in templates
+===========================
+
+* Python code in templates should be indented up to the current indentation level of the preceeding HTML tag
+* Each variable should be separated by one space from the parenthesis, e.g. ``{{ value }}`` and **not** ``{{value}}``
+
+.. code-block:: html
+
+    <table>
+    {% for row in table_rows %}
+        <tr>
+        {% for cell in row.cells %}
+            <td>{{ cell }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>

@@ -40,7 +40,7 @@
 			<td>{{ resource.mime_type }}</td></tr>
 	</table>
 	</div>
-	<div class="tab-pane fade" style="width:100%;" id="show_map">
+	<div class="tab-pane fade" style="width:1000px;" id="show_map">
 
 	{% if resource.location %}
 	{% include "geomap/location_display.html" with location=resource.location  %}

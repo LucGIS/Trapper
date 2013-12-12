@@ -85,7 +85,7 @@ def init():
 	fs1.features.add(f1, f2, f3)
 	
 	fs2 = FeatureSet.objects.create(name="SimpleMammalAudio", resource_type = rt2)
-	fs2.features.add(f4)
+	fs2.features.add(f1, f2, f4)
 	
 	fs3 = FeatureSet.objects.create(name="SimpleMammalImage", resource_type = rt3)
 	fs3.features.add(f1, f2, f3)

@@ -32,7 +32,8 @@ urlpatterns = patterns('',
 	url(r'classify/action/$', views.process_classify, name='classify_action'),
 
 	# Displays the details about given classification
-	url(r'classification/details/(?P<pk>\d+)/$', views.classification_details, name='classification_details'),
+	url(r'classification/detail/(?P<pk>\d+)/$', views.ClassificationDetailView.as_view(), name='classification_detail'),
+	url(r'classification/list/$', views.ClassificationListView.as_view(), name='classification_list'),
 
 	url(r'crowd/list/$', views.cs_resource_list, name='cs_resource_list'),
 )

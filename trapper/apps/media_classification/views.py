@@ -210,6 +210,7 @@ def project_update(request, pk):
 
 def cs_resource_list(request):
 	"""Displays the crowd-sourcing enabled resources list."""
+	# TODO: This view should be converted to a class-based one
 
 	projects = Project.objects.filter(cs_enabled=True)
 	data = []
@@ -244,7 +245,7 @@ def process_classify(request):
 
 	resource = Resource.objects.get(id=resource_id)
 	project = Project.objects.get(id=project_id)
-	resource_feature_set = project.resource_feature_sets.filter(resource_type=resource.resource_type)[0]
+	feature_set = project.feature_sets.filter(resource_type=resource.resource_type)[0]
 
 	answers = list(k.split('__') + [v,] for k,v in dict(request.POST).iteritems() if "__" in k)
 	answer_rows = {}
@@ -254,24 +255,30 @@ def process_classify(request):
 		answer_rows[n][k] = v
 	answer_rows = [ v for k,v in sorted(answer_rows.items(), key=lambda i : i[0])]
 
-	r = Classification(resource=resource, resource_feature_set=resource_feature_set, user=request.user)
-	r.save()
+	c = Classification(resource=resource, feature_set=feature_set, user=request.user, project=project)
+	c.save()
 
 	for answer_row in answer_rows:
-		rci = ClassificationRow(resource_classification=r)
-		rci.save()
+		row = ClassificationRow(classification=c)
+		row.save()
 		for k, v in answer_row.iteritems():
 			feature = Feature.objects.get(pk=k)
-			afs = FeatureAnswer(value=v[0], feature=feature, resource_classification_item=rci)
+			afs = FeatureAnswer(value=v[0], feature=feature, classification_row=row)
 			afs.save()
 
-	return redirect('trapper.apps.media_classification.classification_details', pk=r.pk)
+	return HttpResponseRedirect(reverse('media_classification:classification_detail',kwargs={'pk':c.pk}))
 
-def classification_details(request, pk):
-	c = Classification.objects.get(pk=pk)
+class ClassificationDetailView(generic.DetailView):
+	"""Detail view of the Classification object."""
 
-	context = {
-		'c': c,
-	}
+	model = Classification
+	template_name = 'media_classification/classification_detail.html'
 
-	return render(request, 'media_classification/classification_details.html', context)
+
+class ClassificationListView(generic.ListView):
+	"""List view of the Classification object."""
+
+	paginate_by = 10
+	model = Classification
+	context_object_name = 'classifications'
+	template_name = 'media_classification/classification_list.html'

@@ -1,0 +1,28 @@
+{# Renders a table for a single classification item #}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		Resource: {{ classification.resource.name }} <a href="{{ classification.resource.get_absolute_url }}"><span class="glyphicon glyphicon-search"></span></a>
+		, Taxonomist: {{ classification.user.username }}
+		, Project: {{ classification.project.name }}
+		, Feature Set: {{ classification.feature_set.name }}
+	</div>
+	<table class="table">
+		<thead>
+			<tr>
+			{# FIXME: This is an ugly way to pull the headers, use classification.feature_set.features.all and order them properly #}
+			{% for ans in classification.classificationrow_set.all.first.featureanswer_set.all %}
+				<th>{{ans.feature.name}}</th>
+			{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+		{% for row in classification.classificationrow_set.all %}
+			<tr>
+			{% for ans in row.featureanswer_set.all %}
+				<td>{{ans.feature.get_short_name}} = {{ans.get_display_name}}</td>
+			{% endfor %}
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>

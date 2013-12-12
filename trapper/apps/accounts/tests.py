@@ -30,20 +30,20 @@ class UserTestsViews(TestCase):
 	def test_index_anonymous(self):
 		response = self.client.get(reverse('index'))
 		self.assertEqual(response.status_code, 200)
-		self.assertContains(response, "Welcome to Tr@pper!")
+		self.assertContains(response, "Welcome to Trapper!")
 		self.anonymous_menu(response)
 
 	def test_index_logged_in(self):
 		self.client.login(username='user1', password='user1')
 		response = self.client.get(reverse('index'))
 		self.assertEqual(response.status_code, 200)
-		self.assertContains(response, "Welcome to Tr@pper!")
+		self.assertContains(response, "Welcome to Trapper!")
 		self.logged_in_menu(response)
 
 	def test_index_staff(self):
 		self.client.login(username='staff1', password='staff1')
 		response = self.client.get(reverse('index'))
 		self.assertEqual(response.status_code, 200)
-		self.assertContains(response, "Welcome to Tr@pper!")
+		self.assertContains(response, "Welcome to Trapper!")
 		self.logged_in_menu(response)
 		self.staff_menu(response)

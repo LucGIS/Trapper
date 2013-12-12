@@ -78,6 +78,66 @@ class FeatureSet(models.Model):
 	def get_absolute_url(self):
 		return reverse('media_classification:featureset_detail', kwargs={'pk':self.pk})
 
+
+class Project(models.Model):
+	"""Describes a single classification project existing withing the system
+	"""
+
+	name = models.CharField(max_length=255)
+
+	collections = models.ManyToManyField(Collection, through='ProjectCollection', blank=True, null=True)
+	"""Collections assigned to the project"""
+
+	feature_sets = models.ManyToManyField(FeatureSet, blank=True, null=True)
+	"""Feature sets definitions"""
+
+	date_created = models.DateTimeField(auto_now_add=True)
+
+	cs_enabled = models.BooleanField(default=True)
+	"""Is crowd-sourcing enabled for the project ?"""
+
+	def __unicode__(self):
+		return unicode(self.name)
+
+	def get_all_cs_resources(self):
+		"""Returns a list of crowd-sourcing enabled resources for given project."""
+
+		resources = []
+
+		if not self.cs_enabled:
+			return resources
+
+		for c in self.projectcollection_set.filter(cs_enabled=True):
+			new = [r for r in c.collection.resources.all()]
+			resources.extend(new)
+		return list(set(resources))
+
+	def determine_roles(self, user):
+		"""Returns a tuple of project roles for given user.
+
+		:param user: user for which the roles are determined
+		:type user: :py:class:`django.contrib.auth.models.User`
+		:return: list of role names of given user withing the project
+		:rtype: str
+		"""
+
+		return [r.name for r in self.projectrole_set.filter(user=user)]
+
+	def can_edit(self, user):
+		"""Determines whether given user can edit the project.
+
+		:param user: user for which the test is made
+		:type user: :py:class:`django.contrib.auth.models.User`
+		:return: True if user can edit the project, False otherwise
+		:rtype: bool
+		"""
+
+		return self.projectrole_set.filter(user=user, name__in=ProjectRole.ROLE_EDIT).count() > 0
+
+	def get_absolute_url(self):
+		return reverse('media_classification:project_detail', kwargs={'pk':self.pk})
+
+
 class Classification(models.Model):
 	"""Classification made by the Crowd-sourcing user.
 	
@@ -95,6 +155,7 @@ class Classification(models.Model):
 	resource = models.ForeignKey(Resource)
 	feature_set = models.ForeignKey(FeatureSet)
 	user = models.ForeignKey(User)
+	project = models.ForeignKey(Project)
 
 	def __unicode__(self):
 		return unicode("Id: %s | FeatureSet: %s | Resource: %s" % (self.id, self.feature_set, self.resource.name))
@@ -131,61 +192,15 @@ class FeatureAnswer(models.Model):
 	def __unicode__(self):
 		return "Feature: %s | Value: %s | ClassificationId: %s" % (self.feature.name, self.value, self.classification_row.classification.id);
 
+	def get_display_name(self):
+		"""Returns the name that is to be displayed on a website."""
 
-class Project(models.Model):
-	"""Describes a single classification project existing withing the system
-	"""
+		# If it's a numerical, return it
+		if self.feature.feature_type != Feature.TYPE_STR:
+			return unicode(self.value)
+		else:
+			return unicode(self.feature.featurescope_set.get(pk=int(self.value)).name)
 
-	name = models.CharField(max_length=255)
-
-	collections = models.ManyToManyField(Collection, through='ProjectCollection', blank=True, null=True)
-	"""Collections assigned to the project"""
-
-	feature_sets = models.ManyToManyField(FeatureSet, blank=True, null=True)
-	"""Feature sets definitions"""
-
-	date_created = models.DateTimeField(auto_now_add=True)
-
-	cs_enabled = models.BooleanField(default=True)
-	"""Is crowd-sourcing enabled for the project ?"""
-
-	def __unicode__(self):
-		return unicode(self.name)
-
-	def get_all_cs_resources(self):
-		"""Returns a list of crowd-sourcing enabled resources for given project."""
-
-		resources = []
-		#for c in self.collections.filter(projectcollection__active=True):
-		#	print c.name
-		#	new = [r.resource for r in ResourceExtra.objects.filter(cs_enabled=True, resource__in=c.resources.all())]
-		#	resources.extend(new)
-		return list(set(resources))
-
-	def determine_roles(self, user):
-		"""Returns a tuple of project roles for given user.
-
-		:param user: user for which the roles are determined
-		:type user: :py:class:`django.contrib.auth.models.User`
-		:return: list of role names of given user withing the project
-		:rtype: str
-		"""
-
-		return [r.name for r in self.projectrole_set.filter(user=user)]
-
-	def can_edit(self, user):
-		"""Determines whether given user can edit the project.
-
-		:param user: user for which the test is made
-		:type user: :py:class:`django.contrib.auth.models.User`
-		:return: True if user can edit the project, False otherwise
-		:rtype: bool
-		"""
-
-		return self.projectrole_set.filter(user=user, name__in=ProjectRole.ROLE_EDIT).count() > 0
-
-	def get_absolute_url(self):
-		return reverse('media_classification:project_detail', kwargs={'pk':self.pk})
 
 
 class Sequence(models.Model):

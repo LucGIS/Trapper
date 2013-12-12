@@ -1,0 +1,6 @@
+{% extends "messaging/base.html" %}
+{% load staticfiles %}
+{% block messaging_message_outbox %}class="active"{% endblock %}
+{% block content %}
+{% include "messaging/message_list.html" %}
+{% endblock content %}

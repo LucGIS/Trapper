@@ -32,7 +32,7 @@ Command below will install virtualenv, postgresql, geospatial libraries, PostGIS
 
     user@home:~$ sudo apt-get install python-virtualenv postgresql-9.1 binutils
     libproj-dev gdal-bin postgresql-9.1-postgis postgresql-server-dev-9.1
-    rabbitmq-server
+    rabbitmq-server libavcodec-dev libavformat-dev libswscale-dev libjpeg-dev
 
 .. note::
 
@@ -50,12 +50,48 @@ Preparing PostgreSQL database
 In this section we will prepare the database for handling the geospatial data, as well as setup some basic user privileges.
 Before we downloading Trapper perform the following actions in a console:
 
+Now we will create a new postgresql user named *trapper*.
+
+.. code-block:: none
+
+    user@home:~$ adduser trapper
+    (use unix defaults here)
+    user@home:~$ su - postgres
+    postgres@home:~$ psql
+    postgres=# CREATE USER trapper WITH PASSWORD 'trapper';
+    CREATE ROLE
+    postgres=# \q
+
+Snipplet above does the following:
+
+1. Creates a new unix user called *trapper*
+2. Switches to *postgres* user
+3. Runs *psql* command-line interface and connects to a *template1* database
+4. Creates the postgresql user *trapper*
+5. ``\q`` exists the psql
+
+.. seealso::
+
+    * `Adding postgresql user accounts <http://www.cyberciti.biz/faq/howto-add-postgresql-user-account/>`_
+
+.. note::
+
+    In production code you will most likely want to create a user with a more sophisticated password (don't forget to update the ``trapper/settings.py`` accordingly).
+
+.. note::
+
+    In order to run trapper's automated unit tests user might need some additional privileges for creating databases. In order to resolve that without assigning him superuser provileges, see `Obtaining sufficient privileges <https://docs.djangoproject.com/en/dev/ref/contrib/gis/testing/#obtaining-sufficient-privileges>`_ section of the Django documentation.
+
+Now we will create a database and set up the postgis extension on it:
+
 .. code-block:: none
 
     user@home:~$ su - postgres
     postgres@home:~$ psql
-    postgres=# CREATE DATABASE trapper_db;
+    postgres=# CREATE DATABASE trapper_db OWNER trapper;
     CREATE DATABASE
+    postgres=# GRANT ALL PRIVILEGES ON DATABASE trapper_db TO trapper;
+    GRANT
     postgres=# \c trapper_db
     You are now connected to database "trapper_db" as user "postgres"
     trapper_db=# CREATE EXTENSION postgis;
@@ -66,7 +102,7 @@ Snipplet above does the following:
 
 1. Switches to a *postgres* user
 2. Runs *psql* command-line interface and connects to a *template1* database
-3. Creates the database named *trapper_db*
+3. Creates the database named *trapper_db* and makes *trapper* its owner
 4. Connects to the newly created database
 5. installs the postgis extension (required for the geospatial features of Trapper)
 6. ``\q`` exists the psql
@@ -81,42 +117,6 @@ Snipplet above does the following:
     Optionally, you can add the package for PostGIS 2.1 for *Debian Wheezy* yourself:
 
     * `PostGIS 2.1 on Debian Wheezy <http://blog.light42.com/wordpress/?p=1540>`_
-
-Now we will create a postgresql user named *trapper* and grant him the database privileges:
-
-.. code-block:: none
-
-    user@home:~$ adduser trapper
-    (use unix defaults here)
-    user@home:~$ su - postgres
-    postgres@home:~$ psql
-    postgres=# CREATE USER trapper WITH PASSWORD 'trapper';
-    CREATE ROLE
-    postgres=# GRANT ALL PRIVILEGES ON DATABASE trapper_db TO trapper;
-    GRANT
-    postgres=# \q
-
-
-Snipplet above does the following:
-
-1. Creates a new unix user called *trapper*
-2. Switches to *postgres* user
-3. Runs *psql* command-line interface and connects to a *template1* database
-4. Creates the postgresql user *trapper*
-5. Grants him all the privileges to the previously created *trapper_db* database
-6. ``\q`` exists the psql
-
-.. seealso::
-
-    * `Adding postgresql user accounts <http://www.cyberciti.biz/faq/howto-add-postgresql-user-account/>`_
-
-.. note::
-
-    In production code you will most likely want to create a user with a more sophisticated password.
-
-.. note::
-
-    In order to run trapper's automated unit tests user might need some additional privileges for creating databases. In order to resolve that without assigning him superuser provileges, see `Obtaining sufficient privileges <https://docs.djangoproject.com/en/dev/ref/contrib/gis/testing/#obtaining-sufficient-privileges>`_ section of the Django documentation.
 
 ************************************
 Preparing the project

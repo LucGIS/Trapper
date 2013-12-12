@@ -1,17 +1,20 @@
 {% extends "messaging/base.html" %}
 {% block content %}
 
-<table border=1>
-<tr><td>Subject:</td><td>{{ message.subject }}</td></tr>
-<tr><td>Body:</td><td><pre>{{ message.text }}</pre></td></tr>
-</table>
-
-<table border=1>
-<tr>
-<td>Date Sent: {{ message.date_sent }}</td>
-<td>Sender: {{ message.user_from.username }}</td>
-<td>Recepient: {{ message.user_to.username }}</td>
-</tr>
-</table>
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		{{ message.subject }}
+	</div>
+	<div class="panel-body">
+		<p>
+		{{ message.text | safe}}
+		</p>
+	</div>
+	<ul class="list-group">
+		<li class="list-group-item">Date Sent: {{ message.date_sent }}</li>
+		<li class="list-group-item">Sender: {{ message.user_from.username }}</li>
+		<li class="list-group-item">Recepient: {{ message.user_to.username }}</li>
+	</ul>
+</div>
 
 {% endblock content %}

@@ -13,16 +13,18 @@
 					<th>Lat</th>
 					<th>Lon</th>
 					<th>Owner</th>
+					<th>Is Public ?</th>
 					<th>See on map</th>
 				</tr>
 			</thead>
 			<tbody>
 			{% for location in locations %}
 			<tr>
-				<td>{{location.location_id}}</td>
-				<td>{{location.coordinates.x}}</td>
-				<td>{{location.coordinates.y}}</td>
-				<td>{{location.owner.username}}</td>
+				<td>{{ location.location_id }}</td>
+				<td>{{ location.coordinates.x }}</td>
+				<td>{{ location.coordinates.y }}</td>
+				<td>{{ location.owner.username }}</td>
+				<td>{{ location.is_public }}</td>
 				<td><a href="{% url "geomap:location_detail" location.pk %}"><span class="glyphicon glyphicon-search"></span></a></td>
 			</tr>
 			{% endfor %}
