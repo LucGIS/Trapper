@@ -1,5 +1,8 @@
 {% extends "storage/base.html" %}
 {% load staticfiles %}
+{% block header%}
+{{form.media}}
+{% endblock %}
 {% block content %}
 You are about to ask
 <b>{{collection.owner.username}}</b>

@@ -1,4 +1,5 @@
 from ajax_select import make_ajax_field
+from tinymce.widgets import TinyMCE
 
 from django import forms
 
@@ -11,7 +12,7 @@ from trapper.tools.batch_uploading import ConfigFileValidator
 class CollectionRequestForm(forms.Form):
 	"""Defines a form for creating a collection request for the :class:`Project` object."""
 
-	text = forms.CharField(widget=forms.Textarea)
+	text = forms.CharField(widget=TinyMCE(attrs={'cols':60, 'rows':15}))
 	project = forms.ModelChoiceField(queryset=Project.objects.none())
 	collection_pk = forms.IntegerField(widget=forms.HiddenInput())
 

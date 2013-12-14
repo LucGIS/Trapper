@@ -94,6 +94,6 @@ class ResolveClassificaionResourceRequestView(generic.DetailView):
 		self.object = self.get_object()
 		if 'resolve_yes' in self.request.POST:
 			self.object.resolve_yes()
-		elif 'resolve_n' in self.request.POST:
+		elif 'resolve_no' in self.request.POST:
 			self.object.resolve_no()
 		return redirect(reverse('messaging:notification_list'))

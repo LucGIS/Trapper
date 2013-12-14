@@ -227,7 +227,7 @@ class CollectionRequestView(LoginRequiredMixin, generic.FormView):
 	success_url = reverse_lazy('storage:collection_list')
 
 	# Template of the request message
-	TEXT_TEMPLATE = "Dear %s,\nI would like to ask you for the permission to use the %s collection.\n\nBest regards,\n%s"
+	TEXT_TEMPLATE = "Dear %s,<br/>I would like to ask you for the permission to use the %s collection.<br/><br/>Best regards,<br/>%s"
 
 	# Only Project Admins and Experts can request for the resources
 	REQUIRED_PROJECT_ROLES = [ProjectRole.ROLE_PROJECT_ADMIN, ProjectRole.ROLE_EXPERT]
