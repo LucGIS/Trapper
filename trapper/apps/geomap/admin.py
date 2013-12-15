@@ -1,5 +1,6 @@
 ############################################################################
-#   Copyright (c) 2013  Trapper development team                           #
+#   Copyright (c) 2013  IBS PAN Bialowieza                                 #
+#   Copyright (c) 2013  Bialystok University of Technology                 #
 #                                                                          #
 #   This file is a part of Trapper.                                        #
 #                                                                          #
