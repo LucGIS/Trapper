@@ -31,10 +31,31 @@ Command below will install virtualenv, postgresql, geospatial libraries, PostGIS
 .. code-block:: none
 
     user@home:~$ sudo apt-get install python-virtualenv postgresql-9.1 binutils
-    libproj-dev gdal-bin postgresql-9.1-postgis postgresql-server-dev-9.1
-    rabbitmq-server libavcodec-dev libavformat-dev libswscale-dev libjpeg-dev
+    libproj-dev gdal-bin postgresql-server-dev-9.1
+    rabbitmq-server libavcodec-dev libavformat-dev libswscale-dev libjpeg-dev python-dev
 
-.. note::
+Before installing postgis, check which version is available at your system:
+
+.. code-block:: none
+
+    user@home:~$ sudo apt-get install -s postgresql-9.1-postgis | grep postgis
+
+It may be the case that your version is 1.5.x or lower.
+
+You can either install the available version same as before:
+
+.. code-block:: none
+
+    user@home:~$ sudo apt-get install postgresql-9.1-postgis
+
+Or you could try to find the way to obtain PostGIS 2.x for your system:
+
+.. seealso::
+
+    * `Adding UbuntuGIS (contains PostGIS 2.0) <http://trac.osgeo.org/ubuntugis/wiki/UbuntuGISRepository>`_
+    * `PostGIS 2.1 on Debian Wheezy <http://blog.light42.com/wordpress/?p=1540>`_
+
+.. note:
 
     It is recommended to use PostGIS 2.x as it simplifies the setup process.
 
@@ -114,9 +135,6 @@ Snipplet above does the following:
 
     * `Setting up PostGIS 1.x (Django documentation) <https://docs.djangoproject.com/en/1.6/ref/contrib/gis/install/postgis/#creating-a-spatial-database-template-for-earlier-versions>`_
 
-    Optionally, you can add the package for PostGIS 2.1 for *Debian Wheezy* yourself:
-
-    * `PostGIS 2.1 on Debian Wheezy <http://blog.light42.com/wordpress/?p=1540>`_
 
 ************************************
 Preparing the project
@@ -126,7 +144,7 @@ Next step is cloning the repository and installing python the requirements.
 
 .. code-block:: none
 
-    user@home:~$ git clone http://github.com/kiryx/Trapper.git
+    user@home:~$ git clone https://github.com/TrapperTeam/Trapper
     user@home:~$ cd Trapper/
     user@home:~$ virtualenv env
     user@home:~$ ./env/bin/pip install -r requirements.txt
