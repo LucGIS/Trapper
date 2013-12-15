@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block master_content %}
+
+
 <div class="jumbotron">
 
 	<h2>Welcome to Trapper!</h2>
@@ -27,4 +30,5 @@
 	-Trapper development team.
 	</p>
 </div>
+	<div style="padding:20px; text-align:center;"><img src="{% static "img/IG_small.png" %}" /><img src="{% static "img/TEWI_small.png" %}" /><img src="{% static "img/EFRR_small.png" %}" /></div>
 {% endblock master_content %}
