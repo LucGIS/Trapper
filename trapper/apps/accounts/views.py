@@ -19,13 +19,25 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.              #
 ############################################################################
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
-from django.shortcuts import redirect, render
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import redirect
 from django.views import generic
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse_lazy
+
+class UserRegistrationView(generic.FormView):
+	"""Displays the user registration form and creates a new user."""
+
+	form_class = UserCreationForm
+	template_name = 'registration/register.html'
+	success_url = reverse_lazy('accounts:login')
+
+	def form_valid(self, form):
+		form.save()
+		messages.success(self.request, "<strong>Account Created!</strong>Please login using your username and password.")
+		return super(UserRegistrationView, self).form_valid(form)
 
 class UserProfileDetailView(generic.DetailView):
 	"""Displays the profile details about an arbitrary user."""
