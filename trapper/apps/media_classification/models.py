@@ -21,7 +21,7 @@
 ############################################################################
 
 from django.db import models
-from trapper.apps.storage.models import Resource, ResourceType, Collection
+from trapper.apps.storage.models import Resource, Collection
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
@@ -91,11 +91,11 @@ class FeatureSet(models.Model):
 	"""
 
 	name = models.CharField(max_length=255)
-	resource_type = models.ForeignKey(ResourceType)
+	resource_type = models.CharField(choices=Resource.TYPE_CHOICES, max_length=1)
 	features = models.ManyToManyField(Feature)
 	
 	def __unicode__(self):
-		return unicode("Name: %s | Type: %s" %(self.name, self.resource_type.name))
+		return unicode("Name: %s | Type: %s" %(self.name, self.get_resource_type_display()))
 
 	def get_absolute_url(self):
 		return reverse('media_classification:featureset_detail', kwargs={'pk':self.pk})

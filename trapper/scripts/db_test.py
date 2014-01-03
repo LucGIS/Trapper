@@ -6,7 +6,7 @@
 
 from django.contrib.auth.models import User, Group
 from django.contrib.gis.geos import Point
-from trapper.apps.storage.models import ResourceType, Resource, Collection
+from trapper.apps.storage.models import Resource, Collection
 from trapper.apps.media_classification.models import Feature, FeatureScope, FeatureSet, Project, ProjectRole, ProjectCollection
 from trapper.apps.geomap.models import Location
 
@@ -39,11 +39,6 @@ f4 = Feature.objects.create(name="ApproxCount", short_name="Count", feature_type
 fs3_1 = FeatureScope.objects.create(name="1", feature = f4)
 fs3_2 = FeatureScope.objects.create(name="2-5", feature = f4)
 fs3_3 = FeatureScope.objects.create(name="6+", feature = f4)
-
-# ResourceType, Resource
-rt1, created = ResourceType.objects.get_or_create(name="Video")
-rt2, created = ResourceType.objects.get_or_create(name="Audio")
-rt3, created = ResourceType.objects.get_or_create(name="Image")
 
 r_data = (
 	("video_mp4",  u1, u2, 'video_1.mp4',),
@@ -80,13 +75,13 @@ c3 = Collection.objects.create(name="Image2013", owner=u4)
 c3.resources.add(r6)
 
 # FeatureSet
-fs1 = FeatureSet.objects.create(name="SimpleMammalVideo", resource_type = rt1)
+fs1 = FeatureSet.objects.create(name="SimpleMammalVideo", resource_type=Resource.TYPE_VIDEO)
 fs1.features.add(f1, f2, f3)
 
-fs2 = FeatureSet.objects.create(name="SimpleMammalAudio", resource_type = rt2)
+fs2 = FeatureSet.objects.create(name="SimpleMammalAudio", resource_type=Resource.TYPE_AUDIO)
 fs2.features.add(f1, f2, f4)
 
-fs3 = FeatureSet.objects.create(name="SimpleMammalImage", resource_type = rt3)
+fs3 = FeatureSet.objects.create(name="SimpleMammalImage", resource_type=Resource.TYPE_IMAGE)
 fs3.features.add(f1, f2, f3)
 
 # Project
@@ -100,6 +95,6 @@ pr0 = ProjectRole.objects.create(name=ProjectRole.ROLE_PROJECT_ADMIN, user=u0, p
 pr2 = ProjectRole.objects.create(name=ProjectRole.ROLE_EXPERT, user=u4, project=p1)
 
 ## Locations
-loc1 = Location.objects.create(coordinates=Point(23.8607, 52.7015))
-loc2 = Location.objects.create(coordinates=Point(23.1510, 53.1367))
-loc3 = Location.objects.create(coordinates=Point(22.3027, 54.3076))
+loc1 = Location.objects.create(coordinates=Point(23.8607, 52.7015), owner=u1, location_id="ID_01")
+loc2 = Location.objects.create(coordinates=Point(23.1510, 53.1367), owner=u2, location_id="ID_02")
+loc3 = Location.objects.create(coordinates=Point(22.3027, 54.3076), owner=u1, location_id="ID_03")

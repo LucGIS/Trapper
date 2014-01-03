@@ -33,7 +33,7 @@ class ResourceLookup(LookupChannel):
 			return True
 
 	def get_query(self,q,request):
-		return Resource.objects.filter(Q(name__icontains=q) | Q(resource_type__name__icontains=q)).order_by('name')
+		return Resource.objects.filter(Q(name__icontains=q) | Q(resource_type__icontains=q)).order_by('name')
 
 	def get_result(self, obj):
 		u""" result is the simple text that is the completion of what the person typed """
@@ -45,6 +45,6 @@ class ResourceLookup(LookupChannel):
 
 	def format_item_display(self, obj):
 		""" (HTML) formatted item for displaying item in the selected deck area """
-		return u"%s|%s" % (escape(obj.name), escape(obj.resource_type.name))
+		return u"%s|%s" % (escape(obj.name), escape(obj.get_resource_type_display()))
 
 #Note that raw strings should always be escaped with the escape() function

@@ -21,14 +21,14 @@
 			</td>
 			<td><h4>{{ resource.name }}</h4></td>
 			<td>
-			{% if resource.resource_type.name == "Audio" %}
+			{% if resource.resource_type == "A" %}
 				<span class="glyphicon glyphicon-music"></span>Audio
-			{% elif resource.resource_type.name == "Video" %}
+			{% elif resource.resource_type == "V" %}
 				<span class="glyphicon glyphicon-film"></span>Video
-			{% elif resource.resource_type.name == "Image" %}
+			{% elif resource.resource_type == "I" %}
 				<span class="glyphicon glyphicon-picture"></span>Image
 			{% else %}
-				{{resource.resource_type.name}}
+				{{resource.resource_type}}
 			{% endif %}
 			<td>{{ resource.owner.username }}</td>
 			<td><a title="Detail resource" href="{% url "storage:resource_detail" resource.id %}"><span class="glyphicon glyphicon-search"></a></td>

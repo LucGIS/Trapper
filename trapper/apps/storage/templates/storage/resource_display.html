@@ -1,16 +1,16 @@
-{% if resource.resource_type.name == "Video" %}
+{% if resource.resource_type == "V" %}
 <video id="example_video_1" class="video-js vjs-default-skin"
 	controls preload="auto" width="640" height="370"
 	data-setup='{"example_option":true}'
 	<source src="{{resource.file.url}}" type="{{resource.mime_type}}" />
 </video>
 
-{% elif resource.resource_type.name == "Audio" %}
+{% elif resource.resource_type == "A" %}
 <audio controls>
 	<source src="{{resource.file.url}}" type="{{resource.mime_type}}" />
 </audio>
-{% elif resource.resource_type.name == "Image" %}
-<img width=100% src="{{resource.file.url}}" title="{{resource_type.name}}" />
+{% elif resource.resource_type == "I" %}
+<img width=100% src="{{resource.file.url}}" title="{{resource_type}}" />
 {% else %}
 Unrecognized resource type
 {% endif %}

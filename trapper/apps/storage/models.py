@@ -37,17 +37,6 @@ from django.core.urlresolvers import reverse
 
 from trapper.apps.geomap.models import Location
 
-class ResourceType(models.Model):
-	"""This model contains all possible types given Resource can take.
-	It is modelled this way instead of a choice field so more types of resource can be recognized in future.
-	Typical examples are "Video", "Image" and "Audio" types.
-	"""
-
-	name = models.CharField(max_length=255)
-
-	def __unicode__(self):
-		return unicode(self.name)
-
 class Resource(models.Model):
 	"""Model describing a single resource.
 	Resource is usually a video or an image.
@@ -71,10 +60,21 @@ class Resource(models.Model):
 		('video/ogg', 'video/ogg'),
 		('image/jpeg', 'image/jpeg'),
 	)
+
+	TYPE_VIDEO = "V"
+	TYPE_IMAGE = "I"
+	TYPE_AUDIO = "A"
+
+	TYPE_CHOICES = (
+		(TYPE_VIDEO, 'Video'),
+		(TYPE_IMAGE, 'Image'),
+		(TYPE_AUDIO, 'Audio'),
+	)
+
 	mime_type = models.CharField(choices=MIME_CHOICES, max_length=255, null=True, blank=True)
 	extra_mime_type = models.CharField(choices=MIME_CHOICES, max_length=255, null=True, blank=True)
 	thumbnail = models.ImageField(upload_to='storage/resource/thumbnail/', null=True, blank=True)
-	resource_type = models.ForeignKey(ResourceType, null=True, blank=True)
+	resource_type = models.CharField(choices=TYPE_CHOICES, max_length=1, null=True, blank=True)
 	date_uploaded = models.DateTimeField(auto_now_add=True)
 	location = models.ForeignKey(Location, null=True, blank=True)
 
@@ -84,7 +84,7 @@ class Resource(models.Model):
 	managers = models.ManyToManyField(User, null=True, blank=True, related_name='managed_resources')
 
 	def __unicode__(self):
-		return unicode(self.resource_type.name + ":" + self.name)
+		return unicode(self.get_resource_type_display() + ":" + self.name)
 
 	def get_absolute_url(self):
 		"""Get the absolute url for an instance of this model."""
@@ -154,11 +154,11 @@ class Resource(models.Model):
 			self.set_mimetype()
 
 		if self.mime_type.startswith('audio'):
-			self.resource_type = ResourceType.objects.get(name="Audio")
+			self.resource_type = Resource.TYPE_AUDIO
 		elif self.mime_type.startswith('video'):
-			self.resource_type = ResourceType.objects.get(name="Video")
+			self.resource_type = Resource.TYPE_VIDEO
 		elif self.mime_type.startswith('image'):
-			self.resource_type = ResourceType.objects.get(name="Image")
+			self.resource_type = Resource.TYPE_IMAGE
 
 		if commit:
 			self.save()

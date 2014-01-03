@@ -23,7 +23,7 @@
 from ajax_select import make_ajax_form
 
 from django.contrib import admin
-from trapper.apps.storage.models import ResourceType, Resource, Collection, CollectionUploadJob
+from trapper.apps.storage.models import Resource, Collection, CollectionUploadJob
 from trapper.apps.storage.tasks import process_collection_upload
 
 class ResourceInline(admin.StackedInline):
@@ -45,7 +45,6 @@ class CollectionUploadJobAdmin(admin.ModelAdmin):
 	model = CollectionUploadJob
 	actions=[run_collection_upload_task,]
 
-admin.site.register(ResourceType)
 admin.site.register(Resource)
 admin.site.register(CollectionUploadJob, CollectionUploadJobAdmin)
 admin.site.register(Collection, CollectionAdmin)
