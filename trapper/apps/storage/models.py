@@ -98,6 +98,15 @@ class Resource(models.Model):
 		thumb_file = InMemoryUploadedFile(thumb_io, None, self.name, 'image/jpeg', thumb_io.len, None)
 		self.thumbnail = thumb_file
 
+	def can_update_or_delete(self, user):
+		return user in (self.owner, self.uploader) or user in self.managers.all()
+
+	def can_delete(self, user):
+		return self.can_update_or_delete(user)
+
+	def can_update(self, user):
+		return self.can_update_or_delete(user)
+
 	def update_metadata(self, commit=False):
 		"""Updates the internal metadata about the resource.
 
@@ -245,3 +254,12 @@ class Collection(models.Model):
 		"""Get the absolute url for an instance of this model."""
 
 		return reverse('storage:collection_detail', kwargs={'pk':self.pk})
+
+	def can_update_or_delete(self, user):
+		return user == self.owner or user in self.managers.all()
+
+	def can_update(self, user):
+		return self.can_update_or_delete(user)
+
+	def can_delete(self, user):
+		return self.can_update_or_delete(user)

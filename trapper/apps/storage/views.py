@@ -36,7 +36,7 @@ from trapper.apps.storage.tasks import process_collection_upload
 from trapper.apps.storage.forms import ResourceForm, CollectionForm, CollectionRequestForm, CollectionUploadForm, CollectionUploadFormPart2
 from trapper.apps.media_classification.models import Project, ProjectRole
 from trapper.apps.messaging.models import Message, CollectionRequest
-from trapper.apps.common.decorators import object_access_required
+from trapper.apps.common.decorators import object_access_required, ObjectAccessRequiredMixin
 
 from trapper.apps.storage.filters import ResourceFilter
 
@@ -86,38 +86,35 @@ class UserResourceListView(LoginRequiredMixin, ResourceListView):
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Resource.objects.filter(owner=user)
 
-def can_update_or_delete_resource(user, resource):
-	return user in (resource.owner, resource.uploader) or user in resource.managers.all()
-
-class ResourceDeleteView(LoginRequiredMixin, generic.DeleteView):
+class ResourceDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.DeleteView):
 	"""Delete view of the resource object.
 	Given resource can be removed when user is the owner or the uploader of the resource.
 	"""
 
 	model=Resource
+        access_func = Resource.can_delete
 	success_url='resource/list/'
 	context_object_name='object'
 	template_name='storage/object_confirm_delete.html'
 
-	@method_decorator(object_access_required(Resource, can_update_or_delete_resource))
 	def dispatch(self, *args, **kwargs):
 		return super(ResourceDeleteView, self).dispatch(*args, **kwargs)
 
-class ResourceUpdateView(LoginRequiredMixin, generic.CreateView):
+class ResourceUpdateView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.CreateView):
 	"""Update view of the resource object.
-	Given resource can be updated when user passes :func:`.can_update_or_delete_resource` function.
+	Given resource can be updated when user passes :func:`Resource.can_update` check.
 	"""
 
 	model = Resource
+        access_func = Resource.can_update
 	form_class= ResourceForm
 
-	@method_decorator(object_access_required(Resource, can_update_or_delete_resource))
 	def dispatch(self, *args, **kwargs):
 		return super(ResourceUpdateView, self).dispatch(*args, **kwargs)
 
 class ResourceCreateView(LoginRequiredMixin, generic.CreateView):
 	"""Update view of the resource object.
-	Given resource can be updated when user passes :func:`.can_update_or_delete_resource` function.
+	Given resource can be updated when user passes an access function.
 	"""
 
 	model = Resource
@@ -150,19 +147,16 @@ class CollectionCreateView(LoginRequiredMixin, generic.CreateView):
 	model = Collection
 	form_class= CollectionForm
 
-def can_update_or_delete_collection(user, collection):
-	# Method used as a permission test for the decorator
-	return user == collection.owner or user in collection.managers.all()
-
-class CollectionUpdateView(LoginRequiredMixin, generic.UpdateView):
+class CollectionUpdateView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.UpdateView):
 	"""Collection's update view.
 	Handles the update of the Collection object.
 	"""
 
 	model = Collection
+        access_func = Collection.can_update
 	form_class= CollectionForm
+        access_func = Collection.can_update
 
-	@method_decorator(object_access_required(Collection, can_update_or_delete_collection))
 	def dispatch(self, *args, **kwargs):
 		return super(CollectionUpdateView, self).dispatch(*args, **kwargs)
 
@@ -224,17 +218,18 @@ class CollectionUploadView(LoginRequiredMixin, generic.FormView):
 			job = CollectionUploadJob.objects.create(definition=form.cleaned_data['definition_file'], owner=self.request.user)
 			return HttpResponseRedirect(reverse('storage:collection_upload_2',kwargs={'pk':job.pk}))
 
-class CollectionDeleteView(LoginRequiredMixin, generic.DeleteView):
+class CollectionDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.DeleteView):
 	"""This class handles the deletion of the :class:`.Collection` object.
 	The collection object can be deleted by the managers and the owner of the collection.
 	"""
 
 	model = Collection
+        access_func = Collection.can_update
 	success_url='collection/list/'
 	context_object_name='object'
 	template_name='storage/object_confirm_delete.html'
+        access_func = Collection.can_update
 
-	@method_decorator(object_access_required(Collection, can_update_or_delete_collection))
 	def dispatch(self, *args, **kwargs):
 		return super(CollectionDeleteView, self).dispatch(*args, **kwargs)
 

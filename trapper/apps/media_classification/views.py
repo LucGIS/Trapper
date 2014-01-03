@@ -120,22 +120,17 @@ class ProjectListView(generic.ListView):
 			items.append((p, len(roles) > 0, ProjectRole.ROLE_PROJECT_ADMIN in roles))
 		return items
 
-def can_detail_project(self, user, project):
-	return ProjectRole.objects.filter(user=user, project=project).count() > 0
-
 class ProjectDetailView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.DetailView):
 	"""Detail view for the Project model"""
 
 	model = Project
-        access_func = can_detail_project
+        access_func = Project.can_detail
 
 	#@method_decorator(object_access_required(Project, can_detail_project))
 	def dispatch(self, *args, **kwargs):
 		return super(ProjectDetailView, self).dispatch(*args, **kwargs)
 
 
-def can_update_project(user, project):
-	return ProjectRole.objects.filter(user=user, project=project, name=ProjectRole.ROLE_PROJECT_ADMIN).count() > 0
 
 class ProjectRoleInline(InlineFormSet):
 	"""Utility-class: ProjectRoles displayed as a InlineFormset"""

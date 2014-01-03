@@ -47,6 +47,8 @@ def object_access_required(modelname, access_func):
 class ObjectAccessRequiredMixin(AccessMixin):
 	"""
 	Checks whether request.user passes the test for the object he is trying to access (view/edit/delete).
+
+	access_func must take exactly two parameters: the object and a user
 	"""
 	
 	access_func = None
@@ -55,7 +57,6 @@ class ObjectAccessRequiredMixin(AccessMixin):
 		return self.access_func
 
 	def get_accessed_object(self):
-		"""Return the self.object by default. """
 		return self.get_object()
 
 	def dispatch(self, request, *args, **kwargs):
@@ -66,7 +67,7 @@ class ObjectAccessRequiredMixin(AccessMixin):
 				"Define %(cls)s.access_func or override "
 				"%(cls)s.get_access_func()." % {"cls": self.__class__.__name__})
 
-		if not access_func(request.user, self.get_accessed_object()):
+		if not self.get_access_func()(self.get_accessed_object(), request.user):
 			raise PermissionDenied
 
 		return super(ObjectAccessRequiredMixin, self).dispatch(

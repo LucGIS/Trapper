@@ -145,8 +145,8 @@ class Project(models.Model):
 
 		return [r.name for r in self.projectrole_set.filter(user=user)]
 
-	def can_edit(self, user):
-		"""Determines whether given user can edit the project.
+	def can_update(self, user):
+		"""Determines whether given user can update the project.
 
 		:param user: user for which the test is made
 		:type user: :py:class:`django.contrib.auth.models.User`
@@ -155,6 +155,17 @@ class Project(models.Model):
 		"""
 
 		return self.projectrole_set.filter(user=user, name__in=ProjectRole.ROLE_EDIT).count() > 0
+
+	def can_detail(self, user):
+		"""Determines whether given user can see the details of a project.
+
+		:param user: user for which the check is made
+		:type user: :py:class:`django.contrib.auth.models.User`
+		:return: True if user can see the details of the project, False otherwise
+		:rtype: bool
+		"""
+
+		return self.projectrole_set.filter(user=user).count() > 0
 
 	def get_absolute_url(self):
 		return reverse('media_classification:project_detail', kwargs={'pk':self.pk})
