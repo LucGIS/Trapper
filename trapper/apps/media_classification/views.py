@@ -34,7 +34,7 @@ from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesV
 from trapper.apps.media_classification.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet
 from trapper.apps.storage.models import Resource
 from trapper.apps.media_classification.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset, FeatureSetForm
-from trapper.apps.common.decorators import object_access_required
+from trapper.apps.common.decorators import object_access_required, ObjectAccessRequiredMixin
 
 
 
@@ -120,16 +120,16 @@ class ProjectListView(generic.ListView):
 			items.append((p, len(roles) > 0, ProjectRole.ROLE_PROJECT_ADMIN in roles))
 		return items
 
-def can_detail_project(user, project):
+def can_detail_project(self, user, project):
 	return ProjectRole.objects.filter(user=user, project=project).count() > 0
 
-
-class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
+class ProjectDetailView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.DetailView):
 	"""Detail view for the Project model"""
 
 	model = Project
+        access_func = can_detail_project
 
-	@method_decorator(object_access_required(Project, can_detail_project))
+	#@method_decorator(object_access_required(Project, can_detail_project))
 	def dispatch(self, *args, **kwargs):
 		return super(ProjectDetailView, self).dispatch(*args, **kwargs)
 

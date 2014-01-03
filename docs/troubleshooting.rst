@@ -64,3 +64,11 @@ Restart the postgresql server as root:
 .. code-block:: none
 
     sudo /etc/init.d/postgresql restart
+
+
+******************************************************
+ERROR: could not open extension control file "/usr/share/postgresql/9.1/extension/postgis.control"
+******************************************************
+
+You might have encountered this error when you tried to create the postgis extension for the database.
+Most likely you have postgis in version 1.5 which requires a manual setup of the postgresql extension (see installation guide)

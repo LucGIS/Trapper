@@ -31,6 +31,7 @@ ADMINS = (
 MANAGERS = ADMINS
 import os
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+POSTGIS_VERSION = (2,1,0)
 
 DATABASES = {
 	'default': {
