@@ -178,18 +178,18 @@ class Resource(models.Model):
 class CollectionUploadJob(models.Model):
 	"""Job-like model for the collection upload requests.
 	A single CollectionUploadJob instance contains both the definition of the collections, as well as the archive file with the data.
-
 	"""
+
 	definition = models.FileField(upload_to='storage/collection/jobs/')
 	archive = models.FileField(upload_to='storage/collection/jobs/', null=True, blank=True)
 	date_added = models.DateTimeField(auto_now_add=True)
 	date_resolved = models.DateTimeField(null=True, blank=True)
 	owner = models.ForeignKey(User)
 
-	STATUS_NEW				= 1
-	STATUS_PENDING			= 2
-	STATUS_RESOLVED_OK		= 3
-	STATUS_RESOLVED_ERROR	= 4
+	STATUS_NEW            = 1
+	STATUS_PENDING        = 2
+	STATUS_RESOLVED_OK    = 3
+	STATUS_RESOLVED_ERROR = 4
 
 	STATUS_CHIOCES = (
 		(STATUS_NEW, 'New'),

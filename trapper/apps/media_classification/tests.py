@@ -25,14 +25,16 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from trapper.apps.media_classification.models import Project, ProjectRole
+from trapper.apps.research.models import Project as RProject
 
 
 class ProjectViewsTestDBTest(TestCase):
 
 	def setUp(self):
+		self.rp0 = RProject.objects.create(name="RProject_0")
 		self.u0 = User.objects.create_user('user1', 'user@users.com', 'user1')
-		self.p0 = Project.objects.create(name="Project_0")
-		self.p1 = Project.objects.create(name="Project_1")
+		self.p0 = Project.objects.create(name="Project_0", research_project=self.rp0)
+		self.p1 = Project.objects.create(name="Project_1", research_project=self.rp0)
 		self.pr0 = ProjectRole.objects.create(name=ProjectRole.ROLE_PROJECT_ADMIN, user=self.u0, project=self.p0)
 
 	def test_project_list_anon(self):

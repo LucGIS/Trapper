@@ -157,6 +157,7 @@ INSTALLED_APPS = (
 	'trapper.apps.messaging',
 	'trapper.apps.common',
 	'trapper.apps.geomap',
+	'trapper.apps.research',
 
 	'django.contrib.admin',
 	'django_extensions',

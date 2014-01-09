@@ -22,6 +22,7 @@
 
 from django.db import models
 from trapper.apps.storage.models import Resource, Collection
+from trapper.apps.research.models import Project as RProject
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
@@ -106,7 +107,7 @@ class Project(models.Model):
 	"""
 
 	name = models.CharField(max_length=255)
-
+	research_project = models.ForeignKey(RProject, related_name='classification_projects')
 	collections = models.ManyToManyField(Collection, through='ProjectCollection', blank=True, null=True)
 	"""Collections assigned to the project"""
 
