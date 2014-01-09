@@ -15,8 +15,8 @@ u0.is_superuser=True
 u0.save()
 
 # Groups
-g0, created = Group.objects.get_or_create(name='Admin')
-g1, created = Group.objects.get_or_create(name='Staff')
+g0, created = Group.objects.get_or_create(name='Staff')
+g1, created = Group.objects.get_or_create(name='Expert')
 
 # Add group permissions
 admin_cts = ContentType.objects.filter(app_label__in=['media_classification','accounts','storage','auth'])

@@ -13,13 +13,14 @@ from trapper.apps.geomap.models import Location
 # Users
 u0 = User.objects.get(username='alice')
 
-g0 = Group.objects.get(name='Admin')
-g1 = Group.objects.get(name='Staff')
-
-u1 = User.objects.create_user('admin1','admin1@trapper.pl','admin1')
+g0 = Group.objects.get(name='Staff')
+u1 = User.objects.create_user('staff1','staff1@trapper.pl','staff1')
 u1.groups.add(g0)
-u2 = User.objects.create_user('staff1','staff1@trapper.pl','staff1')
+
+g1 = Group.objects.get(name='Expert')
+u2 = User.objects.create_user('expert1','expert1@trapper.pl','expert1')
 u2.groups.add(g1)
+
 u3 = User.objects.create_user('user1','user1@foo.com','user1')
 u4 = User.objects.create_user('user2','user2@foo.com','user2')
 
