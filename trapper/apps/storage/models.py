@@ -242,6 +242,7 @@ class Collection(models.Model):
 	"""
 
 	name = models.CharField(max_length=255)
+	description = models.TextField(max_length=2000, null=True, blank=True)
 	resources = models.ManyToManyField(Resource)
 
 	owner = models.ForeignKey(User, related_name='owned_collections')

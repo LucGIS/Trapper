@@ -4,67 +4,97 @@
 <h1>{{ project.name }}</h1>
 <br/>
 
-<h3>Researchers in this project:</h3>
-<table class="table">
-<th>User</th>
-<th>Role</th>
-{% for role in project.projectrole_set.all %}
-<tr><td>{{role.user.username}}</td><td>{{role.get_name_display}}</td></tr>
-{% endfor %}
-</table>
-<h3>Resource collections for this project:</h3>
-<div class="panel-group" id="accordion">
-	{% for pc in project.projectcollection_set.all %}
-	<div class="panel panel-default">
-		<div class="panel-heading">
-		<a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}">{{pc.collection.name}}</a>
-		Active: <span class="glyphicon glyphicon-{% if pc.active %}ok{% else %}remove{% endif %}"></span>
-		Crowd-Sourcing: <span class="glyphicon glyphicon-{% if pc.cs_enabled %}ok{% else %}remove{% endif %}"></span>
-		</div>
-		<div id="collection{{pc.pk}}" class="panel-collapse collapse out">
-			<table class="table">
-			<th>Name</th>
-			<th>Owner</th>
-			<th>Uploader</th>
-			<th>Details</th>
-			<th>Classify</th>
-			{% for resource in pc.collection.resources.all %}
-			<tr>
-			<td>{{ resource.name }}</td>
-			<td>{{ resource.owner.username }}</td>
-			<td>{{ resource.uploader.username }}</td>
-			<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
-			<td><a href="{% url "media_classification:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
-			</tr>
-			{% endfor %}
-			</table>
-		</div>
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		Project description:
 	</div>
-	{% endfor %}
+	<div class="panel-body">
+		<p>
+		{% if project.description %}
+			{{ project.description | safe}}
+		{% else %}
+			This project has no description yet.
+		{% endif %}
+		</p>
+	</div>
 </div>
-<h3>Classification projects:</h3>
-<div class="panel-group" id="cproject_accordion">
-{% for cproject in project.classification_projects.all %}
-	<div class="panel panel-default">
-		<div class="panel-heading">
-		<a data-toggle="collapse" data-parent="#cproject_accordion" href="#cproject{{cproject.pk}}">{{cproject.name}}</a>
-		Crowd-Sourcing: <span class="glyphicon glyphicon-{% if pc.cs_enabled %}ok{% else %}remove{% endif %}"></span>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+	Researchers in this project:
+	</div>
+	<div class="panel-body">
+		<table class="table">
+		<th>User</th>
+		<th>Role</th>
+		{% for role in project.projectrole_set.all %}
+		<tr><td>{{role.user.username}}</td><td>{{role.get_name_display}}</td></tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		Resource collections for this project:
+	</div>
+	<div class="panel-body">
+		<div class="panel-group" id="accordion">
+			{% for pc in project.projectcollection_set.all %}
+			<div class="panel panel-default">
+				<div class="panel-heading">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}">{{pc.collection.name}}</a>
+				Active: <span class="glyphicon glyphicon-{% if pc.active %}ok{% else %}remove{% endif %}"></span>
+				Crowd-Sourcing: <span class="glyphicon glyphicon-{% if pc.cs_enabled %}ok{% else %}remove{% endif %}"></span>
+				</div>
+				<div id="collection{{pc.pk}}" class="panel-collapse collapse out">
+					<table class="table">
+					<th>Name</th>
+					<th>Owner</th>
+					<th>Uploader</th>
+					<th>Details</th>
+					<th>Classify</th>
+					{% for resource in pc.collection.resources.all %}
+					<tr>
+					<td>{{ resource.name }}</td>
+					<td>{{ resource.owner.username }}</td>
+					<td>{{ resource.uploader.username }}</td>
+					<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
+					<td><a href="{% url "media_classification:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+					</tr>
+					{% endfor %}
+					</table>
+				</div>
+			</div>
+			{% endfor %}
 		</div>
-		<div id="cproject{{cproject.pk}}" class="panel-collapse collapse out">
-			<table class="table">
+
+	</div>
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		Classification projects:
+	</div>
+	<div class="panel-body">
+		<table class="table">
 			<tr>
 				<th>Name</th>
 				<th>Crowd Sourcing</th>
 				<th>Details</th>
 			</tr>
+			{% for cproject in project.classification_projects.all %}
 			<tr>
 				<td>{{ cproject.name }}</td>
 				<td>{{ cproject.cs_enabled }}</td>
 				<td><a href="{% url "media_classification:project_detail" cproject.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
 			</tr>
-			</table>
-		</div>
+			{% endfor %}
+		</table>
 	</div>
-{% endfor %}
 </div>
+
+<a class="btn btn-md btn-success" href="{% url "storage:resource_create" %}">Open classification project <span class="glyphicon glyphicon-eye-open"></span></a>
+<a class="btn btn-md btn-success" href="{% url "storage:resource_create" %}">Add researchers <span class="glyphicon glyphicon-user"></span></a>
+
 {% endblock content %}

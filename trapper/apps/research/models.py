@@ -7,6 +7,7 @@ class Project(models.Model):
 	"""Describes a research project existing withing the system """
 
 	name = models.CharField(max_length=255)
+	description = models.TextField(max_length=2000, null=True, blank=True)
 
 	collections = models.ManyToManyField(Collection, blank=True, null=True, related_name='research_projects')
 	"""Collections assigned to the project"""
