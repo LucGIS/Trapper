@@ -34,7 +34,7 @@ from braces.views import LoginRequiredMixin
 from trapper.apps.storage.models import Resource, Collection, CollectionUploadJob
 from trapper.apps.storage.tasks import process_collection_upload
 from trapper.apps.storage.forms import ResourceForm, CollectionForm, CollectionRequestForm, CollectionUploadForm, CollectionUploadFormPart2
-from trapper.apps.media_classification.models import Project, ProjectRole
+from trapper.apps.research.models import Project, ProjectRole
 from trapper.apps.messaging.models import Message, CollectionRequest
 from trapper.apps.common.decorators import object_access_required, ObjectAccessRequiredMixin
 
@@ -234,7 +234,7 @@ class CollectionDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generi
 		return super(CollectionDeleteView, self).dispatch(*args, **kwargs)
 
 class CollectionRequestView(LoginRequiredMixin, generic.FormView):
-	"""This is the view generating the collction request page for the :class:`.Project`.
+	"""This is the view generating the collection request page for the :class:`.Project`.
 	It will only display the projects in which the user has the admin :class:`.ProjectRole`.
 
 	"""
@@ -283,7 +283,7 @@ class CollectionRequestView(LoginRequiredMixin, generic.FormView):
 		form = super(CollectionRequestView, self).get_form(form_class, *args, **kwargs)
 
 
-		project_pks = set(role.project.pk for role in self.request.user.projectrole_set.filter(name__in=self.REQUIRED_PROJECT_ROLES))
+		project_pks = set(role.project.pk for role in self.request.user.research_roles.filter(name__in=self.REQUIRED_PROJECT_ROLES))
 		projects = Project.objects.filter(pk__in=project_pks)
 		form.fields['project'].queryset = projects
 		return form

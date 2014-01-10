@@ -25,7 +25,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from trapper.apps.storage.models import Collection
-from trapper.apps.media_classification.models import Project, ProjectCollection
+from trapper.apps.research.models import Project
 
 class Message(models.Model):
 	"""E-mail like messaging features among the users."""
@@ -75,7 +75,7 @@ class CollectionRequest(SystemNotification):
 		"""Resolves the request positively and creates a ProjectCollection object."""
 
 		self.resolve()
-		ProjectCollection.objects.create(project=self.project, collection=self.collection, active=True)
+                self.project.collections.add(self.collection)
 
 	def resolve_no(self):
 		"""Resolves the request negatively."""

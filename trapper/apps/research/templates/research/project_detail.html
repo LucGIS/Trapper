@@ -40,12 +40,10 @@
 	</div>
 	<div class="panel-body">
 		<div class="panel-group" id="accordion">
-			{% for pc in project.projectcollection_set.all %}
+			{% for pc in project.collections.all %}
 			<div class="panel panel-default">
 				<div class="panel-heading">
-				<a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}">{{pc.collection.name}}</a>
-				Active: <span class="glyphicon glyphicon-{% if pc.active %}ok{% else %}remove{% endif %}"></span>
-				Crowd-Sourcing: <span class="glyphicon glyphicon-{% if pc.cs_enabled %}ok{% else %}remove{% endif %}"></span>
+				{{pc.name}} <a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}"><span class="glyphicon glyphicon-chevron-down"></span></a>
 				</div>
 				<div id="collection{{pc.pk}}" class="panel-collapse collapse out">
 					<table class="table">
@@ -54,13 +52,13 @@
 					<th>Uploader</th>
 					<th>Details</th>
 					<th>Classify</th>
-					{% for resource in pc.collection.resources.all %}
+					{% for resource in pc.resources.all %}
 					<tr>
-					<td>{{ resource.name }}</td>
-					<td>{{ resource.owner.username }}</td>
-					<td>{{ resource.uploader.username }}</td>
-					<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
-					<td><a href="{% url "media_classification:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+						<td>{{ resource.name }}</td>
+						<td>{{ resource.owner.username }}</td>
+						<td>{{ resource.uploader.username }}</td>
+						<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
+						<td><a href="{% url "media_classification:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
 					</tr>
 					{% endfor %}
 					</table>
@@ -94,7 +92,7 @@
 	</div>
 </div>
 
-<a class="btn btn-md btn-success" href="{% url "storage:resource_create" %}">Open classification project <span class="glyphicon glyphicon-eye-open"></span></a>
+<a class="btn btn-md btn-success" href="{% url "media_classification:project_create" %}">Open classification project <span class="glyphicon glyphicon-eye-open"></span></a>
 <a class="btn btn-md btn-success" href="{% url "storage:resource_create" %}">Add researchers <span class="glyphicon glyphicon-user"></span></a>
 
 {% endblock content %}
