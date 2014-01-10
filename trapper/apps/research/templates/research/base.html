@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block master_content %}
+<ul class="nav nav-pills">
+	<li {% block research_project_list %}{% endblock %}><a href="{% url "research:project_list" %}">All projects</a></li>
+</ul>
+<div>
+{% block content %}{% endblock content %}
+</div>
+{% endblock master_content %}

@@ -1,0 +1,31 @@
+{% extends "research/base.html" %}
+{% load staticfiles %}
+{% block research_project_list %} class="active" {% endblock %}
+{% block content %}
+{% if items %}
+Available projects:
+<table class="table">
+<th>Project Name</th>
+<th>Details</th>
+<th>Edit</th>
+{% for project, can_view, can_edit in items %}
+<tr>
+	<td>{{ project.name }}</td>
+	<td>
+		{% if can_view %}
+		<a href="{% url "research:project_detail" project.id %}"><span class="glyphicon glyphicon-search"></span></a>
+		{% endif %}
+	</td>
+	<td>
+	{% if can_edit %}
+	TODO
+	{#<a href="{% url "research:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>#}
+	{% endif %}
+	</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+No project available. Start one now!
+{% endif %}
+{% endblock content %}

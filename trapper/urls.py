@@ -17,6 +17,8 @@ urlpatterns = patterns('',
 
 	# Media classification urls
     url(r'^media_classification/', include('trapper.apps.media_classification.urls', namespace='media_classification')),
+	# Research urls
+    url(r'^research/', include('trapper.apps.research.urls', namespace='research')),
 
 	# Storage urls
     url(r'^storage/', include('trapper.apps.storage.urls', namespace='storage')),

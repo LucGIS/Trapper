@@ -130,8 +130,6 @@ class ProjectDetailView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.D
 	def dispatch(self, *args, **kwargs):
 		return super(ProjectDetailView, self).dispatch(*args, **kwargs)
 
-
-
 class ProjectRoleInline(InlineFormSet):
 	"""Utility-class: ProjectRoles displayed as a InlineFormset"""
 
