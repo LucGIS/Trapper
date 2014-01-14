@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from trapper.apps.storage.models import Collection
 from django.contrib.auth.models import User
@@ -51,7 +52,7 @@ class Project(models.Model):
 		return self.projectrole_set.filter(user=user).count() > 0
 
 	def get_absolute_url(self):
-		return reverse('media_classification:project_detail', kwargs={'pk':self.pk})
+		return reverse('research:project_detail', kwargs={'pk':self.pk})
 
 class ProjectRole(models.Model):
 	"""Model describing the user's role withing given :class:`.Project`"""

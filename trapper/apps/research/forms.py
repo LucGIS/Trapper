@@ -20,18 +20,20 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.              #
 ############################################################################
 
-from django.conf.urls import patterns, url
-from django.views.generic import TemplateView
+from django import forms
+from django.forms.models import inlineformset_factory
+from tinymce.widgets import TinyMCE
 
-from trapper.apps.research import views
+from trapper.apps.research.models import Project, ProjectRole
 
+class ProjectForm(forms.ModelForm):
+	"""Project ModelForm for the Update/Create views"""
 
-urlpatterns = patterns('',
-	# Home page of research project module
-	url(r'^$', TemplateView.as_view(template_name='research/index.html'), name='index'),
+	class Meta:
+		model = Project
+		fields = ['name','description',]
 
-	# Display project list and the details about given project
-	url(r'project/list/$', views.ProjectListView.as_view(), name='project_list'),
-	url(r'project/detail/(?P<pk>\d+)/$', views.ProjectDetailView.as_view(), name='project_detail'),
-	url(r'project/create/$', views.ProjectCreateView.as_view(), name='project_create'),
-)
+	description = forms.CharField(widget=TinyMCE(attrs={'cols':60, 'rows':15}))
+
+ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra = 1)
+"""Formset for the ProjectRole model"""

@@ -27,15 +27,16 @@ from django.views import generic
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
 
 from braces.views import LoginRequiredMixin
 from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesView, NamedFormsetsMixin
 
 from trapper.apps.media_classification.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet
+from trapper.apps.research.models import Project as RProject
 from trapper.apps.storage.models import Resource
 from trapper.apps.media_classification.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset, FeatureSetForm
 from trapper.apps.common.decorators import object_access_required, ObjectAccessRequiredMixin
-
 
 
 # FeatureSet views
@@ -151,18 +152,20 @@ class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 	inlines = [ProjectRoleInline, CollectionInline]
 	inlines_names = ['projectrole_formset', 'collection_formset']
 
+	def get_initial(self, *args, **kwargs):
+		initial = super(ProjectCreateView, self).get_initial(*args, **kwargs)
+		initial['rp_pk'] = self.kwargs['rp_pk']
+		return initial
+
 	def forms_valid(self, form, inlines):
 		"""Saves the formsets and redirects to Project's detail page."""
 
 		self.object = form.save(commit=False)
+		rproject = get_object_or_404(RProject, pk=form.cleaned_data['rp_pk'])
+		self.object.research_project=rproject
 		self.object.save()
-		projectrole_formset, collection_formset = inlines
+		projectrole_formset = inlines[0]
 		projectrole_formset.save()
-		# Save collection formset manually as it is defined using intermediate model
-		for pc in collection_formset:
-			pc_obj = pc.save(commit=False)
-			pc_obj.project_id = self.object.id
-			pc_obj.save()
 		return HttpResponseRedirect(self.object.get_absolute_url())
 
 class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):

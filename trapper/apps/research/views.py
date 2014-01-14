@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from braces.views import LoginRequiredMixin
 from django.views import generic
+from django.http import HttpResponseRedirect
+
+from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesView, NamedFormsetsMixin
 
 from trapper.apps.research.models import Project, ProjectRole
+from trapper.apps.research.forms import ProjectForm, ProjectRoleFormset
 from trapper.apps.common.decorators import object_access_required, ObjectAccessRequiredMixin
 
 class ProjectListView(generic.ListView):
@@ -33,6 +37,31 @@ class ProjectDetailView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.D
 	model = Project
         access_func = Project.can_detail
 
-	#@method_decorator(object_access_required(Project, can_detail_project))
 	def dispatch(self, *args, **kwargs):
 		return super(ProjectDetailView, self).dispatch(*args, **kwargs)
+
+# TODO: Class below belongs to forms.py
+class ProjectRoleInline(InlineFormSet):
+	"""Utility-class: ProjectRoles displayed as a InlineFormset"""
+
+	model = ProjectRole
+	extra = 2
+
+class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
+	"""Create view for the Project model"""
+
+	model = Project
+	form_class = ProjectForm
+	template_name = 'research/project_create.html'
+	inlines = [ProjectRoleInline,]
+	inlines_names = ['projectrole_formset', ]
+
+	def forms_valid(self, form, inlines):
+		"""Saves the formsets and redirects to Project's detail page."""
+
+		self.object = form.save(commit=False)
+		self.object.save()
+		projectrole_formset = inlines[0]
+		projectrole_formset.save()
+		return HttpResponseRedirect(self.object.get_absolute_url())
+

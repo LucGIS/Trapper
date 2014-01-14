@@ -30,7 +30,9 @@ class ProjectForm(forms.ModelForm):
 
 	class Meta:
 		model = Project
-		exclude = ['collections']
+		exclude = ['collections', 'research_project']
+
+	rp_pk = forms.IntegerField(widget=forms.HiddenInput)
 
 class ProjectCollectionForm(forms.ModelForm):
 	"""ProjectCollection ModelForm for the Update/Create views"""

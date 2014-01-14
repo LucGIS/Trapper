@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block master_content %}
-<ul class="nav nav-pills">
+<ul class="nav nav-pills well well-sm">
 	<li {% block media_classification_cs_resource_list %}{% endblock %}><a href="{% url "media_classification:cs_resource_list" %}">Crowd Sourcing</a></li>
 	<li {% block media_classification_project_list %}{% endblock %}><a href="{% url "media_classification:project_list" %}">All projects</a></li>
 </ul>

@@ -133,8 +133,7 @@ class UserCollectionListView(LoginRequiredMixin, generic.ListView):
 	context_object_name = 'collections'
 
 	def get_queryset(self):
-		"""Filters the queryset according to the user's id.
-		"""
+		"""Filters the queryset according to the user's id. """
 
 		user = get_object_or_404(User, pk=self.kwargs['user_pk'])
 		return Collection.objects.filter(owner=user)
@@ -160,6 +159,7 @@ class CollectionUpdateView(LoginRequiredMixin, ObjectAccessRequiredMixin, generi
 	def dispatch(self, *args, **kwargs):
 		return super(CollectionUpdateView, self).dispatch(*args, **kwargs)
 
+# Uploading collections through YAML and archive files
 class CollectionUploadViewPart2(LoginRequiredMixin, generic.FormView):
 	"""Collection's upload view.
 	This is the second part of the collection upload process.
@@ -218,6 +218,7 @@ class CollectionUploadView(LoginRequiredMixin, generic.FormView):
 			job = CollectionUploadJob.objects.create(definition=form.cleaned_data['definition_file'], owner=self.request.user)
 			return HttpResponseRedirect(reverse('storage:collection_upload_2',kwargs={'pk':job.pk}))
 
+# Deleting collections
 class CollectionDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.DeleteView):
 	"""This class handles the deletion of the :class:`.Collection` object.
 	The collection object can be deleted by the managers and the owner of the collection.
@@ -233,6 +234,7 @@ class CollectionDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generi
 	def dispatch(self, *args, **kwargs):
 		return super(CollectionDeleteView, self).dispatch(*args, **kwargs)
 
+# Requesting collections for the research.Project model
 class CollectionRequestView(LoginRequiredMixin, generic.FormView):
 	"""This is the view generating the collection request page for the :class:`.Project`.
 	It will only display the projects in which the user has the admin :class:`.ProjectRole`.

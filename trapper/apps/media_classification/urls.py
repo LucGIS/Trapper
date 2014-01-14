@@ -35,7 +35,7 @@ urlpatterns = patterns('',
 	url(r'project/detail/(?P<pk>\d+)/$', views.ProjectDetailView.as_view(), name='project_detail'),
 #	url(r'project/update/(?P<pk>\d+)/$', views.ProjectUpdateView.as_view(), name='project_update'),
 	url(r'project/update/(?P<pk>\d+)/$', views.project_update, name='project_update'),
-	url(r'project/create/$', views.ProjectCreateView.as_view(), name='project_create'),
+	url(r'project/create/(?P<rp_pk>\d+)/$', views.ProjectCreateView.as_view(), name='project_create'),
 
 	# FeatureSet views
 	url(r'featureset/detail/(?P<pk>\d+)/$', views.FeatureSetDetailView.as_view(), name='featureset_detail'),

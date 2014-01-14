@@ -92,7 +92,7 @@
 	</div>
 </div>
 
-<a class="btn btn-md btn-success" href="{% url "media_classification:project_create" %}">Open classification project <span class="glyphicon glyphicon-eye-open"></span></a>
+<a class="btn btn-md btn-success" href="{% url "media_classification:project_create" project.id %}">Open classification project <span class="glyphicon glyphicon-eye-open"></span></a>
 <a class="btn btn-md btn-success" href="{% url "storage:resource_create" %}">Add researchers <span class="glyphicon glyphicon-user"></span></a>
 
 {% endblock content %}

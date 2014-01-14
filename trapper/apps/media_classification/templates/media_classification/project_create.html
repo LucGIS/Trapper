@@ -20,58 +20,82 @@
 </script>
 {% endblock header %}
 
-<form id="projectForm" action="" method="post">
+<form id="projectForm" class="form-horizontal" action="" method="post">
 {% csrf_token %}
 
-<h2>Name: {{form.name}}</h2>
-<h3>Feature sets:</h3>
-{{form.feature_sets}}
-<h3>CS-Enabled for this project: {{form.cs_enabled}}</h3>
+{{form.rp_pk}}
 
-<h3>Collections:</h3>
-<br />
-{{ collection_formset.management_form }}
-<table id="collectionForm" class="table">
-	<thead>
-		<th>Name</th>
-		<th>Is active ?</th>
-		<th>Crowd Sourcing enabled ?</th>
-	</thead>
-	<tbody>
-	{% for form in collection_formset.forms %}
-		{{form.id}}
-		<tr>
-			<td>{{form.collection}}</td>
-			<td>{{form.active}}</td>
-			<td>{{form.cs_enabled}}</td>
-			<td>{% if form.instance.pk %}{{form.DELETE}}{% endif %}</td>
-		</tr>
-	{% endfor %}
-	</tbody>
-</table>
-<br />
+<div class="form-group">
+	<label class="col-sm-2 control-label">Project name:</label>
+	<div class="col-sm-10">
+		{{ form.name }}
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">Feature sets:</label>
+	<div class="col-sm-10">
+		{{form.feature_sets}}
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">Crowd-Sourcing enabled:</label>
+	<div class="col-sm-10">
+		{{form.cs_enabled}}
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">Collections:</label>
+	<div class="col-sm-10">
+		{{ collection_formset.management_form }}
+		<table id="collectionForm" class="table">
+			<thead>
+				<th>Name</th>
+				<th>Is active ?</th>
+				<th>Crowd Sourcing enabled ?</th>
+			</thead>
+			<tbody>
+			{% for form in collection_formset.forms %}
+				{{form.id}}
+				<tr>
+					<td>{{form.collection}}</td>
+					<td>{{form.active}}</td>
+					<td>{{form.cs_enabled}}</td>
+					<td>{% if form.instance.pk %}{{form.DELETE}}{% endif %}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
 
-<h3>Roles:</h3>
-<br />
-{{ projectrole_formset.management_form }}
-<table id="projectroleForm" class="table">
-	<thead>
-		<th>User</th>
-		<th>Role</th>
-	</thead>
-	<tbody>
-{% for form in projectrole_formset.forms %}
-	{{form.id}}
-	<tr>
-		<td>{{form.user}}</td>
-		<td>{{form.name}}</td>
-		<td>{% if form.instance.pk %}{{form.DELETE}}{% endif %}</td>
-	</tr>
-	</tbody>
-{% endfor %}
-</table>
+<div class="form-group">
+	<label class="col-sm-2 control-label">Project roles:</label>
+	<div class="col-sm-10">
+		{{ projectrole_formset.management_form }}
+		<table id="projectroleForm" class="table">
+			<thead>
+				<th>User</th>
+				<th>Role</th>
+			</thead>
+			<tbody>
+		{% for form in projectrole_formset.forms %}
+			{{form.id}}
+			<tr>
+				<td>{{form.user}}</td>
+				<td>{{form.name}}</td>
+				<td>{% if form.instance.pk %}{{form.DELETE}}{% endif %}</td>
+			</tr>
+			</tbody>
+		{% endfor %}
+		</table>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">
+		<input class="btn btn-primary" type="submit" value="Submit" />
+	</label>
+</div>
 
-<input class="btn btn-primary" type="submit" value="Update" />
 </form>
 
 {% endblock content %}
