@@ -6,11 +6,17 @@
 Available projects:
 <table class="table">
 <th>Project Name</th>
+<th>Project Staff</th>
 <th>Details</th>
 <th>Edit</th>
 {% for project, can_view, can_edit in items %}
 <tr>
 	<td>{{ project.name }}</td>
+	<td>
+	{% for r in project.projectrole_set.all %}
+	<a href="{{r.user.userprofile.get_absolute_url}}">{{r.user}}</a>({{r.get_name_display}}),
+	{% endfor %}
+	</td>
 	<td>
 		{% if can_view %}
 		<a href="{% url "research:project_detail" project.id %}"><span class="glyphicon glyphicon-search"></span></a>
@@ -18,8 +24,7 @@ Available projects:
 	</td>
 	<td>
 	{% if can_edit %}
-	TODO
-	{#<a href="{% url "research:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>#}
+		<a href="{% url "research:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
 	{% endif %}
 	</td>
 </tr>
@@ -28,4 +33,7 @@ Available projects:
 {% else %}
 No project available. Start one now!
 {% endif %}
+<p>
+	<a class="btn btn-sm btn-success" href="{% url "research:project_create" %}">Create new project <span class="glyphicon glyphicon-book"></span></a>
+</p>
 {% endblock content %}

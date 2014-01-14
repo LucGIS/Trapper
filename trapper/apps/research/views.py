@@ -65,3 +65,21 @@ class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 		projectrole_formset.save()
 		return HttpResponseRedirect(self.object.get_absolute_url())
 
+class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
+	"""Create view for the Project model"""
+
+	model = Project
+	form_class = ProjectForm
+	template_name = 'research/project_create.html'
+	inlines = [ProjectRoleInline,]
+	inlines_names = ['projectrole_formset', ]
+
+	def forms_valid(self, form, inlines):
+		"""Saves the formsets and redirects to Project's detail page."""
+
+		self.object = form.save(commit=False)
+		self.object.save()
+		projectrole_formset = inlines[0]
+		projectrole_formset.save()
+		return HttpResponseRedirect(self.object.get_absolute_url())
+

@@ -155,6 +155,7 @@ class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 	def get_initial(self, *args, **kwargs):
 		initial = super(ProjectCreateView, self).get_initial(*args, **kwargs)
 		initial['rp_pk'] = self.kwargs['rp_pk']
+		#initial['collections'] = self.kwargs['rp_pk']
 		return initial
 
 	def forms_valid(self, form, inlines):
