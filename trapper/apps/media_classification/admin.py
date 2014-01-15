@@ -21,7 +21,7 @@
 ############################################################################
 
 from django.contrib import admin
-from trapper.apps.media_classification.models import FeatureScope, Feature, FeatureSet, Classification, ClassificationRow, Project, FeatureAnswer, ProjectRole, ProjectCollection
+from trapper.apps.media_classification.models import FeatureScope, Feature, FeatureSet, Classification, ClassificationRow, Project, FeatureAnswer, ProjectRole, ProjectCollection, Sequence
 
 
 class FeatureScopeInline(admin.StackedInline):
@@ -68,4 +68,5 @@ admin.site.register(ProjectCollection)
 admin.site.register(Classification, ClassificationAdmin)
 admin.site.register(ClassificationRow, ClassificationRowAdmin)
 admin.site.register(ProjectRole)
+admin.site.register(Sequence)
 admin.site.register(Project, ProjectAdmin)

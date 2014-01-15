@@ -31,6 +31,7 @@
 		<tr><td>{{role.user.username}}</td><td>{{role.get_name_display}}</td></tr>
 		{% endfor %}
 		</table>
+		<a class="btn btn-md btn-success" href="{% url "storage:resource_create" %}">Add researchers <span class="glyphicon glyphicon-user"></span></a>
 	</div>
 </div>
 
@@ -89,10 +90,9 @@
 			</tr>
 			{% endfor %}
 		</table>
+		<a class="btn btn-md btn-success" href="{% url "media_classification:project_create" project.id %}">New classification project <span class="glyphicon glyphicon-eye-open"></span></a>
 	</div>
 </div>
 
-<a class="btn btn-md btn-success" href="{% url "media_classification:project_create" project.id %}">Open classification project <span class="glyphicon glyphicon-eye-open"></span></a>
-<a class="btn btn-md btn-success" href="{% url "storage:resource_create" %}">Add researchers <span class="glyphicon glyphicon-user"></span></a>
 
 {% endblock content %}

@@ -32,10 +32,10 @@ from django.shortcuts import get_object_or_404
 from braces.views import LoginRequiredMixin
 from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesView, NamedFormsetsMixin
 
-from trapper.apps.media_classification.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet
+from trapper.apps.media_classification.models import Feature, FeatureAnswer, FeatureScope, Project, Classification, ClassificationRow, ProjectRole, ProjectCollection, FeatureSet, Sequence
 from trapper.apps.research.models import Project as RProject
 from trapper.apps.storage.models import Resource
-from trapper.apps.media_classification.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset, FeatureSetForm
+from trapper.apps.media_classification.forms import ProjectForm, ProjectCollectionFormset, ProjectRoleFormset, FeatureSetForm, SequenceForm
 from trapper.apps.common.decorators import object_access_required, ObjectAccessRequiredMixin
 
 
@@ -96,6 +96,57 @@ class FeatureCreateView(generic.CreateView):
 	"""Create view of the Feature model"""
 
 	model = Feature
+
+# Sequence views
+
+class SequenceCreateView(generic.CreateView):
+	"""Create view for the Sequence model"""
+
+	model = Sequence
+	form_class = SequenceForm
+
+	def form_valid(self, form):
+		self.object = form.save(commit=False)
+		cproject = get_object_or_404(Project, pk=form.cleaned_data['cp_pk'])
+		self.object.project = cproject
+		self.object.user = self.request.user
+		self.object.save()
+		return HttpResponseRedirect(self.object.get_absolute_url())
+
+	def get_initial(self, *args, **kwargs):
+		initial = super(SequenceCreateView, self).get_initial(*args, **kwargs)
+		initial['cp_pk'] = self.kwargs['cp_pk']
+		return initial
+
+class SequenceUpdateView(generic.UpdateView):
+	"""Create view for the Sequence model"""
+
+	model = Sequence
+	form_class = SequenceForm
+
+	def form_valid(self, form):
+		self.object = form.save(commit=False)
+		cproject = get_object_or_404(Project, pk=form.cleaned_data['cp_pk'])
+		self.object.project = cproject
+		self.object.user = self.request.user
+		self.object.save()
+		return HttpResponseRedirect(self.object.get_absolute_url())
+
+class SequenceDetailView(generic.DetailView):
+	"""Create view for the Sequence model"""
+
+	model = Sequence
+
+class SequenceListView(generic.ListView):
+	"""Create view for the Sequence model"""
+
+	# TODO:
+	# SequenceListView is currently not used (and untested),
+	# since raw list of sequences it not used in global scope,
+	# e.g. without the project context on the classification project page)
+
+	model = Sequence
+	template_name = 'media_classification/sequence_list.html'
 
 # Project views
 

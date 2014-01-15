@@ -1,0 +1,34 @@
+{% extends "media_classification/base.html" %}
+{% load staticfiles %}
+
+{# Extra header: django-dynamic-formset #}
+{% block content %}
+Editing sequence <b>{{sequence.name}}</b> created on <b>{{sequence.date_created}}</b> by <b><a href="{{sequence.user.userprofile.get_absolute_url}}">{{sequence.user.username}}</a></b>
+<form action="" role="form" method="post">
+{% csrf_token %}
+{{form.cp_pk}}
+	<div class="form-group">
+		<label class="col-sm-2 control-label">{{form.name.label}}:</label>
+		<div class="col-sm-10">
+			{{form.name}}
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-2 control-label">{{form.description.label}}:</label>
+		<div class="col-sm-10">
+			{{form.description}}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">{{form.resources.label}}:</label>
+		<div class="col-sm-10">
+			{{form.resources}}
+		</div>
+	</div>
+
+	<input class="btn btn-primary" type="submit" value="Submit" />
+</form>
+
+{% endblock content %}

@@ -6,7 +6,8 @@
 Available projects:
 <table class="table">
 <th>Project name</th>
-<th>Research project</th>
+<th>Parent research project</th>
+<th>Project staff</th>
 <th>Details</th>
 <th>Edit</th>
 {% for project, can_view, can_edit in items %}
@@ -14,13 +15,22 @@ Available projects:
 	<td>{{ project.name }}</td>
 	<td>{{ project.research_project.name }}</td>
 	<td>
+		{% for r in project.research_project.projectrole_set.all %}
+		<a href="{{r.user.userprofile.get_absolute_url}}">{{r.user}}</a>({{r.get_name_display}}),
+		{% endfor %}
+	</td>
+	<td>
 		{% if can_view %}
 		<a href="{% url "media_classification:project_detail" project.id %}"><span class="glyphicon glyphicon-search"></span></a>
+		{% else %}
+		<span class="glyphicon glyphicon-ban-circle"></span>
 		{% endif %}
 	</td>
 	<td>
 		{% if can_edit %}
 		<a href="{% url "media_classification:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
+		{% else %}
+		<span class="glyphicon glyphicon-ban-circle"></span>
 		{% endif %}
 	</td>
 </tr>

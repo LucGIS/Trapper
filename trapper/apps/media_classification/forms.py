@@ -20,10 +20,12 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.              #
 ############################################################################
 
+from ajax_select import make_ajax_field
+
 from django import forms
 from django.forms.models import inlineformset_factory
 
-from trapper.apps.media_classification.models import Project, ProjectCollection, ProjectRole, FeatureSet
+from trapper.apps.media_classification.models import Project, ProjectCollection, ProjectRole, FeatureSet, Sequence
 
 class ProjectForm(forms.ModelForm):
 	"""Project ModelForm for the Update/Create views"""
@@ -51,6 +53,16 @@ class FeatureSetForm(forms.ModelForm):
 	class Meta:
 		model = FeatureSet
 		exclude = ['features',]
+
+class SequenceForm(forms.ModelForm):
+	"""Sequence ModelForm for the Update and Create views."""
+
+	class Meta:
+		model = Sequence
+		exclude = ['date_created', 'user', 'project']
+
+	cp_pk = forms.IntegerField(widget=forms.HiddenInput)
+	resources = make_ajax_field(Sequence, 'resources', 'resource', help_text=None, plugin_options={'autoFocus':True,})
 
 ProjectCollectionFormset = inlineformset_factory(Project, ProjectCollection, extra=0, form=ProjectCollectionForm)
 """Formset for the ProjectCollection model"""

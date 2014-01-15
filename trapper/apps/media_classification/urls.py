@@ -49,6 +49,12 @@ urlpatterns = patterns('',
 	url(r'feature/create/$', views.FeatureCreateView.as_view(), name='feature_create'),
 	url(r'feature/update/(?P<pk>\d+)/$', views.FeatureUpdateView.as_view(), name='feature_update'),
 
+	# Sequence views
+	url(r'sequence/detail/(?P<pk>\d+)/$', views.SequenceDetailView.as_view(), name='sequence_detail'),
+	url(r'sequence/list/$', views.SequenceListView.as_view(), name='sequence_list'),
+	url(r'sequence/create/(?P<cp_pk>\d+)$', views.SequenceCreateView.as_view(), name='sequence_create'),
+	url(r'sequence/update/(?P<pk>\d+)/$', views.SequenceUpdateView.as_view(), name='sequence_update'),
+
 	# Display the classification form and process (action) it
 	url(r'classify/(?P<project_id>\d+)/(?P<resource_id>\d+)/$', views.classify_resource, name='classify'),
 	url(r'classify/action/$', views.process_classify, name='classify_action'),

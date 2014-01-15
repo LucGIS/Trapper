@@ -236,14 +236,12 @@ class FeatureAnswer(models.Model):
 			return unicode(self.feature.featurescope_set.get(pk=int(self.value)).name)
 
 
-
 class Sequence(models.Model):
-	"""Sequence of resources identified by an expert.
-	"""
+	"""Sequence of resources identified by an expert.  """
 
 	name = models.CharField(max_length=255, null=True, blank=True)
 	description = models.TextField(max_length=1000, null=True, blank=True)
-	resources = models.ManyToManyField(Resource)
+	resources = models.ManyToManyField(Resource, null=True, blank=True)
 	project = models.ForeignKey(Project)
 	date_created = models.DateTimeField(auto_now_add=True)
 	user = models.ForeignKey(User)
@@ -251,6 +249,9 @@ class Sequence(models.Model):
 	def __unicode__(self):
 		return unicode("Sequence from {date} defined by {user}".format(
 			date=self.date_created, user=self.user))
+
+	def get_absolute_url(self):
+		return reverse('media_classification:sequence_detail', kwargs={'pk':self.pk})
 
 
 class ProjectCollection(models.Model):

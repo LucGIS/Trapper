@@ -124,7 +124,6 @@ class ResourceCreateView(LoginRequiredMixin, generic.CreateView):
 		form.instance.uploader = self.request.user
 		return super(ResourceCreateView, self).form_valid(form)
 
-
 class UserCollectionListView(LoginRequiredMixin, generic.ListView):
 	"""Collection list, initially filtered by the collections owned by given user.
 	"""

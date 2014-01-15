@@ -99,6 +99,6 @@ class ResourceForm(forms.ModelForm):
 			r.save()
 			r.update_metadata(commit=True)
 		return r
-	
-	owner = make_ajax_field(Collection, 'owner', 'user', help_text=None, plugin_options={'autoFocus':True,})
-	managers = make_ajax_field(Collection, 'managers', 'user', help_text=None, show_help_text=False, plugin_options={'autoFocus':True,})
+
+	owner = make_ajax_field(Resource, 'owner', 'user', help_text=None, plugin_options={'autoFocus':True,})
+	managers = make_ajax_field(Resource, 'managers', 'user', help_text=None, show_help_text=False, plugin_options={'autoFocus':True,})

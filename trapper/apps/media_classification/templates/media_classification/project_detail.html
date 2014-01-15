@@ -1,45 +1,91 @@
 {% extends "media_classification/base.html" %}
 {% load staticfiles %}
 {% block content %}
-<h1>{{ project.name }}</h1>
-<h1>Research project:{{ project.research_project.name }}</h1>
 
-<h3>Researchers in this project:</h3>
-<table class="table">
-<th>User</th>
-<th>Role</th>
-{% for role in project.projectrole_set.all %}
-<tr><td>{{role.user.username}}</td><td>{{role.get_name_display}}</td></tr>
-{% endfor %}
-</table>
-<h3>Resource Collections for this project:</h3>
-<div class="panel-group" id="accordion">
-	{% for pc in project.projectcollection_set.all %}
-	<div class="panel panel-default">
-		<div class="panel-heading">
-		<a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}">{{pc.collection.name}}</a>
-		Active: <span class="glyphicon glyphicon-{% if pc.active %}ok{% else %}remove{% endif %}"></span>
-		Crowd-Sourcing: <span class="glyphicon glyphicon-{% if pc.cs_enabled %}ok{% else %}remove{% endif %}"></span>
-		</div>
-		<div id="collection{{pc.pk}}" class="panel-collapse collapse out">
-			<table class="table">
-			<th>Name</th>
-			<th>Owner</th>
-			<th>Uploader</th>
-			<th>Details</th>
-			<th>Classify</th>
-			{% for resource in pc.collection.resources.all %}
-			<tr>
-			<td>{{ resource.name }}</td>
-			<td>{{ resource.owner.username }}</td>
-			<td>{{ resource.uploader.username }}</td>
-			<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
-			<td><a href="{% url "media_classification:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
-			</tr>
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		Classification project details:
+	</div>
+	<div class="panel-body">
+		<ul class="list-group">
+			<li class="list-group-item">Name: {{project.name}}</li>
+			<li class="list-group-item">Part of research project: <a href="{{project.research_project.get_absolute_url}}">{{project.research_project.name}}</a></li>
+		</ul>
+	</div>
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		Researchers in this project:
+	</div>
+	<div class="panel-body">
+		<table class="table">
+		<th>User</th>
+		<th>Role</th>
+		{% for role in project.projectrole_set.all %}
+		<tr><td>{{role.user.username}}</td><td>{{role.get_name_display}}</td></tr>
+		{% endfor %}
+		</table>
+	</div>
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		Resource Collections for this project:
+	</div>
+	<div class="panel-body">
+		<div class="panel-group" id="accordion">
+			{% for pc in project.projectcollection_set.all %}
+			<div class="panel panel-default">
+				<div class="panel-heading">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}">{{pc.collection.name}}</a>
+				Active: <span class="glyphicon glyphicon-{% if pc.active %}ok{% else %}remove{% endif %}"></span>
+				Crowd-Sourcing: <span class="glyphicon glyphicon-{% if pc.cs_enabled %}ok{% else %}remove{% endif %}"></span>
+				</div>
+				<div id="collection{{pc.pk}}" class="panel-collapse collapse out">
+					<table class="table">
+					<th>Name</th>
+					<th>Owner</th>
+					<th>Uploader</th>
+					<th>Details</th>
+					<th>Classify</th>
+					{% for resource in pc.collection.resources.all %}
+					<tr>
+					<td>{{ resource.name }}</td>
+					<td>{{ resource.owner.username }}</td>
+					<td>{{ resource.uploader.username }}</td>
+					<td><a href="{% url "storage:resource_detail" resource.id %}" title="Details"><span class="glyphicon glyphicon-search"></span></a></td>
+					<td><a href="{% url "media_classification:classify" project.id resource.id %}" title="Classify Resource"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+					</tr>
+					{% endfor %}
+					</table>
+				</div>
+			</div>
 			{% endfor %}
-			</table>
 		</div>
 	</div>
-	{% endfor %}
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		Sequences in this project:
+	</div>
+	<div class="panel-body">
+		<table class="table">
+		<th>Name</th>
+		<th>Created by</th>
+		<th>Date created</th>
+		<th>Resources in sequence</th>
+			{% for sequence in project.sequence_set.all %}
+			<tr>
+				<td><a href="{{sequence.get_absolute_url}}">{{sequence.name}}</a></td>
+				<td>{{sequence.user}}</td>
+				<td>{{sequence.date_created}}</td>
+				<td>{{sequence.resources.count}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+		<a class="btn btn-md btn-success" href="{% url "media_classification:sequence_create" project.id %}">Create sequence <span class="glyphicon glyphicon-plus"></span></a>
+	</div>
 </div>
 {% endblock content %}
