@@ -33,7 +33,7 @@ import os
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 # Uncomment this line if your postgis is 2.1 or newer (input the correct version in that case)
-#POSTGIS_VERSION = (2,1,0)
+POSTGIS_VERSION = (2,1,0)
 
 DATABASES = {
 	'default': {
