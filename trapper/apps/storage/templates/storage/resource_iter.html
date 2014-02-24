@@ -9,6 +9,7 @@
 			<th>Detail</th>
 			<th>Update</th>
 			<th>Delete</th>
+			<th>Request for project</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -22,11 +23,11 @@
 			<td><h4>{{ resource.name }}</h4></td>
 			<td>
 			{% if resource.resource_type == "A" %}
-				<span class="glyphicon glyphicon-music"></span>Audio
+				<span class="glyphicon glyphicon-music"></span> Audio
 			{% elif resource.resource_type == "V" %}
-				<span class="glyphicon glyphicon-film"></span>Video
+				<span class="glyphicon glyphicon-film"></span> Video
 			{% elif resource.resource_type == "I" %}
-				<span class="glyphicon glyphicon-picture"></span>Image
+				<span class="glyphicon glyphicon-picture"></span> Image
 			{% else %}
 				{{resource.resource_type}}
 			{% endif %}
@@ -34,6 +35,7 @@
 			<td><a title="Detail resource" href="{% url "storage:resource_detail" resource.id %}"><span class="glyphicon glyphicon-search"></a></td>
 			<td><a title="Update resource" href="{% url "storage:resource_update" resource.id %}"><span class="glyphicon glyphicon-pencil"></a></td>
 			<td><a title="Delete resource" href="{% url "storage:resource_delete" resource.id %}"><span class="glyphicon glyphicon-trash"></a></td>
+			<td><a title="Request it for your project" href="{% url "storage:resource_request" resource.id %}"><span class="glyphicon glyphicon-eye-open"></span></a></td>
 		</tr>
 	{% endfor %}
 	</tbody>

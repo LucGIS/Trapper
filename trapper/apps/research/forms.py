@@ -24,7 +24,16 @@ from django import forms
 from django.forms.models import inlineformset_factory
 from tinymce.widgets import TinyMCE
 
-from trapper.apps.research.models import Project, ProjectRole
+from trapper.apps.research.models import Project, ProjectRole, ProjectCollection
+
+from djangular.forms import NgModelFormMixin
+from crispy_forms.helper import FormHelper                                                                                     
+from crispy_forms.layout import Layout, Field, Submit, HTML, Fieldset, Div
+from crispy_forms.bootstrap import StrictButton, PrependedText                                    
+from crispy_forms.utils import render_field     
+from django_select2.fields import ModelSelect2MultipleField
+from django_select2.widgets import Select2Widget, Select2MultipleWidget
+
 
 class ProjectForm(forms.ModelForm):
 	"""Project ModelForm for the Update/Create views"""
@@ -37,3 +46,35 @@ class ProjectForm(forms.ModelForm):
 
 ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra = 1)
 """Formset for the ProjectRole model"""
+
+
+
+class ProjectCollectionForm(NgModelFormMixin, forms.ModelForm):
+
+        REQUIRED_PROJECT_ROLES = [ProjectRole.ROLE_PROJECT_ADMIN, ProjectRole.ROLE_EXPERT]
+
+        class Meta:
+		model = ProjectCollection
+		#exclude = ['collection',]
+
+        def __init__(self, *args, **kwargs):
+                user = kwargs.pop('user', None)
+                self.helper = FormHelper()                                                                                             
+                self.helper.form_tag = False
+                self.helper.error_text_inline = True                                                                                   
+                self.helper.form_show_errors = True
+                self.helper.help_text_inline = False
+                super(ProjectCollectionForm, self).__init__(*args, **kwargs)
+                self.fields['collection'].widget = forms.HiddenInput()
+                if user:
+                        project_pks = set(role.project.pk for role in user.research_roles.filter(name__in = self.REQUIRED_PROJECT_ROLES))
+                        projects = Project.objects.filter(pk__in=project_pks)
+                        self.fields['project'].queryset = projects
+
+        def clean(self):
+                #cleaned_data = super(ProjectCollectionForm, self).clean()
+                project = self.cleaned_data.get("project")
+                collection = self.cleaned_data.get("collection")
+                if ProjectCollection.objects.filter(project=project, collection=collection):
+                        raise forms.ValidationError("Project Collection already exists.")
+                return self.cleaned_data

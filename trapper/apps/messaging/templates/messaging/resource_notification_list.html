@@ -1,0 +1,26 @@
+{% extends "messaging/base.html" %}
+{% load staticfiles %}
+{% block messaging_rnotification_list %}class="active"{% endblock %}
+{% block content %}
+
+{% if notifications %}
+	<table border=1>
+	<th>Name</th>
+	<th>Resource</th>
+	<th>Project</th>
+	<th>Message</th>
+	<th>Action</th>
+	{% for notification in notifications %}
+	<tr>
+		<td>{{notification.name}}</td>
+		<td>{{notification.resource.name}}</td>
+		<td>{{notification.project.name}}</td>
+		<td><a href="{{notification.message.get_absolute_url}}" >View Message</a></td>
+		<td><a href="{% url "messaging:rnotification_resolve" notification.pk %}" >Resolve</a></td>
+	</tr>
+	{% endfor %}
+	</table>
+{% else %}
+No notifications available.
+{% endif %}
+{% endblock content %}

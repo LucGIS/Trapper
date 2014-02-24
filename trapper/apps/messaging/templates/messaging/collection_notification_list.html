@@ -1,6 +1,6 @@
 {% extends "messaging/base.html" %}
 {% load staticfiles %}
-{% block messaging_notification_list %}class="active"{% endblock %}
+{% block messaging_cnotification_list %}class="active"{% endblock %}
 {% block content %}
 
 {% if notifications %}
@@ -16,7 +16,7 @@
 		<td>{{notification.collection.name}}</td>
 		<td>{{notification.project.name}}</td>
 		<td><a href="{{notification.message.get_absolute_url}}" >View Message</a></td>
-		<td><a href="{% url "messaging:notification_resolve" notification.pk %}" >Resolve</a></td>
+		<td><a href="{% url "messaging:cnotification_resolve" notification.pk %}" >Resolve</a></td>
 	</tr>
 	{% endfor %}
 	</table>

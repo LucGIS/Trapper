@@ -29,13 +29,22 @@ import StringIO
 from PIL import Image, ImageOps
 from mimetypes import guess_type
 import datetime
+import itertools
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+from guardian import models as Gmodels
+from guardian.shortcuts import get_perms
+
+from easy_thumbnails.fields import ThumbnailerField
+from easy_thumbnails.signals import saved_file
+from easy_thumbnails.signal_handlers import generate_aliases_global
+
 from trapper.apps.geomap.models import Location
+
 
 class Resource(models.Model):
 	"""Model describing a single resource.
@@ -45,7 +54,7 @@ class Resource(models.Model):
 	"""
 
 	name = models.CharField(max_length=255)
-	file = models.FileField(upload_to='storage/resource/file/', null=True, blank=True)
+	file = ThumbnailerField(upload_to='storage/resource/file/', null=True, blank=True)
 	extra_file = models.FileField(upload_to='storage/resource/file/', null=True, blank=True)
 
 	THUMBNAIL_SIZE = (96,96)
@@ -70,33 +79,58 @@ class Resource(models.Model):
 		(TYPE_IMAGE, 'Image'),
 		(TYPE_AUDIO, 'Audio'),
 	)
+        STATUS_CHOICES = (
+                ('Private', 'Private'),
+		('OnDemand', 'On demand'),
+		('Public', 'Public'),
+        )
 
 	mime_type = models.CharField(choices=MIME_CHOICES, max_length=255, null=True, blank=True)
 	extra_mime_type = models.CharField(choices=MIME_CHOICES, max_length=255, null=True, blank=True)
-	thumbnail = models.ImageField(upload_to='storage/resource/thumbnail/', null=True, blank=True)
 	resource_type = models.CharField(choices=TYPE_CHOICES, max_length=1, null=True, blank=True)
 	date_uploaded = models.DateTimeField(auto_now_add=True)
+	date_recorded = models.DateTimeField(null=True, blank=True)
 	location = models.ForeignKey(Location, null=True, blank=True)
-
-	is_public = models.BooleanField("Publicly available", default=False)
+        status = models.CharField(choices=STATUS_CHOICES, max_length=8, default='OnDemand')
+	#is_public = models.BooleanField("Publicly available", default=False, help_text="Make it public")
+	#is_private = models.BooleanField("Private", default=False, help_text="Make it private (only owner and managers can see this resource)")
 	uploader = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_resources')
 	owner = models.ForeignKey(User, null=True, blank=True, related_name='owned_resources')
 	managers = models.ManyToManyField(User, null=True, blank=True, related_name='managed_resources')
 
+        class Meta:
+                permissions = (
+                        ('view_resource_SNG', 'View Resource - Single'),
+                        ('view_resource_PRO', 'View Resource - In Project Collection'),
+                )
+
 	def __unicode__(self):
-		return unicode(self.get_resource_type_display() + ":" + self.name)
+		return unicode(str(self.get_resource_type_display()) + ":" + self.name)
 
 	def get_absolute_url(self):
 		"""Get the absolute url for an instance of this model."""
-
 		return reverse('storage:resource_detail', kwargs={'pk':self.pk})
 
-	def _set_thumbnail(self, image):
-		thumb_io = StringIO.StringIO()
-		image = ImageOps.fit(image, self.THUMBNAIL_SIZE, Image.ANTIALIAS)
-		image.save(thumb_io, format="JPEG")
-		thumb_file = InMemoryUploadedFile(thumb_io, None, self.name, 'image/jpeg', thumb_io.len, None)
-		self.thumbnail = thumb_file
+
+        def can_view(self, user):
+                if self.status == 'Public':
+                        return True
+                else:
+                        perms = get_perms(user, self)
+                        return  user in (self.owner, self.uploader) or user in self.managers.all() or 'view_resource_PRO' in perms or 'view_resource_SNG' in perms   
+
+        # helper function; has project-based access; can return 'checkset' which can tell you which collections are shared between resource and user 
+        def has_access(self, user, return_checkset=False):
+                from trapper.apps.research.models import Project
+                projects = user.research_roles.values_list('project_id', flat=True)
+                # check if resource belongs to any collection of any project that user is part of
+                checkset = set(self.collection_set.values_list('id', flat=True)) & set(list(itertools.chain(*[Project.objects.get(pk=k).collections.values_list('id', flat=True) for k in projects])))
+                if return_checkset:
+                        return checkset
+                elif checkset:
+                        return True
+                else:
+                        return False
 
 	def can_update_or_delete(self, user):
 		return user in (self.owner, self.uploader) or user in self.managers.all()
@@ -106,42 +140,46 @@ class Resource(models.Model):
 
 	def can_update(self, user):
 		return self.can_update_or_delete(user)
+        
+        def is_used_by_other_collection(self, user):
+                # is used by other collection
+                if self.collection_set.all().exclude(owner=user):
+                        return True
+                else: 
+                        return False
+                
+        def is_used_by_other_research_project(self, user):
+                # get all research projects where user plays admin role
+                import itertools
+                admin_in_projects = [k.project for k in user.research_roles.filter(name="A")]
+                # check if other projects use a resource\
+                if set(list(itertools.chain(*[k.research_projects.all() for k in self.collection_set.all()]))) - set(admin_in_projects):
+                        return True
+                else:
+                        return False
 
-	def update_metadata(self, commit=False):
+        def can_be_deleted(self, user):
+                return not(self.is_used_by_other_collection(user) or self.is_used_by_other_research_project(user))
+
+        def move2archive(self):
+                user = User.objects.get(username="archive")
+                self.owner, self.uploader = (user, user)
+                self.managers.remove()
+                self.save()
+
+        def update_metadata(self, commit=False):
 		"""Updates the internal metadata about the resource.
 
 		:param commit: States whether to perform self.save() at the end of this method
 		:type commit: bool
 		"""
-
+                
 		self.update_mimetype(commit=False)
 		self.update_resource_type(commit=False)
-		self.update_thumbnail(commit=False)
-
+                
 		if commit:
 			self.save()
 
-	def update_thumbnail(self, commit=False):
-		"""Generates the thumbnail for video and image resources
-
-		:param commit: States whether to perform self.save() at the end of this method
-		:type commit: bool
-		"""
-		if not self.mime_type:
-			self.update_mimetype()
-
-		if self.mime_type.startswith('video'):
-			# FIXME: There's a problem with seeking in ogg files
-			s = VideoStream(self.file.path)
-			i = s.get_frame_at_sec(1).image()
-			self._set_thumbnail(i)
-		elif self.mime_type.startswith('image'):
-			i = Image.open(self.file.path)
-			self._set_thumbnail(i)
-		# TODO/FEATUE: possibly create a soundwave thumbnail out of the audio files
-
-		if commit:
-			self.save()
 
 	def update_resource_type(self, commit=False):
 		"""Sets resource_type based on mime_type.
@@ -174,6 +212,10 @@ class Resource(models.Model):
 
 		if commit:
 			self.save()
+
+# easy_thumbnails; TODO: make a task run by celery
+saved_file.connect(generate_aliases_global)
+
 
 class CollectionUploadJob(models.Model):
 	"""Job-like model for the collection upload requests.
@@ -240,13 +282,21 @@ class Collection(models.Model):
 	At core, this model is just an aggregation of :class:`.Resource` objects.
 	Additionally, permissions to alter given collection are given only to the users belonging to *managers* or the *owner*.
 	"""
-
+        STATUS_CHOICES = (
+                ('Private', 'Private'),
+		('OnDemand', 'On demand'),
+		('Public', 'Public'),
+        )
 	name = models.CharField(max_length=255)
 	description = models.TextField(max_length=2000, null=True, blank=True)
 	resources = models.ManyToManyField(Resource)
-
 	owner = models.ForeignKey(User, related_name='owned_collections')
-	managers = models.ManyToManyField(User, null=True, blank=True, related_name='managed_collections')
+	uploader = models.ForeignKey(User, null=True, blank=True, related_name='uploaded_collections')
+	managers = models.ManyToManyField(User, null=True, blank=True, related_name='managed_collections', help_text='test')
+        status = models.CharField(choices=STATUS_CHOICES, max_length=8, default='OnDemand')
+	#is_public = models.BooleanField("Publicly available", default=False, help_text="Make it public")
+	#is_private = models.BooleanField("Private", default=False, help_text="Make it private (only owner and managers can see this collection)")
+
 
 	def __unicode__(self):
 		return unicode("%s | %s" % (self.name, self.owner.username))
@@ -264,3 +314,26 @@ class Collection(models.Model):
 
 	def can_delete(self, user):
 		return self.can_update_or_delete(user)
+
+
+# GUARDIAN stuff
+
+class ResourceUserObjectPermission(Gmodels.UserObjectPermissionBase):
+        content_object = models.ForeignKey(Resource)
+
+class ResourceGroupObjectPermission(Gmodels.GroupObjectPermissionBase):
+        content_object = models.ForeignKey(Resource)
+
+class CollectionUserObjectPermission(Gmodels.UserObjectPermissionBase):
+        content_object = models.ForeignKey(Collection)
+
+class CollectionGroupObjectPermission(Gmodels.GroupObjectPermissionBase):
+        content_object = models.ForeignKey(Collection)
+
+
+# register signals
+from signals import collection_m2m_changed
+from django.db.models.signals import m2m_changed
+
+m2m_changed.connect(collection_m2m_changed, sender=Collection.resources.through)
+

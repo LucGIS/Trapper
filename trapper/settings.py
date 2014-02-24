@@ -19,6 +19,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.              #
 ############################################################################
 
+
 # Django settings for trapper project.
 
 DEBUG = True
@@ -33,7 +34,7 @@ import os
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 # Uncomment this line if your postgis is 2.1 or newer (input the correct version in that case)
-POSTGIS_VERSION = (2,1,0)
+#POSTGIS_VERSION = (2,1,0)
 
 DATABASES = {
 	'default': {
@@ -56,7 +57,7 @@ ALLOWED_HOSTS = []
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Europe/Warsaw'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -88,7 +89,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+#STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -102,13 +103,19 @@ STATICFILES_DIRS = (
 	os.path.join(PROJECT_ROOT, 'static').replace('\\','/'),
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
-	'django.contrib.staticfiles.finders.FileSystemFinder',
 	'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+	'django.contrib.staticfiles.finders.FileSystemFinder',
 #	'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -120,6 +127,12 @@ TEMPLATE_LOADERS = (
 	'django.template.loaders.filesystem.Loader',
 	'django.template.loaders.app_directories.Loader',
 #	 'django.template.loaders.eggs.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS =(
+    'django.core.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -145,42 +158,37 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.sites',
-	'django.contrib.messages',
-	'django.contrib.staticfiles',
-	'django.contrib.gis',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.gis',
+    'django.contrib.comments',
+    
+    'trapper.apps.media_classification',
+    'trapper.apps.storage',
+    'trapper.apps.accounts',
+    'trapper.apps.messaging',
+    'trapper.apps.common',
+    'trapper.apps.geomap',
+    'trapper.apps.research',
 
-	'trapper.apps.media_classification',
-	'trapper.apps.storage',
-	'trapper.apps.accounts',
-	'trapper.apps.messaging',
-	'trapper.apps.common',
-	'trapper.apps.geomap',
-	'trapper.apps.research',
-
-	'django.contrib.admin',
-	'django_extensions',
-	'ajax_select',
-	'tinymce',
+    'grappelli',
+    'django.contrib.admin',
+    'south',
+    'django_extensions',
+    'tinymce',
+    'datetimewidget', 
+    'debug_toolbar',
+    'guardian',
+    'fluent_comments',
+    'crispy_forms',
+    'djangular',
+    'easy_thumbnails',
+    'django_select2',
 )
-
-AJAX_LOOKUP_CHANNELS = {
-	'resource': ('trapper.apps.storage.lookups', 'ResourceLookup'),
-	'user': ('trapper.apps.accounts.lookups', 'UserLookup'),
-
-	#'resource': {
-	#	'model': 'storage.resource',
-	#	'search_field': 'name'
-	#},
-
-	#'user': {
-	#	'model': 'auth.user',
-	#	'search_field': 'username'
-	#},
-}
 
 from django.contrib.messages import constants as messages
 
@@ -219,3 +227,35 @@ LOGGING = {
 		},
 	}
 }
+
+# GUARDIAN SETTINGS
+ANONYMOUS_USER_ID = -1
+GUARDIAN_RENDER_403 = True
+
+# FLUENT COMMENTS                                                                                                                                                      
+FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')                                                                                                              
+COMMENTS_APP = 'fluent_comments'  
+
+# EASY THUMBNAILS
+THUMBNAIL_BASEDIR = 'thumbs'
+THUMBNAIL_ALIASES = {                                                                                                          
+    '': {                                                                                                                      
+        'small': {'size':(80, 80),},                                                                                           
+        'default': {'size':(100, 100),},                                                                                       
+        'medium': {'size':(250, 250),},                                                                                        
+        'large': {'size':(400, 400),},
+        'video': {'size':(640, 480),},                                                                                         
+    },                                                                                                                         
+}
+
+THUMBNAIL_SOURCE_GENERATORS = (
+    'easy_thumbnails.source_generators.pil_image', # Default
+    'trapper.tools.video_thumb_source_generator.ffmpeg_frame',
+)
+
+# CRISPY FORMS
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+#DJANGO-SELECT2
+SELECT2_BOOTSTRAP = True
+#AUTO_RENDER_SELECT2_STATICS = False

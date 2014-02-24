@@ -22,7 +22,6 @@
 
 from django.db import models
 from django.contrib.auth.models import User, Group
-from django.core.urlresolvers import reverse
 
 
 class UserProfile(models.Model):
@@ -37,14 +36,16 @@ class UserProfile(models.Model):
 		return unicode("%s" % (self.user.username,))
 
 	def get_absolute_url(self):
-		return reverse('accounts:userprofile_detail', kwargs={'pk':self.pk})
+                from django.core.urlresolvers import reverse
+                return reverse('accounts:userprofile_detail', kwargs={'pk':self.user.pk})
+                
 
 	def has_unread_messages(self):
 		"""Checks whether user has any unread messages
 		(see :class:`trapper.apps.messaging.models.Message`).
 		"""
 
-		return self.user.received_messages.filter(date_received=None).count() + self.user.system_notifications.filter(resolved=False).count() > 0
+		return self.user.received_messages.filter(date_received=None).count()
 
 	def count_unread_messages(self):
 		"""Returns the number of unread messages.
@@ -53,12 +54,22 @@ class UserProfile(models.Model):
 
 		return self.user.received_messages.filter(date_received=None).count()
 
-	def count_unresolved_system_notifications(self):
+	def count_unresolved_collection_notifications(self):
 		"""Returns the number of unresolved system notifications.
 		(see :class:`trapper.apps.messaging.models.SystemNotification`).
 		"""
 
-		return self.user.system_notifications.filter(resolved=False).count()
+		return self.user.collection_notifications.filter(resolved=False).count()
+
+	def count_unresolved_resource_notifications(self):
+		"""Returns the number of unresolved system notifications.
+		(see :class:`trapper.apps.messaging.models.SystemNotification`).
+		"""
+
+		return self.user.resource_notifications.filter(resolved=False).count()
+
+
+# SIGNALS: User
 
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
@@ -78,5 +89,14 @@ def set_user_as_staff(sender, instance, action, **kwargs):
 		else:
 			User.objects.filter(pk=instance.pk).update(is_staff=False)
 
+from trapper.apps.storage.models import ResourceUserObjectPermission, CollectionUserObjectPermission
+
+# remove all object-based permissions connected with user
+def remove_obj_perms_connected_with_user(sender, instance, **kwargs):
+        ResourceUserObjectPermission.objects.filter(user=instance).delete()
+        CollectionUserObjectPermission.objects.filter(user=instance).delete()
+
+
 models.signals.post_save.connect(create_user_profile, sender=User)
 models.signals.m2m_changed.connect(set_user_as_staff, sender=User.groups.through)
+models.signals.pre_delete.connect(remove_obj_perms_connected_with_user, sender=User)

@@ -1,0 +1,25 @@
+{% extends "storage/nggrid_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block actions %}
+<li><a href="/storage/resource/create" style="display:inline; padding:0;">
+    <button type="button" class="btn btn-default navbar-btn">Upload a resource <i class="icon-upload"></i></button>
+</a> </li>
+<li><button type="button" class="btn btn-default navbar-btn" ng-click="getCollectionCreateAjaxForm()">Create collection</button></li> 
+<li class="dropdown">
+  <button type="button" class="dropdown-toggle btn btn-default navbar-btn" data-toggle="dropdown">Actions <b class="caret"></b></button>
+  <ul class="dropdown-menu">    
+    <li><a href="#">Action</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</li>
+{% endblock %}
+{% block modal_form %}
+{% include "storage/modal_form_template.html" %}
+{% endblock %}
+{% block modal_preview %}
+{% include "storage/modal_preview_template.html" %}
+{% endblock %}

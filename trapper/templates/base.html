@@ -1,32 +1,44 @@
 <!DOCTYPE html>
 <html>
   <head>
-	{% load staticfiles %}
-	<meta charset="utf-8">
+    {% load staticfiles %}
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
-	<script type="text/javascript" src="{% static "jquery.js" %}"></script>
-	<link type="text/css" href="{% static "ajax_select/css/ajax_select.css" %}"  media="all" rel="stylesheet" />
-	<script type="text/javascript" src="{% static "ajax_select/js/bootstrap.js" %}"></script>
-	<script type="text/javascript" src="{% static "ajax_select/js/ajax_select.js" %}"></script>
-	<link href="//vjs.zencdn.net/4.2/video-js.css" rel="stylesheet">
-	<script src="//vjs.zencdn.net/4.2/video.js"></script>
+    <!-- CSS -->
+    <link type="text/css" href="{% static "jquery/jquery-ui-1.10.4.min.css" %}"  media="all" rel="stylesheet" />
+    <link type="text/css" href="{% static "bootstrap/css/bootstrap.css" %}"  media="all" rel="stylesheet" />
+    <link type="text/css" href="{% static "bootstrap/css/bootstrap-theme.css" %}"  media="all" rel="stylesheet" />
+    <link type="text/css" href="{% static "bootstrap/css/bootstrap-datetimepicker.min.css" %}"  media="all" rel="stylesheet" />
+    <link type="text/css" href="{% static "bootstrap/css/bootstrap-switch.min.css" %}"  media="all" rel="stylesheet" />
+    <link type="text/css" href="{% static "bootstrap/css/select2-bootstrap.css" %}"  media="all" rel="stylesheet" />
+    <link type="text/css" href="{% static "bootstrap_extra.css" %}"  media="all" rel="stylesheet" />
+    <link type="text/css" href="{% static "font-awesome/css/font-awesome.min.css" %}" media="all" rel="stylesheet" />
+    <link type="text/css" href="//vjs.zencdn.net/4.2/video-js.css" media="all"rel="stylesheet">
 
-
+    <!-- JS -->
+    <script type="text/javascript" src="{% static "jquery/jquery-2.1.0.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "jquery/jquery-ui-1.10.4.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap-datetimepicker.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap-switch.min.js" %}"></script>
+    <script src="//vjs.zencdn.net/4.2/video.js"></script>
+    <script type="text/javascript">
+      jQuery(function ($) {
+	  $('.datetimeinput').datetimepicker({
+	      format: 'yyyy-mm-dd hh:ii',
+	  });
+      });
+    </script>
     <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+    
     <title>Trapper</title>
 
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
-	<link type="text/css" href="{% static "bootstrap_extra.css" %}"  media="all" rel="stylesheet" />
-
-	{# Header block for extra scripts and css styles #}
-	{% block header %}{% endblock header %}
+    {# Header block for extra scripts and css styles #}
+    {% block header %}{% endblock header %}
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -37,10 +49,11 @@
     <![endif]-->
   </head>
   <body>
-	  <div class="container">
-
+    <div class="container">
+      
       <!-- Static navbar -->
-      <div class="navbar navbar-inverse navbar-static-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -48,120 +61,114 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-		  <a class="navbar-brand" href="{% url "index" %}"><span class="glyphicon glyphicon-home"></span> Trapper</a>
+	  <a class="navbar-brand" href="{% url "index" %}"><span class="glyphicon glyphicon-home"></span> Trapper</a>
         </div>
 
-        <div class="navbar-collapse collapse">
+        <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
 
-			{% if user.is_staff %}
-			<li><a href="{% url "admin:index" %}"><span class="glyphicon glyphicon-briefcase"></span> Admin Site</a></li>
-			{% endif %}
-	        <li class="dropdown">
-
-
-			{% if user.is_authenticated %}
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-envelope {%if user.userprofile.has_unread_messages %}new_message{% endif %}"></span> Messaging<b class="caret"></b></a>
-
-	          <ul class="dropdown-menu">
-	            <li class="dropdown-header">Message:</li>
-				<li><a href="{% url "messaging:message_inbox" %}">Inbox <span class="badge">{{ user.userprofile.count_unread_messages }}</span></a></li>
-	            <li><a href="{% url "messaging:message_outbox" %}">Outbox</a></li>
-	            <li><a href="{% url "messaging:message_outbox" %}">New message</a></li>
-	            <li class="divider"></li>
-	            <li class="dropdown-header">System notification:</li>
-				<li><a href="{% url "messaging:notification_list" %}">Notifications <span class="badge">{{ user.userprofile.count_unresolved_system_notifications }}</span></a></li>
-	          </ul>
-	        </li>
-			{% endif %}
+	    {% if user.is_staff %}
+	    <li><a href="{% url "admin:index" %}"><span class="glyphicon glyphicon-briefcase"></span> Admin Site</a></li>
+	    {% endif %}
+	    <li class="dropdown">
+	      
+	      
+	      {% if user.is_authenticated %}
+	      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-envelope {%if user.userprofile.has_unread_messages %}new_message{% endif %}"></span> Messaging<b class="caret"></b></a>
+	      
+	      <ul class="dropdown-menu">
+	        <li class="dropdown-header">Message:</li>
+		<li><a href="{% url "messaging:message_inbox" %}">Inbox <span class="badge">{{ user.userprofile.count_unread_messages }}</span></a></li>
+	        <li><a href="{% url "messaging:message_outbox" %}">Outbox</a></li>
+	        <li><a href="{% url "messaging:message_outbox" %}">New message</a></li>
+	        <li class="divider"></li>
+	        <li class="dropdown-header">System Notifications:</li>
+		<li><a href="{% url "messaging:cnotification_list" %}">Requested Collections <span class="badge">{{ user.userprofile.count_unresolved_collection_notifications }}</span></a></li>
+		<li><a href="{% url "messaging:rnotification_list" %}">Requested Resources <span class="badge">{{ user.userprofile.count_unresolved_resource_notifications }}</span></a></li>	
+	      </ul>
+	    </li>
+	    {% endif %}
 
             <li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-film"></span> Storage<b class="caret"></b></a>
+	      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-film"></span> Storage<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header">Resources:</li>
                 <li><a href="{% url "storage:resource_list" %}">Resources</a></li>
-				{% if user.is_authenticated %}
+		{% if user.is_authenticated %}
                 <li><a href="{% url "storage:user_resource_list" user.id %}">My resources</a></li>
-				<li><a href="{% url "storage:resource_create" %}">Add resource <span class="glyphicon glyphicon-plus create_item"></span></a></li>
-				{% endif %}
+		<li><a href="{% url "storage:resource_create" %}">Add resource <span class="glyphicon glyphicon-plus create_item"></span></a></li>
+		{% endif %}
                 <li class="divider"></li>
                 <li class="dropdown-header">Collections:</li>
                 <li><a href="{% url "storage:collection_list" %}">Collections</a></li>
-				{% if user.is_authenticated %}
+		{% if user.is_authenticated %}
                 <li><a href="{% url "storage:user_collection_list" user.id %}">My collections</a></li>
-				<li><a href="{% url "storage:collection_create" %}">Add collection <span class="glyphicon glyphicon-plus create_item"></span></a></li>
-				<li><a href="{% url "storage:collection_upload" %}">Upload collection <span class="glyphicon glyphicon-plus create_item"></span></a></li>
-				{% endif %}
+		<li><a href="{% url "storage:collection_create" %}">Add collection <span class="glyphicon glyphicon-plus create_item"></span></a></li>
+		<li><a href="{% url "storage:collection_upload" %}">Upload collection <span class="glyphicon glyphicon-plus create_item"></span></a></li>
+		{% endif %}
               </ul>
             </li>
-
+	    
             <li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-book"></span> Research<b class="caret"></b></a>
+	      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-book"></span> Research<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header">Projects:</li>
-				<li><a href="{% url "research:project_list" %}">Projects</a></li>
+		<li><a href="{% url "research:project_list" %}">Projects</a></li>
               </ul>
             </li>
 
             <li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-eye-open"></span> Media classification<b class="caret"></b></a>
+	      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-eye-open"></span> Media classification<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header">Classification projects:</li>
-				<li><a href="{% url "media_classification:project_list" %}">Projects</a></li>
-				<li><a href="{% url "media_classification:featureset_list" %}">Feature sets</a></li>
+		<li><a href="{% url "media_classification:project_list" %}">Projects</a></li>
+		<li><a href="{% url "media_classification:featureset_list" %}">Feature sets</a></li>
                 <li><a href="#">Request collection</a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">Crowd Sourcing:</li>
                 <li><a href="#">Tutorial</a></li>
-				<li><a href="{% url "media_classification:cs_resource_list" %}">Classify material</a></li>
+		<li><a href="{% url "media_classification:cs_resource_list" %}">Classify material</a></li>
               </ul>
             </li>
 
-			<li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-globe"></span> GeoMap<b class="caret"></b></a>
+	    <li class="dropdown">
+	      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-globe"></span> GeoMap<b class="caret"></b></a>
               <ul class="dropdown-menu">
-				<li><a href="{% url "geomap:index" %}">Show Map</a></li>
-				<li><a href="{% url "geomap:location_upload" %}">Upload locations</a></li>
+		<li><a href="{% url "geomap:index" %}">Show Map</a></li>
+		<li><a href="{% url "geomap:location_upload" %}">Upload locations</a></li>
               </ul>
-			</li>
+	    </li>
 
           </ul>
+
           <ul class="nav navbar-nav navbar-right">
-
-			{% if user.is_authenticated %}
-			<li><a href="{{user.userprofile.get_absolute_url}}"><span class="glyphicon glyphicon-user"></span> {{user.username}}</a></li>
-			<li><a href="{% url "accounts:logout" %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-
-			{% else %}
-				<li><a href="{% url "accounts:login" %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-				<li><a href="{% url "accounts:register" %}"><span class="glyphicon glyphicon-plus-sign"></span> Register</a></li>
-			{% endif %}
-
+	    {% if user.is_authenticated %}
+	    <li><a href="{{user.userprofile.get_absolute_url}}"><span class="glyphicon glyphicon-user"></span> {{user.username}}</a></li>
+	    <li><a href="{% url "accounts:logout" %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+	    {% else %}
+	    <li><a href="{% url "accounts:login" %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+	    <li><a href="{% url "accounts:register" %}"><span class="glyphicon glyphicon-plus-sign"></span> Register</a></li>
+	    {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
-
+	</div><!--/.container-fluid -->
       </div>
-	{% if messages %}
-		{% for message in messages %}
-		<div class="alert alert-{{ message.tags }}">
-		{{ message|safe }}
-		</div>
-		{% endfor %}
-	{% endif %}
-	{% block master_content %}{% endblock master_content %}
-
-	<hr />
-	<footer style="text-align:center;">
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+	{{ message|safe }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% block master_content %}{% endblock master_content %}
+      	
+      <footer style="text-align:center;">
 	© 2013 Mammal Research Institute of the Polish Academy of Sciences
 	and Bialystok University of Technology.
 	<!-- <a href="http://www.djangoproject.com/"><img src="https://www.djangoproject.com/m/img/badges/djangomade124x25.gif" border="0" alt="Made with Django." title="Made with Django." /></a> -->
-	</footer>
+      </footer>
     </div> <!-- /container -->
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery.js"></script>
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+    
   </body>
 </html>
 

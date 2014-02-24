@@ -7,7 +7,7 @@
 from django.contrib.auth.models import User, Group
 from django.contrib.gis.geos import Point
 from trapper.apps.storage.models import Resource, Collection
-from trapper.apps.research.models import Project as RProject, ProjectRole as RProjectRole
+from trapper.apps.research.models import Project as RProject, ProjectRole as RProjectRole, ProjectCollection as RProjectCollection
 from trapper.apps.media_classification.models import Feature, FeatureScope, FeatureSet, Project, ProjectRole, ProjectCollection
 from trapper.apps.geomap.models import Location
 
@@ -63,7 +63,7 @@ for name, owner, uploader, filename in r_data:
 		r.file.save(filename, File(r_file), save=False)
 	r.update_metadata(commit=True)
 
-Resource.objects.all().update(is_public=True)
+#Resource.objects.all().update(is_public=True)
 r1, r2, r3, r4, r5, r6 = Resource.objects.filter(pk__in=xrange(1,7))
 
 # Collection
@@ -89,13 +89,18 @@ fs3.features.add(f1, f2, f3)
 rp1 = RProject.objects.create(name="ResearchProject1")
 rpr0 = RProjectRole.objects.create(name=RProjectRole.ROLE_PROJECT_ADMIN, user=u0, project=rp1)
 rpr2 = RProjectRole.objects.create(name=RProjectRole.ROLE_EXPERT, user=u4, project=rp1)
+
+rpc1 = RProjectCollection.objects.create(project=rp1, collection=c1)
+rpc2 = RProjectCollection.objects.create(project=rp1, collection=c2)
+rpc3 = RProjectCollection.objects.create(project=rp1, collection=c3)
+
 # Project
 p1 = Project.objects.create(name="ClassificationProject1", research_project=rp1)
 p2 = Project.objects.create(name="ClassificationProject2", research_project=rp1)
 p1.feature_sets.add(fs1, fs2, fs3)
-pc1 = ProjectCollection.objects.create(project=p1, collection=c1, active=True, cs_enabled=True)
-pc2 = ProjectCollection.objects.create(project=p1, collection=c2, active=True, cs_enabled=False)
-pc3 = ProjectCollection.objects.create(project=p1, collection=c3, active=False, cs_enabled=True)
+pc1 = ProjectCollection.objects.create(project=p1, collection=rpc1, active=True, cs_enabled=True)
+pc2 = ProjectCollection.objects.create(project=p1, collection=rpc2, active=True, cs_enabled=False)
+pc3 = ProjectCollection.objects.create(project=p1, collection=rpc3, active=False, cs_enabled=True)
 
 pr0 = ProjectRole.objects.create(name=ProjectRole.ROLE_PROJECT_ADMIN, user=u0, project=p1)
 pr2 = ProjectRole.objects.create(name=ProjectRole.ROLE_EXPERT, user=u4, project=p1)

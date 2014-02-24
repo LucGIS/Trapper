@@ -21,10 +21,32 @@
 ############################################################################
 
 import django_filters
+from datetimewidget.widgets import DateTimeWidget
 
-from trapper.apps.storage.models import Resource
+from trapper.apps.storage.models import Resource, Collection
+from trapper.apps.storage.forms import ResourceFilterForm
+
+resource_types = [(k) for k in Resource.TYPE_CHOICES]
+resource_types.sort()
+RESOURCE_TYPE_FILTER_CHOICES = tuple([('','-- All --')]+resource_types)
+resource_status = [(k) for k in Resource.STATUS_CHOICES]
+RESOURCE_STATUS_FILTER_CHOICES = tuple([('','-- All --')]+resource_status)
+#collections = Collection.objects.all().order_by('name')
+#COLLECTION_CHOICES = tuple([('','-- All --')]+[(x.id, x.name + " : " + x.owner.username) for x in collections])
 
 class ResourceFilter(django_filters.FilterSet):
+        date_uploaded = django_filters.DateRangeFilter(label='Date')
+        resource_type= django_filters.ChoiceFilter(choices=RESOURCE_TYPE_FILTER_CHOICES, label='Type')
+        status = django_filters.ChoiceFilter(choices=RESOURCE_STATUS_FILTER_CHOICES)
+        #collection = django_filters.ChoiceFilter(choices=COLLECTION_CHOICES)
+
 	class Meta:
 		model = Resource
-		fields = ['name', 'resource_type', 'is_public']
+                form = ResourceFilterForm
+		fields = ['resource_type', 'date_uploaded', 'status']
+
+        
+
+
+
+

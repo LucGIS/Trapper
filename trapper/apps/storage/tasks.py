@@ -24,9 +24,6 @@ from __future__ import absolute_import
 
 from celery import shared_task
 
-from trapper.apps.storage.models import CollectionUploadJob
-from trapper.tools.batch_uploading import ResourceArchiveValidator, ResourceArchiveUploader
-
 @shared_task
 def process_collection_upload(job_pk):
 	"""Performs a final validation and uploads the collection.
@@ -36,6 +33,9 @@ def process_collection_upload(job_pk):
 	:returns: A bar
 	:rtype: int
 	"""
+
+        from trapper.apps.storage.models import CollectionUploadJob 
+        from trapper.tools.batch_uploading import ResourceArchiveValidator, ResourceArchiveUploader
 
 	job = CollectionUploadJob.objects.get(pk=job_pk)
 	job.set_status(CollectionUploadJob.STATUS_PENDING)

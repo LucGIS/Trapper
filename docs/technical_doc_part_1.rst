@@ -45,7 +45,7 @@ Strings: single vs double quotes
 
 Use double quotes:
 
-* When the string is a sentence, message or a word: ``"Four Yorkshiremen."``, ``"Shoebox"``
+* When the string is a sentence, message or a word: ``"Four Torkshiremen."``, ``"Shoebox"``
 
 Use single quotes:
 
@@ -62,7 +62,7 @@ Use single quotes:
     def set_color(color='red'):
         """Sets the color."""
 
-Indentation in templates
+Intentation in templates
 ===========================
 
 * Python code in templates should be indented up to the current indentation level of the preceeding HTML tag

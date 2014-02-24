@@ -24,7 +24,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-from trapper.apps.storage.models import Collection
+from trapper.apps.storage.models import Resource, Collection
 from trapper.apps.research.models import Project
 
 class Message(models.Model):
@@ -51,7 +51,6 @@ class SystemNotification(models.Model):
 	"""Abstract class for various types of system notifications directed towards a user."""
 
 	name = models.CharField(max_length=50)
-	user = models.ForeignKey(User, related_name='system_notifications')
 	resolved = models.BooleanField(default=False)
 
 	def __unicode__(self):
@@ -64,18 +63,41 @@ class SystemNotification(models.Model):
 	class Meta:
 		abstract = True
 
+
+# TODO: more general approach needed i.e. combine CollectionRequest and ResourceRequest
 class CollectionRequest(SystemNotification):
 	"""Notification about an incoming collection request for the media classification project"""
 
+	user = models.ForeignKey(User, related_name='collection_notifications')
 	message = models.ForeignKey(Message)
 	project = models.ForeignKey(Project)
-	collection = models.ForeignKey(Collection)
+	collections = models.ManyToManyField(Collection, blank=True, null=True, related_name='collection_request')
 
 	def resolve_yes(self):
 		"""Resolves the request positively and creates a ProjectCollection object."""
 
 		self.resolve()
-                self.project.collections.add(self.collection)
+                for collection in self.collections.all(): 
+                        self.project.collections.through.objects.create(project=self.project, collection=collection)
+
+	def resolve_no(self):
+		"""Resolves the request negatively."""
+		self.resolve()
+
+class ResourceRequest(SystemNotification):
+	"""Notification about an incoming collection request for the media classification project"""
+
+	user = models.ForeignKey(User, related_name='resource_notifications')
+        user_from = models.ForeignKey(User)
+	message = models.ForeignKey(Message)
+	resources = models.ManyToManyField(Resource, blank=True, null=True, related_name='resource_request')
+
+	def resolve_yes(self):
+		"""Resolves the request positively and assign to a user view-permissions to requested resources"""
+                from guardian.shortcuts import assign_perm
+		self.resolve()
+                for resource in self.resources.all():
+                        assign_perm("view_resource_SNG", self.user_from, resource)
 
 	def resolve_no(self):
 		"""Resolves the request negatively."""

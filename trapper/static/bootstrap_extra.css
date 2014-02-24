@@ -17,3 +17,59 @@
 .nav-tabs {
 	margin-bottom: 0;
 }
+
+.gridStyle {
+    border: 0px;
+    width: 100%; 
+    height: 1000px;
+}
+
+.selectedItems{
+    float: left; 
+}
+
+ul.djng-form-errors {                                                                                                  
+    margin-left: 0;                                                                                                
+    display: inline-block;                                                                                         
+    float: right;                                                                                                  
+    width: 360px;                                                                                                  
+}                                                                                                                      
+
+ul.djng-form-errors li {                                                                                               
+    list-style-type: none;                                                                                         
+    color: #e9322d;                                                                                                
+}                                                                                                                      
+
+ul.djng-form-errors li:before {                                                                                        
+    content: "* ";                                                                                                 
+    font-size: 135%;                                                                                               
+}                                                                                                                      
+
+.modal-wide .modal-dialog {
+  width: 80%; /* or whatever you wish */
+}
+
+.input-group .select2-container .select2-choice{
+    font-size:12px;
+    line-height:20px;
+    height:100%;
+    width:100%;
+    padding-top:4px;
+    padding-bottom:4px;
+}
+
+.input-group .select2-container .select2-choice{
+    border-radius: 0 4px 4px 0;
+}
+
+.search-query {
+    height:44px;
+}
+
+body { padding-top: 70px; }
+
+.navbar-btn {
+margin-top: 8px;
+margin-bottom: 8px;
+margin-right:8px;
+}

@@ -20,8 +20,6 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.              #
 ############################################################################
 
-from ajax_select import make_ajax_field
-
 from django import forms
 from django.forms.models import inlineformset_factory
 
@@ -62,7 +60,6 @@ class SequenceForm(forms.ModelForm):
 		exclude = ['date_created', 'user', 'project']
 
 	cp_pk = forms.IntegerField(widget=forms.HiddenInput)
-	resources = make_ajax_field(Sequence, 'resources', 'resource', help_text=None, plugin_options={'autoFocus':True,})
 
 ProjectCollectionFormset = inlineformset_factory(Project, ProjectCollection, extra=0, form=ProjectCollectionForm)
 """Formset for the ProjectCollection model"""

@@ -1,42 +1,23 @@
-{% extends "storage/base.html" %}
-{% load staticfiles %}
-{% block storage_resource_list %}class="active"{% endblock %}
-{% block content %}
+{% extends "storage/nggrid_base.html" %}
 
-<div class="panel panel-default">
-	<div class="panel-heading">Filter resources:</div>
-	<div class="panel-body">
-	<form class="navbar-form" role="search" action="" method="get">
-		<div class="form-group">
-			{% for field in filtering_form %}
-			<label>{{ field.label }}</label> {{ field }}
-			{% endfor %}
-		</div>
-		<button class="btn btn-sm btn-primary" type="submit">Apply</button>
-	</form>
-	</div>
-</div>
-<p>
-{% if resources %}
-<h3>Resources:</h3>
+{% block actions %}
+<li class="dropdown">
+  <button type="button" class="dropdown-toggle btn btn-default navbar-btn" data-toggle="dropdown">Actions <b class="caret"></b></button>
+  <ul class="dropdown-menu">    
+    <li><a href="#">Action</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</li>
+{% endblock %}
+{% block modal_form %}
+{% include "storage/modal_form_template.html" %}
+{% endblock %}
+{% block modal_preview %}
+{% include "storage/modal_preview_template.html" %}
+{% endblock %}
 
-	{# Displays pagination at the top and the bottom of the resources list #}
 
-	{% if is_paginated %}
-	{% load common_tags %}
-	{% pagination_menu page_obj 4 previous_filter_params %}
-	{% endif %}
 
-	{% include "storage/resource_iter.html" %}
-
-	{% if is_paginated %}
-	{% pagination_menu page_obj 4 previous_filter_params %}
-	{% endif %}
-{% else %}
-No resources available.
-{% endif %}
-</p>
-<p>
-	<a class="btn btn-sm btn-success" href="{% url "storage:resource_create" %}">Upload a resource <span class="glyphicon glyphicon-cloud-upload"></span></a>
-</p>
-{% endblock content %}

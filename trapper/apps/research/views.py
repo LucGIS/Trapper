@@ -2,12 +2,17 @@ from django.shortcuts import render
 from braces.views import LoginRequiredMixin
 from django.views import generic
 from django.http import HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
 
 from extra_views import InlineFormSet, CreateWithInlinesView, UpdateWithInlinesView, NamedFormsetsMixin
 
-from trapper.apps.research.models import Project, ProjectRole
-from trapper.apps.research.forms import ProjectForm, ProjectRoleFormset
+from trapper.apps.research.models import Project, ProjectRole, ProjectCollection
+from trapper.apps.research.forms import ProjectForm, ProjectRoleFormset, ProjectCollectionForm
 from trapper.apps.common.decorators import object_access_required, ObjectAccessRequiredMixin
+from trapper.apps.storage.models import Collection
+from trapper.apps.common.views import AjaxFormMixin
 
 class ProjectListView(generic.ListView):
 	"""List view of the Project model"""
@@ -28,7 +33,7 @@ class ProjectListView(generic.ListView):
 		items = []
 		for p in projects:
 			roles = p.determine_roles(user) if user.is_authenticated() else []
-			items.append((p, len(roles) > 0, ProjectRole.ROLE_PROJECT_ADMIN in roles))
+			items.append((p, len(roles) > 0, ProjectRole.ROLE_PROJECT_ADMIN in roles, ProjectRole.ROLE_PROJECT_ADMIN in roles))
 		return items
 
 class ProjectDetailView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.DetailView):
@@ -47,7 +52,7 @@ class ProjectRoleInline(InlineFormSet):
 	model = ProjectRole
 	extra = 2
 
-class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
+class ProjectCreateView(LoginRequiredMixin, CreateWithInlinesView, NamedFormsetsMixin):
 	"""Create view for the Project model"""
 
 	model = Project
@@ -82,4 +87,38 @@ class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
 		projectrole_formset = inlines[0]
 		projectrole_formset.save()
 		return HttpResponseRedirect(self.object.get_absolute_url())
+
+class ProjectDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.DeleteView):
+	"""Delete view of the project object.
+	Given resource can be removed when user is the owner or the uploader of the resource.
+	"""
+
+	model=Project
+        access_func = Project.can_delete
+	success_url='project/list/'
+	context_object_name='object'
+	template_name='research/project_confirm_delete.html'
+
+	def dispatch(self, *args, **kwargs):
+		return super(ProjectDeleteView, self).dispatch(*args, **kwargs)
+
+
+
+
+
+class ProjectCollectionCreateView(LoginRequiredMixin, AjaxFormMixin):
+	"""Collection's create view.
+	Handles the creation of the Collection object.
+	"""
+        raise_exception = True
+	ajax_form = ProjectCollectionForm
+
+        @csrf_exempt
+        def dispatch(self, *args, **kwargs):
+                return super(ProjectCollectionCreateView, self).dispatch(*args, **kwargs)
+
+        def json_in_data_test(self, in_data, request):
+                collection = Collection.objects.get(pk=in_data['collection'])
+                if not collection.can_update(self.request.user):
+                        raise PermissionDenied()
 

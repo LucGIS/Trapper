@@ -21,8 +21,8 @@
 ############################################################################
 
 from django.db import models
-from trapper.apps.storage.models import Resource, Collection
-from trapper.apps.research.models import Project as RProject
+from trapper.apps.storage.models import Resource
+from trapper.apps.research.models import Project as RProject, ProjectCollection as RProjectCollection 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
@@ -31,7 +31,7 @@ class Feature(models.Model):
 	Used for defining given "set" of features we are interested in identifying from given resource.
 
 	.. note::
-		Feature can be of given type, which at the moment can be either:
+		Feature can be of given type, which at the moment can be either:ode
 
 		* String (enum)
 		* Integer
@@ -108,7 +108,7 @@ class Project(models.Model):
 
 	name = models.CharField(max_length=255)
 	research_project = models.ForeignKey(RProject, related_name='classification_projects')
-	collections = models.ManyToManyField(Collection, through='ProjectCollection', blank=True, null=True)
+	collections = models.ManyToManyField(RProjectCollection, through='ProjectCollection', blank=True, null=True, related_name="classifications")
 	"""Collections assigned to the project"""
 
 	feature_sets = models.ManyToManyField(FeatureSet, blank=True, null=True)
@@ -258,7 +258,7 @@ class ProjectCollection(models.Model):
 	"""Many-To-Many model for Project-Collection relationship."""
 
 	project = models.ForeignKey(Project)
-	collection = models.ForeignKey(Collection)
+	collection = models.ForeignKey(RProjectCollection)
 	active = models.BooleanField("Active", default=True)
 	"""Is collection "active" within the project at given moment ?"""
 
@@ -266,7 +266,7 @@ class ProjectCollection(models.Model):
 	"""Is collection available for the crowd-sourcing ?"""
 
 	def __unicode__(self):
-		return unicode("%s <-> %s (Active: %s, CS: %s)" % (self.project.name, self.collection.name, self.active, self.cs_enabled))
+		return unicode("%s <-> %s (Active: %s, CS: %s)" % (self.project.name, self.collection, self.active, self.cs_enabled))
 
 
 class ProjectRole(models.Model):

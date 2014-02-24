@@ -1,0 +1,23 @@
+{% extends "storage/base.html" %}
+{% load staticfiles %}
+{% block header%}
+{{form.media}}
+{% endblock %}
+{% block content %}
+You are about to ask
+<b>{{resource.owner.username}}</b>
+<a href="{{resource.owner.userprofile.get_absolute_url}}"><img src="{% static "icon/profile.png" %}" /></a>
+for a request to obtain access to request
+<b>{{resource.name}}</b>
+<a href="{{resource.get_absolute_url}}"><img src="{% static "icon/detail.png" %}" /></a>
+<br />
+<br />
+<form action="" method="post">
+{% csrf_token %}
+<br />
+Text: {{form.text}}
+{{form.object_pk}}
+<br />
+<input type="submit" value="Send request" />
+</form>
+{% endblock content %}

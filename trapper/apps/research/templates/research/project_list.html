@@ -9,7 +9,8 @@ Available projects:
 <th>Project Staff</th>
 <th>Details</th>
 <th>Edit</th>
-{% for project, can_view, can_edit in items %}
+<th>Delete</th>
+{% for project, can_view, can_edit, can_delete in items %}
 <tr>
 	<td>{{ project.name }}</td>
 	<td>
@@ -27,6 +28,13 @@ Available projects:
 	<td>
 		{% if can_edit %}
 		<a href="{% url "research:project_update" project.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
+		{% else %}
+		<span class="glyphicon glyphicon-ban-circle"></span>
+	{% endif %}
+	</td>
+	<td>
+		{% if can_delete %}
+		<a href="{% url "research:project_delete" project.id %}"><span class="glyphicon glyphicon-remove"></span></a>
 		{% else %}
 		<span class="glyphicon glyphicon-ban-circle"></span>
 	{% endif %}

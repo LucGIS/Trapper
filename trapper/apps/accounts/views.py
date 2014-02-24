@@ -28,6 +28,7 @@ from django.shortcuts import redirect
 from django.views import generic
 from django.core.urlresolvers import reverse_lazy
 
+
 class UserRegistrationView(generic.FormView):
 	"""Displays the user registration form and creates a new user."""
 

@@ -21,7 +21,7 @@
 ############################################################################
 
 from django.contrib import admin
-from trapper.apps.research.models import Project, ProjectRole
+from trapper.apps.research.models import Project, ProjectRole, ProjectCollection
 
 
 class ProjectRoleInline(admin.TabularInline):
@@ -33,4 +33,5 @@ class ProjectAdmin(admin.ModelAdmin):
 	filter_horizontal = ('collections',)
 
 admin.site.register(ProjectRole)
+admin.site.register(ProjectCollection)
 admin.site.register(Project, ProjectAdmin)

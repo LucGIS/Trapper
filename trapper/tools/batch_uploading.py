@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 from trapper.apps.geomap.models import Location
 from trapper.apps.storage.models import Resource, Collection
-from trapper.apps.media_classification.models import Project, ProjectCollection
+from trapper.apps.research.models import Project as RProject, ProjectCollection as RProjectCollection
 
 class YAMLReader:
 	"""
@@ -101,10 +101,10 @@ class ConfigFileValidator(YAMLReader):
 			if 'project_id' in col:
 				try:
 					# TODO: use Slug field instead
-					p = Project.objects.get(pk=col['project_id'])
+					p = RProject.objects.get(pk=col['project_id'])
 				except:
 					return "Project with ID '%s' does not exist" % (col['project_id'])
-				if not p.can_edit(self.user):
+				if not p.can_update(self.user):
 					return "You (%s) don't have a permission to alter the project with ID=%s" % (self.user, p.pk)
 
 			if 'managers' in col:
@@ -253,6 +253,6 @@ class ResourceArchiveUploader(YAMLReader):
 
 			# Add to media classification project
 			if 'project_id' in c:
-				p = Project.objects.get(pk=int(c['project_id']))
-				ProjectCollection.objects.create(project=p, collection=col_obj, active=True, cs_enabled=False)
+				p = RProject.objects.get(pk=int(c['project_id']))
+				RProjectCollection.objects.create(project=p, collection=col_obj)
 		return None

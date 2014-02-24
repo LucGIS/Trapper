@@ -1,0 +1,38 @@
+{% extends "storage/nggrid_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block before_nggrid %}
+{% verbatim %}
+<h2><i class="icon-archive"></i> Collection: {{ collection_data.name }}</h2>
+    <div class="alert alert-{{msg_alert}}" ng-show="msg_txt">
+      <strong>{{msg_txt}}</strong>
+      <a class="" href="{{get_url.replace('update','detail')}}"> Go back</a>
+    </div>
+    <form action="#" method="post" novalidate>
+      <div id="collection_update" ng-init="getCollectionUpdateAjaxForm()">
+      </div>
+    </form>
+{% endverbatim %}
+{% endblock %}
+
+{% block actions %}
+<li class="dropdown">
+  {% verbatim %}
+  <button type="button" class="dropdown-toggle btn btn-default navbar-btn" ng-click="getSelectedItems()">Show selected</button>
+  {% endverbatim %}
+  <button type="button" class="dropdown-toggle btn btn-default navbar-btn" data-toggle="dropdown">Actions <b class="caret"></b></button>
+  <ul class="dropdown-menu">    
+    <li><a href="#">Action</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</li>
+{% endblock %}
+{% block modal_form %}
+{% include "storage/modal_form_template.html" %}
+{% endblock %}
+{% block modal_preview %}
+{% include "storage/modal_preview_template.html" %}
+{% endblock %}

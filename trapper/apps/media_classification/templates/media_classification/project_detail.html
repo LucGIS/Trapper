@@ -38,7 +38,7 @@
 			{% for pc in project.projectcollection_set.all %}
 			<div class="panel panel-default">
 				<div class="panel-heading">
-				<a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}">{{pc.collection.name}}</a>
+				<a data-toggle="collapse" data-parent="#accordion" href="#collection{{pc.pk}}">{{pc.collection.collection.name}}</a>
 				Active: <span class="glyphicon glyphicon-{% if pc.active %}ok{% else %}remove{% endif %}"></span>
 				Crowd-Sourcing: <span class="glyphicon glyphicon-{% if pc.cs_enabled %}ok{% else %}remove{% endif %}"></span>
 				</div>
@@ -49,7 +49,7 @@
 					<th>Uploader</th>
 					<th>Details</th>
 					<th>Classify</th>
-					{% for resource in pc.collection.resources.all %}
+					{% for resource in pc.collection.collection.resources.all %}
 					<tr>
 					<td>{{ resource.name }}</td>
 					<td>{{ resource.owner.username }}</td>

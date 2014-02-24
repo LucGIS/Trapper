@@ -35,4 +35,6 @@ urlpatterns = patterns('',
 	url(r'project/detail/(?P<pk>\d+)/$', views.ProjectDetailView.as_view(), name='project_detail'),
 	url(r'project/create/$', views.ProjectCreateView.as_view(), name='project_create'),
 	url(r'project/update/(?P<pk>\d+)/$', views.ProjectUpdateView.as_view(), name='project_update'),
+	url(r'project/delete/(?P<pk>\d+)/$', views.ProjectDeleteView.as_view(), name='project_delete'),
+	url(r'project/collection/create/$', views.ProjectCollectionCreateView.as_view(), name='project_collection_create'),
 )

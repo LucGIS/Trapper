@@ -1,19 +1,58 @@
-{% extends "storage/base.html" %}
-{% load staticfiles %}
-{% block content %}
-<ul>
-	<li>
-Name: {{ collection.name }}
-	</li>
-	<li>
-Owner: {{ collection.owner}}
-	</li>
-	<li>
-Public: {{ collection.resourceextra.public}}
-	</li>
-	<li>
-Resources:
-	{% include "storage/resource_iter.html" with resources=collection.resources.all %}
-	</li>
-</ul>
-{% endblock content %}
+{% extends "storage/nggrid_base.html" %}
+
+{% block before_nggrid %}
+<h2><i class="icon-archive"></i> Collection: {{ collection.name }}</h2>
+<div class="row">
+  <div class="col-md-4">
+    <ul class="list-group">
+      <li class="list-group-item"> 
+	<strong>Owner: </strong><a href="{{collection.owner.userprofile.get_absolute_url}}">{{ collection.owner}}</a>
+      </li>
+      <li class="list-group-item">
+	<strong>Managers: </strong>
+	{% for m in collection.managers.all %}
+	<a href="{{m.userprofile.get_absolute_url}}">{{m}}</a>,
+	{% endfor %}
+      </li>
+      <li class="list-group-item"> 
+	<strong>Status: </strong>{{ collection.status}} 
+      </li>
+    </ul>
+    {% verbatim %}<div ng-show="editable">{% endverbatim %}
+    <a class="btn btn-default" href="{% url "storage:collection_update" collection.id %}" role="button">
+      Edit collection
+    </a>
+    {% verbatim %}
+    <a class="btn btn-default" href="#" role="button" ng-click="getProjectCollectionCreateAjaxForm()">
+      Add to Research Project
+    </a>
+    {% endverbatim %}
+    </div>
+  </div>
+  <div class="col-md-8">
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Description:</strong></li>
+      <li class="list-group-item">{{ collection.description }}</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block actions %}
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
+  <ul class="dropdown-menu">    
+    <li><a href="#">Action</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</li>
+{% endblock %}
+{% block modal_form %}
+{% include "storage/modal_form_template.html" %}
+{% endblock %}
+{% block modal_preview %}
+{% include "storage/modal_preview_template.html" %}
+{% endblock %}

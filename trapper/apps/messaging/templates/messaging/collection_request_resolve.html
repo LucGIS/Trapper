@@ -1,0 +1,10 @@
+{% extends "messaging/base.html" %}
+{% block content %}
+
+Would you like to grant access to <b>{{ notification.collection.name }}</b> to project <b>{{notification.project.name}}</b> ?
+<form action="" method="post">
+{% csrf_token %}
+<input type="submit" value="Yes" name="resolve_yes"/>
+<input type="submit" value="No" name="resolve_no"/>
+</form>
+{% endblock content %}

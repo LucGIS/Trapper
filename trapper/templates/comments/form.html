@@ -1,0 +1,18 @@
+{% load comments i18n crispy_forms_tags fluent_comments_tags %}{% load url from future %}
+
+{% if not form.target_object|comments_are_open %}
+    <p>{% trans "Comments are closed." %}</p>
+{% else %}
+    <form action="{% comment_form_target %}" method="post" class="js-comments-form comments-form form-horizontal"
+          data-ajax-action="{% url 'comments-post-comment-ajax' %}">{% csrf_token %}
+      {% if next %}<div><input type="hidden" name="next" value="{{ next }}" /></div>{% endif %}
+
+      {{ form|crispy }}
+
+      <div class="form-actions">
+        <button type="submit" name="post" class="btn"><i class="icon-reply icon-2x"></i>  <font size="4">{% trans "Post" %}</font></button>
+	<button type="submit" name="preview" class="btn"><i class="icon-zoom-in icon-2x"></i>  <font size="4">{% trans "Preview" %}</font></button>
+       <font size="4"> {% ajax_comment_tags %} </font>
+      </div>
+    </form>
+{% endif %}

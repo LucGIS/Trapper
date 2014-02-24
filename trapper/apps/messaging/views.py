@@ -30,7 +30,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 
-from trapper.apps.messaging.models import Message, CollectionRequest
+from trapper.apps.messaging.models import Message, CollectionRequest, ResourceRequest
 from trapper.apps.messaging.forms import MessageForm
 from trapper.apps.common.decorators import object_access_required
 
@@ -91,26 +91,35 @@ class MessageOutboxView(MessageListView):
 		return self.request.user.sent_messages.all().order_by('-date_sent')
 
 class SystemNotificationListView(generic.ListView):
-	model=CollectionRequest
 	context_object_name='notifications'
-	template_name='messaging/notification_list.html'
 
 	@method_decorator(login_required)
 	def dispatch(self, *args, **kwargs):
 		return super(SystemNotificationListView, self).dispatch(*args, **kwargs)
 
-	def get_queryset(self):
-		return self.request.user.system_notifications.filter(resolved=False)
+class CollectionNotificationListView(SystemNotificationListView):
+        model=CollectionRequest
+	template_name='messaging/collection_notification_list.html'
 
-class ResolveClassificaionResourceRequestView(generic.DetailView):
-	template_name="messaging/resource_request_resolve.html"
+        def get_queryset(self):
+		return self.request.user.collection_notifications.filter(resolved=False)
+
+class ResourceNotificationListView(SystemNotificationListView):
+	model=ResourceRequest
+	template_name='messaging/resource_notification_list.html'
+
+        def get_queryset(self):
+		return self.request.user.resource_notifications.filter(resolved=False)
+
+class ResolveCollectionRequestView(generic.DetailView):
 	context_object_name = "notification"
+	template_name="messaging/collection_request_resolve.html"
 	model = CollectionRequest
 
 	@method_decorator(login_required)
 	@method_decorator(object_access_required(CollectionRequest, lambda u, o: u==o.user))
 	def dispatch(self, *args, **kwargs):
-		return super(ResolveClassificaionResourceRequestView, self).dispatch(*args, **kwargs)
+		return super(ResolveCollectionRequestView, self).dispatch(*args, **kwargs)
 
 	def post(self, request, *args, **kwargs):
 		self.object = self.get_object()
@@ -118,4 +127,22 @@ class ResolveClassificaionResourceRequestView(generic.DetailView):
 			self.object.resolve_yes()
 		elif 'resolve_no' in self.request.POST:
 			self.object.resolve_no()
-		return redirect(reverse('messaging:notification_list'))
+		return redirect(reverse('messaging:cnotification_list'))
+
+class ResolveResourceRequestView(generic.DetailView):
+	context_object_name = "notification"
+	template_name="messaging/resource_request_resolve.html"
+	model = ResourceRequest
+
+	@method_decorator(login_required)
+	@method_decorator(object_access_required(ResourceRequest, lambda u, o: u==o.user))
+	def dispatch(self, *args, **kwargs):
+		return super(ResolveResourceRequestView, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		self.object = self.get_object()
+		if 'resolve_yes' in self.request.POST:
+			self.object.resolve_yes()
+		elif 'resolve_no' in self.request.POST:
+			self.object.resolve_no()
+		return redirect(reverse('messaging:rnotification_list'))
