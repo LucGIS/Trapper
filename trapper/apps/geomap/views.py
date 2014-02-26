@@ -30,37 +30,37 @@ from trapper.apps.geomap.models import Location
 from trapper.apps.geomap.forms import LocationUploadForm
 
 class LocationDetailView(generic.DetailView):
-	"""Displays given location on the map.
-	"""
-	model = Location
-	context_object_name = 'location'
-	template_name = 'geomap/location_detail.html'
+    """Displays given location on the map.
+    """
+    model = Location
+    context_object_name = 'location'
+    template_name = 'geomap/location_detail.html'
 
 class LocationListView(generic.ListView):
-	"""Displays list of locations.
-	"""
-	model = Location
-	context_object_name = 'locations'
-	template_name = 'geomap/location_list.html'
+    """Displays list of locations.
+    """
+    model = Location
+    context_object_name = 'locations'
+    template_name = 'geomap/location_list.html'
 
 class LocationUploadView(LoginRequiredMixin, generic.FormView):
-	"""Uploads location data from the gpx file.
-	"""
+    """Uploads location data from the gpx file.
+    """
 
-	template_name = 'geomap/location_upload.html'
-	form_class = LocationUploadForm
-	success_url = reverse_lazy('geomap:location_list')
+    template_name = 'geomap/location_upload.html'
+    form_class = LocationUploadForm
+    success_url = reverse_lazy('geomap:location_list')
 
-	def form_valid(self, form):
-		"""Attaches a message once the form was validated."""
+    def form_valid(self, form):
+        """Attaches a message once the form was validated."""
 
-		new_locs = form.add_locations(self.request.user)
+        new_locs = form.add_locations(self.request.user)
 
-		if new_locs == 0:
-			messages.warning(self.request, "<strong>Upload Info:</strong> No new Locations found!")
-		elif new_locs == 1:
-			messages.success(self.request, "<strong>Upload Info:</strong> %d new Location was added!" % (new_locs,))
-		elif new_locs > 1:
-			messages.success(self.request, "<strong>Upload Info:</strong> %d new Locations were added!" % (new_locs,))
+        if new_locs == 0:
+            messages.warning(self.request, "<strong>Upload Info:</strong> No new Locations found!")
+        elif new_locs == 1:
+            messages.success(self.request, "<strong>Upload Info:</strong> %d new Location was added!" % (new_locs,))
+        elif new_locs > 1:
+            messages.success(self.request, "<strong>Upload Info:</strong> %d new Locations were added!" % (new_locs,))
 
-		return super(LocationUploadView, self).form_valid(form)
+        return super(LocationUploadView, self).form_valid(form)

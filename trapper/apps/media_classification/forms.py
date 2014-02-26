@@ -26,40 +26,40 @@ from django.forms.models import inlineformset_factory
 from trapper.apps.media_classification.models import Project, ProjectCollection, ProjectRole, FeatureSet, Sequence
 
 class ProjectForm(forms.ModelForm):
-	"""Project ModelForm for the Update/Create views"""
+    """Project ModelForm for the Update/Create views"""
 
-	class Meta:
-		model = Project
-		exclude = ['collections', 'research_project']
+    class Meta:
+        model = Project
+        exclude = ['collections', 'research_project']
 
-	rp_pk = forms.IntegerField(widget=forms.HiddenInput)
+    rp_pk = forms.IntegerField(widget=forms.HiddenInput)
 
 class ProjectCollectionForm(forms.ModelForm):
-	"""ProjectCollection ModelForm for the Update/Create views"""
+    """ProjectCollection ModelForm for the Update/Create views"""
 
-	class Meta:
-		model = ProjectCollection
+    class Meta:
+        model = ProjectCollection
 
-	def __init__(self, *args, **kwargs):
-		super(ProjectCollectionForm, self).__init__(*args,**kwargs)
-		if self.instance.id:
-			# Adds collection as a simple label, so the user can't alter it.
-			self.col_name = self.instance.collection.name
-			del self.fields['collection']
+    def __init__(self, *args, **kwargs):
+        super(ProjectCollectionForm, self).__init__(*args,**kwargs)
+        if self.instance.id:
+            # Adds collection as a simple label, so the user can't alter it.
+            self.col_name = self.instance.collection.name
+            del self.fields['collection']
 
 class FeatureSetForm(forms.ModelForm):
-	class Meta:
-		model = FeatureSet
-		exclude = ['features',]
+    class Meta:
+        model = FeatureSet
+        exclude = ['features',]
 
 class SequenceForm(forms.ModelForm):
-	"""Sequence ModelForm for the Update and Create views."""
+    """Sequence ModelForm for the Update and Create views."""
 
-	class Meta:
-		model = Sequence
-		exclude = ['date_created', 'user', 'project']
+    class Meta:
+        model = Sequence
+        exclude = ['date_created', 'user', 'project']
 
-	cp_pk = forms.IntegerField(widget=forms.HiddenInput)
+    cp_pk = forms.IntegerField(widget=forms.HiddenInput)
 
 ProjectCollectionFormset = inlineformset_factory(Project, ProjectCollection, extra=0, form=ProjectCollectionForm)
 """Formset for the ProjectCollection model"""

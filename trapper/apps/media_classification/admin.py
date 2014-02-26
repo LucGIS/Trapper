@@ -25,40 +25,40 @@ from trapper.apps.media_classification.models import FeatureScope, Feature, Feat
 
 
 class FeatureScopeInline(admin.StackedInline):
-	model = FeatureScope
+    model = FeatureScope
 
 class FeatureAdmin(admin.ModelAdmin):
-	inlines = [FeatureScopeInline,]
+    inlines = [FeatureScopeInline,]
 
 class FeatureAnswerInline(admin.StackedInline):
-	model = FeatureAnswer
-	extra = 0
+    model = FeatureAnswer
+    extra = 0
 
 class ClassificationRowAdmin(admin.ModelAdmin):
-	inlines = [FeatureAnswerInline,]
-	
+    inlines = [FeatureAnswerInline,]
+
 class ClassificationRowInline(admin.StackedInline):
-	model = ClassificationRow
-	extra = 0
+    model = ClassificationRow
+    extra = 0
 
 class ClassificationAdmin(admin.ModelAdmin):
-	inlines = [ClassificationRowInline,]
+    inlines = [ClassificationRowInline,]
 
 class ProjectRoleInline(admin.TabularInline):
-	model = ProjectRole
-	extra = 0
+    model = ProjectRole
+    extra = 0
 
 class ProjectCollectionInline(admin.TabularInline):
-	model = ProjectCollection
-	extra = 0
+    model = ProjectCollection
+    extra = 0
 
 class ProjectAdmin(admin.ModelAdmin):
-	inlines = [ProjectRoleInline, ProjectCollectionInline]
-	filter_horizontal = ('collections','feature_sets',)
+    inlines = [ProjectRoleInline, ProjectCollectionInline]
+    filter_horizontal = ('collections','feature_sets',)
 
-	def get_form(self, request, obj=None, **kwargs):
-		form = super(ProjectAdmin, self).get_form(request, obj, **kwargs)
-		return form
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(ProjectAdmin, self).get_form(request, obj, **kwargs)
+        return form
 
 admin.site.register(Feature, FeatureAdmin)
 admin.site.register(FeatureAnswer)

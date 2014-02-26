@@ -21,23 +21,20 @@
 ############################################################################
 
 from django.conf.urls import patterns, url
-from django.views.generic import DetailView, UpdateView, ListView, CreateView, TemplateView, DeleteView
-
+from django.views.generic import ListView, TemplateView
 from trapper.apps.storage import views
-from trapper.apps.storage.forms import ResourceForm, CollectionForm
-from trapper.apps.storage.models import Resource, Collection
+from trapper.apps.storage.models import Collection
 
 
 urlpatterns = patterns('',
+        # Index view:
+        url(r'^$', TemplateView.as_view(template_name='storage/index.html'), name='index'),
 
-	# Index view:
-	url(r'^$', TemplateView.as_view(template_name='storage/index.html'), name='index'),
-
-	# Resource views:
+        # Resource views:
         url(r'resource/list/$', views.ResourceListView.as_view(), name='resource_list'),
         url(r'resource/list/(?P<user_pk>\d+)/$', views.UserResourceListView.as_view(), name='user_resource_list'),
         url(r'resource/detail/(?P<pk>\d+)/$', views.ResourceDetailView.as_view(), name='resource_detail'),
-	url(r'resource/update/(?P<pk>\d+)/$', views.ResourceUpdateView.as_view(), name='resource_update'),
+        url(r'resource/update/(?P<pk>\d+)/$', views.ResourceUpdateView.as_view(), name='resource_update'),
 	url(r'resource/create/$', views.ResourceCreateView.as_view(), name='resource_create'),
 	url(r'resource/delete/(?P<pk>\d+)/$', views.ResourceDeleteView.as_view(), name='resource_delete'),
 	url(r'resource/request/(?P<pk>\d+)/$', views.ResourceRequestView.as_view(), name='resource_request'),

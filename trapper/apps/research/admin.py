@@ -25,12 +25,12 @@ from trapper.apps.research.models import Project, ProjectRole, ProjectCollection
 
 
 class ProjectRoleInline(admin.TabularInline):
-	model = ProjectRole
-	extra = 0
+    model = ProjectRole
+    extra = 0
 
 class ProjectAdmin(admin.ModelAdmin):
-	inlines = [ProjectRoleInline, ]
-	filter_horizontal = ('collections',)
+    inlines = [ProjectRoleInline, ]
+    filter_horizontal = ('collections',)
 
 admin.site.register(ProjectRole)
 admin.site.register(ProjectCollection)

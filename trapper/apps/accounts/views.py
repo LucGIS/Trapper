@@ -30,42 +30,42 @@ from django.core.urlresolvers import reverse_lazy
 
 
 class UserRegistrationView(generic.FormView):
-	"""Displays the user registration form and creates a new user."""
+    """Displays the user registration form and creates a new user."""
 
-	form_class = UserCreationForm
-	template_name = 'registration/register.html'
-	success_url = reverse_lazy('accounts:login')
+    form_class = UserCreationForm
+    template_name = 'registration/register.html'
+    success_url = reverse_lazy('accounts:login')
 
-	def form_valid(self, form):
-		form.save()
-		messages.success(self.request, "<strong>Account Created!</strong>Please login using your username and password.")
-		return super(UserRegistrationView, self).form_valid(form)
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, "<strong>Account Created!</strong>Please login using your username and password.")
+        return super(UserRegistrationView, self).form_valid(form)
 
 class UserProfileDetailView(generic.DetailView):
-	"""Displays the profile details about an arbitrary user."""
+    """Displays the profile details about an arbitrary user."""
 
-	model = User
-	template_name = "accounts/user_detail.html"
-	context_object_name = 'u'
+    model = User
+    template_name = "accounts/user_detail.html"
+    context_object_name = 'u'
 
 class SessionUserProfileDetailView(UserProfileDetailView):
-	"""Displays the profile details about user stored in session."""
+    """Displays the profile details about user stored in session."""
 
-	def get_object(self):
-		return self.request.user
+    def get_object(self):
+        return self.request.user
 
 class UserProfileUpdateView(generic.UpdateView):
-	"""Update view for the user profile."""
+    """Update view for the user profile."""
 
-	model = User
-	template_name = "accounts/user_update.html"
-	context_object_name = 'u'
-	fields = ['username','first_name','last_name','email']
+    model = User
+    template_name = "accounts/user_update.html"
+    context_object_name = 'u'
+    fields = ['username','first_name','last_name','email']
 
-	def get_success_url(self):
-		return reverse_lazy('accounts:userprofile_detail', kwargs={'pk':self.request.user.pk,})
+    def get_success_url(self):
+        return reverse_lazy('accounts:userprofile_detail', kwargs={'pk':self.request.user.pk,})
 
 def logout_action(request):
-	logout(request)
-	return redirect('trapper.apps.accounts.login')
+    logout(request)
+    return redirect('trapper.apps.accounts.login')
 

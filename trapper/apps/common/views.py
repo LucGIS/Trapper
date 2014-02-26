@@ -1,11 +1,9 @@
-from django import forms
-from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.views.generic import View,TemplateView
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.core.serializers.json import DjangoJSONEncoder
 from braces.views import AjaxResponseMixin, JSONResponseMixin
 from crispy_forms.utils import render_crispy_form
 import json
@@ -42,11 +40,11 @@ class TrapperDjangoJSONEncoder(json.JSONEncoder):
 
 # some angularjs ng-grid related mixins
 class AngularNgGridMixin(JSONResponseMixin, AjaxResponseMixin, TemplateView):
-    ''' 
+    '''
     '''
     # OPTIONS:JSONResponseMixin
     #--------------------------------------#
-    content_type ="text/html"        
+    content_type ="text/html"
     #json_dumps_kwargs = None
 
     # OPTIONS:TemplateView
@@ -72,13 +70,11 @@ class AngularNgGridMixin(JSONResponseMixin, AjaxResponseMixin, TemplateView):
                             content_type=self.get_content_type(),
                             status=status)
 
-
     def get_context_data(self, *args, **kwargs):
         context = super(AngularNgGridMixin, self).get_context_data(*args, **kwargs)
         context['filtering_form'] = self.list_model_filter(self.request.GET).form
         context['model_name'] = self.list_model._meta.model_name.capitalize()
         return context
-
 
     def get_queryset(self, *args, **kwargs):
         if self.list_model is None:
@@ -93,7 +89,7 @@ class AngularNgGridMixin(JSONResponseMixin, AjaxResponseMixin, TemplateView):
         if self.list_model_filter is None:
             return None
         filtered_queryset = self.list_model_filter(self.request.GET, queryset=self.queryset)
-        self.queryset = filtered_queryset.qs         
+        self.queryset = filtered_queryset.qs
 
     def search_data(self, request, *args, **kwargs):
         if self.search_fields is None:
@@ -126,7 +122,7 @@ class AngularNgGridMixin(JSONResponseMixin, AjaxResponseMixin, TemplateView):
             except EmptyPage:
                 # If page is out of range (e.g. 9999), deliver last page of results.
                 qs_p = paginator.page(paginator.num_pages)
-            return qs_p 
+            return qs_p
 
     def filter_queryset(self, request, *args, **kwargs):
         self.get_queryset(request)
@@ -175,7 +171,7 @@ class AjaxFormMixin(JSONResponseMixin, AjaxResponseMixin, View):
     #--------------------------------------#
     ajax_form = None
     #--------------------------------------#
-    
+
     def get_ajax(self, request, obj=None, *args, **kwargs):
         if self.kwargs.has_key('pk'):
             obj = get_object_or_404(self.ajax_form._meta.model, pk=self.kwargs['pk'])
@@ -190,7 +186,7 @@ class AjaxFormMixin(JSONResponseMixin, AjaxResponseMixin, View):
             out_data.update({'initial':initial,})
         return self.render_json_response(out_data)
 
-    # override this method to include some tests of incoming json data  
+    # override this method to include some tests of incoming json data
     def json_in_data_test(self, in_data, request):
         msg = ''
         return msg
@@ -204,7 +200,7 @@ class AjaxFormMixin(JSONResponseMixin, AjaxResponseMixin, View):
                 "%(cls)s is missing the form. "
                 "Define %(cls)s.form." % {"cls": self.__class__.__name__})
         in_data = json.loads(request.body)
-        test_msg = self.json_in_data_test(in_data, request) 
+        test_msg = self.json_in_data_test(in_data, request)
         if test_msg:
             return HttpResponseBadRequest(json.dumps({'msg': test_msg}), mimetype="application/json")
         model = self.ajax_form._meta.model._meta.model_name

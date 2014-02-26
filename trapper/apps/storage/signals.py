@@ -1,10 +1,8 @@
 from django.contrib.auth.models import User
-
-from guardian.shortcuts import assign_perm, remove_perm, get_perms
-
-from trapper.apps.storage.models import Resource, Collection
+from guardian.shortcuts import assign_perm, remove_perm
+from trapper.apps.storage.models import Resource
 from trapper.apps.research.models import Project
-
+import itertools
 
 # asynchronous task needed?
 # assign/remove appropriate view permissions when collection is changed
@@ -15,7 +13,9 @@ def collection_m2m_changed(sender, instance, action, reverse, model, pk_set, **k
         added = pk_set - instance._old_m2m
         removed = instance._old_m2m - pk_set
         if added or removed:
-            projects = Project.objects.filter(pk__in=instance.projectcollection_set.values_list('project_id', flat=True))
+            projects = Project.objects.filter(
+                pk__in=instance.projectcollection_set.values_list('project_id', flat=True)
+            )
             if projects:
                 users = User.objects.filter(pk__in=set(list(itertools.chain(*[project.projectrole_set.values_list('user_id', flat=True) for project in projects]))))
                 for user in users:

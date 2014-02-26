@@ -5,7 +5,7 @@ from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Generate missing thumbnails'
-                    
+
     def handle(self, *args, **options):
         resources = storage.models.Resource.objects.all()
         count = len(resources)
@@ -22,8 +22,7 @@ class Command(BaseCommand):
             except Exception as e:
                 errors.append((resource.file.file.name, e))
         print "\nERRORS:\n"
-        for error in errors: 
+        for error in errors:
             print "FILE: %s " % error[0]
             print "ERROR: %s" % error[1]
             print
-        

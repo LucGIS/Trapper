@@ -166,7 +166,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django.contrib.comments',
-    
+
     'trapper.apps.media_classification',
     'trapper.apps.storage',
     'trapper.apps.accounts',
@@ -180,7 +180,7 @@ INSTALLED_APPS = (
     'south',
     'django_extensions',
     'tinymce',
-    'datetimewidget', 
+    'datetimewidget',
     'debug_toolbar',
     'guardian',
     'fluent_comments',
@@ -232,20 +232,21 @@ LOGGING = {
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
-# FLUENT COMMENTS                                                                                                                                                      
-FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')                                                                                                              
-COMMENTS_APP = 'fluent_comments'  
+# FLUENT COMMENTS
+
+FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')
+COMMENTS_APP = 'fluent_comments'
 
 # EASY THUMBNAILS
 THUMBNAIL_BASEDIR = 'thumbs'
-THUMBNAIL_ALIASES = {                                                                                                          
-    '': {                                                                                                                      
-        'small': {'size':(80, 80),},                                                                                           
-        'default': {'size':(100, 100),},                                                                                       
-        'medium': {'size':(250, 250),},                                                                                        
+THUMBNAIL_ALIASES = {
+    '': {
+        'small': {'size':(80, 80),},
+        'default': {'size':(100, 100),},
+        'medium': {'size':(250, 250),},
         'large': {'size':(400, 400),},
-        'video': {'size':(640, 480),},                                                                                         
-    },                                                                                                                         
+        'video': {'size':(640, 480),},
+    },
 }
 
 THUMBNAIL_SOURCE_GENERATORS = (
