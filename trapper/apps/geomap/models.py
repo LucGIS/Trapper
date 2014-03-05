@@ -23,6 +23,7 @@
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 
+
 class Location(models.Model):
     """Single location (Point) on map.
     This model is often referred by other models for establishing a spatial context.
@@ -48,4 +49,3 @@ class Location(models.Model):
 
     def __unicode__(self):
         return unicode("Location ID: %s" % (self.location_id, ))
-

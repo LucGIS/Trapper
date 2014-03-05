@@ -44,11 +44,13 @@ class FeatureSetDetailView(generic.DetailView):
 
     model = FeatureSet
 
+
 class FeatureSetListView(generic.ListView):
     """List view of a FeatureSet model"""
 
     model = FeatureSet
     context_object_name = 'featuresets'
+
 
 class FeatureInline(InlineFormSet):
     """Utility-class: Features displayed as a InlineFormset"""
@@ -56,28 +58,31 @@ class FeatureInline(InlineFormSet):
     model = FeatureSet.features.through
     extra = 2
 
+
 class FeatureSetUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
     """Update view of the FeatureSet model"""
 
     model = FeatureSet
     form_class = FeatureSetForm
-    inlines = [FeatureInline,]
-    inlines_names = ['features_formset',]
+    inlines = [FeatureInline, ]
+    inlines_names = ['features_formset', ]
+
 
 class FeatureSetCreateView(CreateWithInlinesView, NamedFormsetsMixin):
     """Create view of the FeatureSet model"""
 
     model = FeatureSet
     form_class = FeatureSetForm
-    inlines = [FeatureInline,]
-    inlines_names = ['features_formset',]
+    inlines = [FeatureInline, ]
+    inlines_names = ['features_formset', ]
 
-# Features views
 
+# Features views:
 class FeatureDetailView(generic.DetailView):
     """Detail view of the Feature model"""
 
     model = Feature
+
 
 class FeatureListView(generic.ListView):
     """List view of the Feature model"""
@@ -85,18 +90,20 @@ class FeatureListView(generic.ListView):
     model = Feature
     context_object_name = 'features'
 
+
 class FeatureUpdateView(generic.UpdateView):
     """Update view of the Feature model"""
 
     model = Feature
+
 
 class FeatureCreateView(generic.CreateView):
     """Create view of the Feature model"""
 
     model = Feature
 
-# Sequence views
 
+# Sequence views:
 class SequenceCreateView(generic.CreateView):
     """Create view for the Sequence model"""
 
@@ -116,6 +123,7 @@ class SequenceCreateView(generic.CreateView):
         initial['cp_pk'] = self.kwargs['cp_pk']
         return initial
 
+
 class SequenceUpdateView(generic.UpdateView):
     """Create view for the Sequence model"""
 
@@ -130,10 +138,12 @@ class SequenceUpdateView(generic.UpdateView):
         self.object.save()
         return HttpResponseRedirect(self.object.get_absolute_url())
 
+
 class SequenceDetailView(generic.DetailView):
     """Create view for the Sequence model"""
 
     model = Sequence
+
 
 class SequenceListView(generic.ListView):
     """Create view for the Sequence model"""
@@ -146,8 +156,8 @@ class SequenceListView(generic.ListView):
     model = Sequence
     template_name = 'media_classification/sequence_list.html'
 
-# Project views
 
+# Project views:
 class ProjectListView(generic.ListView):
     """List view of the Project model"""
 
@@ -170,6 +180,7 @@ class ProjectListView(generic.ListView):
             items.append((p, len(roles) > 0, ProjectRole.ROLE_PROJECT_ADMIN in roles))
         return items
 
+
 class ProjectDetailView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.DetailView):
     """Detail view for the Project model"""
 
@@ -180,17 +191,20 @@ class ProjectDetailView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.D
     def dispatch(self, *args, **kwargs):
         return super(ProjectDetailView, self).dispatch(*args, **kwargs)
 
+
 class ProjectRoleInline(InlineFormSet):
     """Utility-class: ProjectRoles displayed as a InlineFormset"""
 
     model = ProjectRole
     extra = 2
 
+
 class CollectionInline(InlineFormSet):
     """Utility-class: Collections displayed as a InlineFormset"""
 
     model = ProjectCollection
     extra = 2
+
 
 class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
     """Create view for the Project model"""
@@ -212,11 +226,12 @@ class ProjectCreateView(CreateWithInlinesView, NamedFormsetsMixin):
 
         self.object = form.save(commit=False)
         rproject = get_object_or_404(RProject, pk=form.cleaned_data['rp_pk'])
-        self.object.research_project=rproject
+        self.object.research_project = rproject
         self.object.save()
         projectrole_formset = inlines[0]
         projectrole_formset.save()
         return HttpResponseRedirect(self.object.get_absolute_url())
+
 
 class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
     """Update view for the Project model"""
@@ -242,6 +257,7 @@ class ProjectUpdateView(UpdateWithInlinesView, NamedFormsetsMixin):
             pc_obj.save()
         return HttpResponseRedirect(self.object.get_absolute_url())
 
+
 def project_update(request, pk):
     """Project update view function.
 
@@ -266,10 +282,12 @@ def project_update(request, pk):
     collection_formset = ProjectCollectionFormset(instance=project)
     projectrole_formset = ProjectRoleFormset(instance=project)
 
-    context = {'project': project,
-            'form': form,
-            'collection_formset': collection_formset,
-            'projectrole_formset': projectrole_formset,}
+    context = {
+        'project': project,
+        'form': form,
+        'collection_formset': collection_formset,
+        'projectrole_formset': projectrole_formset,
+    }
 
     return render(request, 'media_classification/project_update.html', context)
 
@@ -288,6 +306,7 @@ def cs_resource_list(request):
     context = {'data': data}
     return render(request, 'media_classification/cs_resource_list.html', context)
 
+
 @login_required
 def classify_resource(request, resource_id, project_id):
     """Prepares the context for the classification table (i.e. feature sets), and renders it on a template."""
@@ -298,6 +317,7 @@ def classify_resource(request, resource_id, project_id):
     features = [[feature, FeatureScope.objects.filter(feature=feature.pk)] for feature in feature_set.features.all()]
     context = {'resource': resource, 'project': project, 'features': features}
     return render(request, 'media_classification/classify_resource.html', context)
+
 
 @login_required
 def process_classify(request):
@@ -315,13 +335,13 @@ def process_classify(request):
     project = Project.objects.get(id=project_id)
     feature_set = project.feature_sets.filter(resource_type=resource.resource_type)[0]
 
-    answers = list(k.split('__') + [v,] for k,v in dict(request.POST).iteritems() if "__" in k)
+    answers = list(k.split('__') + [v, ] for k, v in dict(request.POST).iteritems() if "__" in k)
     answer_rows = {}
     for n, k, v in answers:
         if n not in answer_rows:
             answer_rows[n] = {}
         answer_rows[n][k] = v
-    answer_rows = [ v for k,v in sorted(answer_rows.items(), key=lambda i : i[0])]
+    answer_rows = [v for k, v in sorted(answer_rows.items(), key=lambda i: i[0])]
 
     c = Classification(resource=resource, feature_set=feature_set, user=request.user, project=project)
     c.save()
@@ -334,7 +354,8 @@ def process_classify(request):
             afs = FeatureAnswer(value=v[0], feature=feature, classification_row=row)
             afs.save()
 
-    return HttpResponseRedirect(reverse('media_classification:classification_detail',kwargs={'pk':c.pk}))
+    return HttpResponseRedirect(reverse('media_classification:classification_detail', kwargs={'pk': c.pk}))
+
 
 class ClassificationDetailView(generic.DetailView):
     """Detail view of the Classification object."""

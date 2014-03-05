@@ -29,6 +29,7 @@ from braces.views import LoginRequiredMixin
 from trapper.apps.geomap.models import Location
 from trapper.apps.geomap.forms import LocationUploadForm
 
+
 class LocationDetailView(generic.DetailView):
     """Displays given location on the map.
     """
@@ -36,12 +37,14 @@ class LocationDetailView(generic.DetailView):
     context_object_name = 'location'
     template_name = 'geomap/location_detail.html'
 
+
 class LocationListView(generic.ListView):
     """Displays list of locations.
     """
     model = Location
     context_object_name = 'locations'
     template_name = 'geomap/location_list.html'
+
 
 class LocationUploadView(LoginRequiredMixin, generic.FormView):
     """Uploads location data from the gpx file.

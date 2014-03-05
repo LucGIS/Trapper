@@ -35,11 +35,11 @@ class ProjectForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['name','description',]
+        fields = ['name', 'description', ]
 
-    description = forms.CharField(widget=TinyMCE(attrs={'cols':60, 'rows':15}))
+    description = forms.CharField(widget=TinyMCE(attrs={'cols': 60, 'rows': 15}))
 
-ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra = 1)
+ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra=1)
 """Formset for the ProjectRole model"""
 
 
@@ -60,7 +60,7 @@ class ProjectCollectionForm(NgModelFormMixin, forms.ModelForm):
         super(ProjectCollectionForm, self).__init__(*args, **kwargs)
         self.fields['collection'].widget = forms.HiddenInput()
         if user:
-            project_pks = set(role.project.pk for role in user.research_roles.filter(name__in = self.REQUIRED_PROJECT_ROLES))
+            project_pks = set(role.project.pk for role in user.research_roles.filter(name__in=self.REQUIRED_PROJECT_ROLES))
             projects = Project.objects.filter(pk__in=project_pks)
             self.fields['project'].queryset = projects
 

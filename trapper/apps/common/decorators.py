@@ -25,6 +25,7 @@ from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from functools import wraps
 from braces.views import AccessMixin
 
+
 def object_access_required(modelname, access_func):
     """
     At the moment this decorator checks whether request.user passes certain access_func.
@@ -42,6 +43,7 @@ def object_access_required(modelname, access_func):
                 raise PermissionDenied
         return wraps(func)(inner)
     return decorator
+
 
 class ObjectAccessRequiredMixin(AccessMixin):
     """
@@ -61,14 +63,12 @@ class ObjectAccessRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         access_func = self.get_access_func()
         if access_func is None:
-            raise ImproperlyConfigured(
-                    "%(cls)s is missing the access_func. "
-                    "Define %(cls)s.access_func or override "
-                    "%(cls)s.get_access_func()." % {"cls": self.__class__.__name__})
+            raise ImproperlyConfigured("%(cls)s is missing the access_func. "
+                                       "Define %(cls)s.access_func or override "
+                                       "%(cls)s.get_access_func()." % {"cls": self.__class__.__name__})
 
         if not self.get_access_func()(self.get_accessed_object(), request.user):
             raise PermissionDenied
 
         return super(ObjectAccessRequiredMixin, self).dispatch(
             request, *args, **kwargs)
-

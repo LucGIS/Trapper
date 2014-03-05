@@ -28,7 +28,6 @@ from trapper.apps.storage.models import Resource, Collection
 
 
 class StorageViewsEmptyDBTest(TestCase):
-
     def test_resource_list(self):
         response = self.client.get(reverse('storage:resource_list'))
         self.assertEqual(response.status_code, 200)

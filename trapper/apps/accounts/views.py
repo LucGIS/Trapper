@@ -41,6 +41,7 @@ class UserRegistrationView(generic.FormView):
         messages.success(self.request, "<strong>Account Created!</strong>Please login using your username and password.")
         return super(UserRegistrationView, self).form_valid(form)
 
+
 class UserProfileDetailView(generic.DetailView):
     """Displays the profile details about an arbitrary user."""
 
@@ -48,11 +49,13 @@ class UserProfileDetailView(generic.DetailView):
     template_name = "accounts/user_detail.html"
     context_object_name = 'u'
 
+
 class SessionUserProfileDetailView(UserProfileDetailView):
     """Displays the profile details about user stored in session."""
 
     def get_object(self):
         return self.request.user
+
 
 class UserProfileUpdateView(generic.UpdateView):
     """Update view for the user profile."""
@@ -60,12 +63,12 @@ class UserProfileUpdateView(generic.UpdateView):
     model = User
     template_name = "accounts/user_update.html"
     context_object_name = 'u'
-    fields = ['username','first_name','last_name','email']
+    fields = ['username', 'first_name', 'last_name', 'email']
 
     def get_success_url(self):
-        return reverse_lazy('accounts:userprofile_detail', kwargs={'pk':self.request.user.pk,})
+        return reverse_lazy('accounts:userprofile_detail', kwargs={'pk': self.request.user.pk, })
+
 
 def logout_action(request):
     logout(request)
     return redirect('trapper.apps.accounts.login')
-

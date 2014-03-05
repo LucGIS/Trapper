@@ -26,6 +26,7 @@ from trapper.apps.research.models import Project as RProject, ProjectCollection 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
+
 class Feature(models.Model):
     """Model describing given feature of an animal.
     Used for defining given "set" of features we are interested in identifying from given resource.
@@ -96,10 +97,10 @@ class FeatureSet(models.Model):
     features = models.ManyToManyField(Feature)
 
     def __unicode__(self):
-        return unicode("Name: %s | Type: %s" %(self.name, self.get_resource_type_display()))
+        return unicode("Name: %s | Type: %s" % (self.name, self.get_resource_type_display()))
 
     def get_absolute_url(self):
-        return reverse('media_classification:featureset_detail', kwargs={'pk':self.pk})
+        return reverse('media_classification:featureset_detail', kwargs={'pk': self.pk})
 
 
 class Project(models.Model):
@@ -169,7 +170,7 @@ class Project(models.Model):
         return self.projectrole_set.filter(user=user).count() > 0
 
     def get_absolute_url(self):
-        return reverse('media_classification:project_detail', kwargs={'pk':self.pk})
+        return reverse('media_classification:project_detail', kwargs={'pk': self.pk})
 
 
 class Classification(models.Model):
@@ -251,7 +252,7 @@ class Sequence(models.Model):
             date=self.date_created, user=self.user))
 
     def get_absolute_url(self):
-        return reverse('media_classification:sequence_detail', kwargs={'pk':self.pk})
+        return reverse('media_classification:sequence_detail', kwargs={'pk': self.pk})
 
 
 class ProjectCollection(models.Model):

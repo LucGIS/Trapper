@@ -37,7 +37,7 @@ class UserProfile(models.Model):
 
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
-        return reverse('accounts:userprofile_detail', kwargs={'pk':self.user.pk})
+        return reverse('accounts:userprofile_detail', kwargs={'pk': self.user.pk})
 
     def has_unread_messages(self):
         """Checks whether user has any unread messages
@@ -69,10 +69,10 @@ class UserProfile(models.Model):
 
 
 # SIGNALS: User
-
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         profile, created = UserProfile.objects.get_or_create(user=instance)
+
 
 def set_user_as_staff(sender, instance, action, **kwargs):
     """Connects to the pre_save signal of the User model.
@@ -90,8 +90,10 @@ def set_user_as_staff(sender, instance, action, **kwargs):
 
 from trapper.apps.storage.models import ResourceUserObjectPermission, CollectionUserObjectPermission
 
-# remove all object-based permissions connected with user
+
 def remove_obj_perms_connected_with_user(sender, instance, **kwargs):
+    """Removes all object-based permissions connected with user."""
+
     ResourceUserObjectPermission.objects.filter(user=instance).delete()
     CollectionUserObjectPermission.objects.filter(user=instance).delete()
 

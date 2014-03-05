@@ -22,6 +22,7 @@
 
 from django import forms
 
+
 class CreateUserForm(forms.Form):
     """User registration form."""
 

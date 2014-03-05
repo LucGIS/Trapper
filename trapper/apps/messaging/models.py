@@ -46,7 +46,7 @@ class Message(models.Model):
         return unicode("%s -> %s (sent: %s)" % (self.user_from, self.user_to, self.date_sent))
 
     def get_absolute_url(self):
-        return reverse('messaging:message_detail', kwargs={'pk':self.pk})
+        return reverse('messaging:message_detail', kwargs={'pk': self.pk})
 
 
 class SystemNotification(models.Model):
@@ -59,7 +59,7 @@ class SystemNotification(models.Model):
         return unicode("%s (%s)" % (self.name, self.__class__.__name__))
 
     def resolve(self):
-        self.resolved=True
+        self.resolved = True
         self.save()
 
     class Meta:
@@ -85,6 +85,7 @@ class CollectionRequest(SystemNotification):
     def resolve_no(self):
         """Resolves the request negatively."""
         self.resolve()
+
 
 class ResourceRequest(SystemNotification):
     """Notification about an incoming collection request for the media classification project"""

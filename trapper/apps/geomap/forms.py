@@ -26,10 +26,11 @@ from trapper.apps.geomap.models import Location
 import trapper.tools.gpxpy as gpxpy
 from django.contrib.gis.geos import Point
 
+
 class LocationUploadForm(forms.Form):
     """Upload form for the locations file."""
 
-    gpx_file=forms.FileField()
+    gpx_file = forms.FileField()
     is_public = forms.BooleanField(initial=False, required=False)
 
     def add_locations(self, user):
@@ -39,7 +40,6 @@ class LocationUploadForm(forms.Form):
         :type user: :py:class:`django.contrib.auth.models.User`
         """
 
-        print self.cleaned_data
         gpx_file = self.cleaned_data['gpx_file']
         gpx = gpxpy.parse(gpx_file)
         no_created = 0
@@ -49,6 +49,5 @@ class LocationUploadForm(forms.Form):
                 Location.objects.create(location_id=waypoint.name,
                                         coordinates=Point(waypoint.longitude, waypoint.latitude),
                                         owner=user,
-                                        is_public=self.cleaned_data['is_public']
-                )
+                                        is_public=self.cleaned_data['is_public'])
         return no_created

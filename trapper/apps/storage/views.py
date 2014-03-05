@@ -61,13 +61,13 @@ class ResourceListView(AngularNgGridMixin):
         if not self.request.user.is_authenticated():
             self.queryset = Resource.objects.filter(status='Public').order_by('name')
         else:
-            self.queryset = Resource.objects.exclude(Q(owner=self.request.user)|Q(managers=self.request.user)).exclude(status='Private').order_by('name')
+            self.queryset = Resource.objects.exclude(Q(owner=self.request.user) | Q(managers=self.request.user)).exclude(status='Private').order_by('name')
 
     def get_extra_fields(self, qs_p):
         extra_fields = []
         for q in qs_p:
             try:
-                extra_fields.append({'thumbnail_large': q.file['video'].url, 'thumbnail_default': q.file['default'].url, 'ajaxurl' : '\'/storage/resource/update/%s\'' % q.pk})
+                extra_fields.append({'thumbnail_large': q.file['video'].url, 'thumbnail_default': q.file['default'].url, 'ajaxurl': '\'/storage/resource/update/%s\'' % q.pk})
             except:
                 extra_fields.append({'thumbnail_large': '/static/img/no_thumb_100x100.jpg', 'thumbnail_default': '/static/img/no_thumb_100x100.jpg'})
         return extra_fields
@@ -85,7 +85,7 @@ class UserResourceListView(LoginRequiredMixin, ResourceListView):
     def get_queryset(self, *args, **kwargs):
         """Return the queryset filtered by the resources which are owned by given user.
         """
-        self.queryset = Resource.objects.filter(Q(owner=self.request.user)|Q(managers=self.request.user)).order_by('name')
+        self.queryset = Resource.objects.filter(Q(owner=self.request.user) | Q(managers=self.request.user)).order_by('name')
 
 
 class ResourceDetailView(ObjectAccessRequiredMixin, generic.DetailView):
@@ -93,7 +93,7 @@ class ResourceDetailView(ObjectAccessRequiredMixin, generic.DetailView):
     Given resource can be viewed when user passes :func:`Resource.can_view` check.
     """
 
-    model=Resource
+    model = Resource
     access_func = Resource.can_view
 
     def dispatch(self, *args, **kwargs):
@@ -105,11 +105,11 @@ class ResourceDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.
     Given resource can be removed when user is the owner or the uploader of the resource.
     """
 
-    model=Resource
+    model = Resource
     access_func = Resource.can_delete
-    success_url='resource/list/'
-    context_object_name='object'
-    template_name='storage/object_confirm_delete.html'
+    success_url = 'resource/list/'
+    context_object_name = 'object'
+    template_name = 'storage/object_confirm_delete.html'
 
     def dispatch(self, *args, **kwargs):
         return super(ResourceDeleteView, self).dispatch(*args, **kwargs)
@@ -117,7 +117,7 @@ class ResourceDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generic.
         def get_context_data(self, *args, **kwargs):
             context = super(ResourceDeleteView, self).get_context_data(*args, **kwargs)
             resource = context['object']
-            if  not resource.can_be_deleted(self.request.user):
+            if not resource.can_be_deleted(self.request.user):
                 context['move_to_archive'] = True
             return context
 
@@ -157,7 +157,7 @@ class ResourceCreateView(LoginRequiredMixin, generic.CreateView):
     """
 
     model = Resource
-    form_class= ResourceForm
+    form_class = ResourceForm
 
     def form_valid(self, form):
         form.instance.uploader = self.request.user
@@ -185,7 +185,7 @@ class CollectionDetailView(LoginRequiredMixin, ResourceListView):
     def get_extra_json_content(self):
         obj = get_object_or_404(Collection, pk=self.kwargs['pk'])
         if self.request.user == obj.owner or self.request.user in obj.managers.all():
-            return {'object_edit_tools' : True,}
+            return {'object_edit_tools': True, }
 
     def get_queryset(self, *args, **kwargs):
         self.queryset = Resource.objects.filter(collection__pk=self.kwargs['pk'])
@@ -212,7 +212,7 @@ class CollectionCreateView(LoginRequiredMixin, AjaxFormMixin):
         if not in_data['resources']:
             msg = 'You did not select any resources'
             return msg
-        qs = Resource.objects.filter(Q(owner=request.user)|Q(managers=request.user))
+        qs = Resource.objects.filter(Q(owner=request.user) | Q(managers=request.user))
         if set(in_data['resources']) - set(qs.values_list('pk', flat=True)):
             raise PermissionDenied()
 
@@ -245,7 +245,7 @@ class CollectionUpdateView(ObjectAccessRequiredMixin, UserResourceListView):
     def get_extra_json_content(self):
         obj = self.get_object()
         resources = obj.resources.values_list('pk', flat=True)
-        return {'preselection':str(resources),}
+        return {'preselection': str(resources), }
 
 
 class CollectionUpdateView2(LoginRequiredMixin, ObjectAccessRequiredMixin, AjaxFormMixin, generic.UpdateView):
@@ -293,7 +293,7 @@ class CollectionUploadViewPart2(LoginRequiredMixin, generic.FormView):
 
     def get_initial(self, *args, **kwargs):
         initial = {
-            'job_pk':self.kwargs['pk'],
+            'job_pk': self.kwargs['pk'],
         }
         return initial
 
@@ -317,7 +317,7 @@ class CollectionUploadView(LoginRequiredMixin, generic.FormView):
     """
 
     template_name = "storage/collection_upload.html"
-    form_class= CollectionUploadForm
+    form_class = CollectionUploadForm
     success_url = reverse_lazy('storage:collection_upload')
 
     def form_valid(self, form):
@@ -332,7 +332,7 @@ class CollectionUploadView(LoginRequiredMixin, generic.FormView):
         else:
             messages.success(self.request, "<strong>Success!</strong> Definition file is valid, please upload the archive file (.zip)")
             job = CollectionUploadJob.objects.create(definition=form.cleaned_data['definition_file'], owner=self.request.user)
-            return HttpResponseRedirect(reverse('storage:collection_upload_2',kwargs={'pk':job.pk}))
+            return HttpResponseRedirect(reverse('storage:collection_upload_2', kwargs={'pk': job.pk}))
 
 
 # Deleting collections
@@ -343,9 +343,9 @@ class CollectionDeleteView(LoginRequiredMixin, ObjectAccessRequiredMixin, generi
 
     model = Collection
     access_func = Collection.can_update
-    success_url='collection/list/'
-    context_object_name='object'
-    template_name='storage/object_confirm_delete.html'
+    success_url = 'collection/list/'
+    context_object_name = 'object'
+    template_name = 'storage/object_confirm_delete.html'
     access_func = Collection.can_update
 
     def dispatch(self, *args, **kwargs):
@@ -383,7 +383,6 @@ class CollectionRequestView(LoginRequiredMixin, generic.FormView):
         form.fields['project'].queryset = projects
         return form
 
-
     def get_context_data(self, *args, **kwargs):
         context = super(CollectionRequestView, self).get_context_data(*args, **kwargs)
 
@@ -397,7 +396,7 @@ class CollectionRequestView(LoginRequiredMixin, generic.FormView):
         self.collection = get_object_or_404(Collection, pk=self.kwargs['pk'])
         projects = Project.objects.all()
         initial = {
-            'object_pk':self.collection.pk,
+            'object_pk': self.collection.pk,
             'project': projects,
             'text': self.TEXT_TEMPLATE % (
                 self.collection.owner.username,
@@ -414,7 +413,11 @@ class CollectionRequestView(LoginRequiredMixin, generic.FormView):
         print "Send email, add message"
         collection = get_object_or_404(Collection, pk=form.cleaned_data['object_pk'])
         project = form.cleaned_data['project']
-        msg = Message.objects.create(subject="Request for collections", text=form.cleaned_data['text'], user_from=self.request.user,user_to=collection.owner, date_sent=datetime.now())
+        msg = Message.objects.create(subject="Request for collections",
+                                     text=form.cleaned_data['text'],
+                                     user_from=self.request.user,
+                                     user_to=collection.owner,
+                                     date_sent=datetime.now())
         coll_req = CollectionRequest(name="Request for collections", user=collection.owner, message=msg, project=project)
         coll_req.save()
         coll_req.collections.add(collection)
@@ -449,7 +452,7 @@ class ResourceRequestView(LoginRequiredMixin, generic.FormView):
         """
         self.resource = get_object_or_404(Resource, pk=self.kwargs['pk'])
         initial = {
-            'object_pk':self.resource.pk,
+            'object_pk': self.resource.pk,
             'text': self.TEXT_TEMPLATE % (
                 self.resource.owner.username,
                 self.resource.name,
@@ -465,9 +468,15 @@ class ResourceRequestView(LoginRequiredMixin, generic.FormView):
         print "Send email, add message"
 
         resource = get_object_or_404(Resource, pk=form.cleaned_data['object_pk'])
-        msg = Message.objects.create(subject="Request for resources: %s" % resource.name, text=form.cleaned_data['text'], user_from=self.request.user,user_to=resource.owner, date_sent=datetime.now())
-        res_req = ResourceRequest(name="Request for resources %s" % resource.name, user=resource.owner, message=msg, user_from=self.request.user)
+        msg = Message.objects.create(subject="Request for resources: %s" % resource.name,
+                                     text=form.cleaned_data['text'],
+                                     user_from=self.request.user,
+                                     user_to=resource.owner,
+                                     date_sent=datetime.now())
+        res_req = ResourceRequest(name="Request for resources %s" % (resource.name, ),
+                                  user=resource.owner,
+                                  message=msg,
+                                  user_from=self.request.user)
         res_req.save()
         res_req.resources.add(resource)
         return super(ResourceRequestView, self).form_valid(form)
-

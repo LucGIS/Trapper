@@ -49,6 +49,7 @@ class MessageDetailView(generic.DetailView):
             message.save()
         return message
 
+
 class MessageCreateView(generic.CreateView):
     form_class = MessageForm
     template_name = 'messaging/message_create.html'
@@ -65,6 +66,7 @@ class MessageCreateView(generic.CreateView):
         print "Invalid", form.errors
         return super(MessageCreateView, self).form_invalid(form)
 
+
 class MessageListView(generic.ListView):
     model = Message
     context_object_name = 'message_list'
@@ -77,11 +79,13 @@ class MessageListView(generic.ListView):
         user = self.request.user
         return Message.objects.filter(Q(user_from=user) | Q(user_to=user))
 
+
 class MessageInboxView(MessageListView):
     template_name = "messaging/message_inbox.html"
 
     def get_queryset(self):
         return self.request.user.received_messages.all().order_by('-date_sent')
+
 
 class MessageOutboxView(MessageListView):
     template_name = "messaging/message_outbox.html"
@@ -89,34 +93,38 @@ class MessageOutboxView(MessageListView):
     def get_queryset(self):
         return self.request.user.sent_messages.all().order_by('-date_sent')
 
+
 class SystemNotificationListView(generic.ListView):
-    context_object_name='notifications'
+    context_object_name = 'notifications'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(SystemNotificationListView, self).dispatch(*args, **kwargs)
 
+
 class CollectionNotificationListView(SystemNotificationListView):
-    model=CollectionRequest
-    template_name='messaging/collection_notification_list.html'
+    model = CollectionRequest
+    template_name = 'messaging/collection_notification_list.html'
 
     def get_queryset(self):
         return self.request.user.collection_notifications.filter(resolved=False)
 
+
 class ResourceNotificationListView(SystemNotificationListView):
-    model=ResourceRequest
-    template_name='messaging/resource_notification_list.html'
+    model = ResourceRequest
+    template_name = 'messaging/resource_notification_list.html'
 
     def get_queryset(self):
         return self.request.user.resource_notifications.filter(resolved=False)
 
+
 class ResolveCollectionRequestView(generic.DetailView):
     context_object_name = "notification"
-    template_name="messaging/collection_request_resolve.html"
+    template_name = "messaging/collection_request_resolve.html"
     model = CollectionRequest
 
     @method_decorator(login_required)
-    @method_decorator(object_access_required(CollectionRequest, lambda u, o: u==o.user))
+    @method_decorator(object_access_required(CollectionRequest, lambda u, o: u == o.user))
     def dispatch(self, *args, **kwargs):
         return super(ResolveCollectionRequestView, self).dispatch(*args, **kwargs)
 
@@ -128,13 +136,14 @@ class ResolveCollectionRequestView(generic.DetailView):
             self.object.resolve_no()
         return redirect(reverse('messaging:cnotification_list'))
 
+
 class ResolveResourceRequestView(generic.DetailView):
     context_object_name = "notification"
-    template_name="messaging/resource_request_resolve.html"
+    template_name = "messaging/resource_request_resolve.html"
     model = ResourceRequest
 
     @method_decorator(login_required)
-    @method_decorator(object_access_required(ResourceRequest, lambda u, o: u==o.user))
+    @method_decorator(object_access_required(ResourceRequest, lambda u, o: u == o.user))
     def dispatch(self, *args, **kwargs):
         return super(ResolveResourceRequestView, self).dispatch(*args, **kwargs)
 

@@ -24,6 +24,7 @@ from __future__ import absolute_import
 
 from celery import shared_task
 
+
 @shared_task
 def process_collection_upload(job_pk):
     """Performs a final validation and uploads the collection.

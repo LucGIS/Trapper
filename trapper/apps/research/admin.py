@@ -28,6 +28,7 @@ class ProjectRoleInline(admin.TabularInline):
     model = ProjectRole
     extra = 0
 
+
 class ProjectAdmin(admin.ModelAdmin):
     inlines = [ProjectRoleInline, ]
     filter_horizontal = ('collections',)

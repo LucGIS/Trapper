@@ -11,7 +11,7 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=2000, null=True, blank=True)
 
-    collections = models.ManyToManyField(Collection, through='ProjectCollection', blank=True, null=True,  related_name='research_projects')
+    collections = models.ManyToManyField(Collection, through='ProjectCollection', blank=True, null=True, related_name='research_projects')
     """Collections assigned to the project"""
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -51,7 +51,6 @@ class Project(models.Model):
 
         return self.projectrole_set.filter(user=user, name__in=ProjectRole.ROLE_DELETE).count() > 0
 
-
     def can_detail(self, user):
         """Determines whether given user can see the details of a project.
 
@@ -64,7 +63,7 @@ class Project(models.Model):
         return self.projectrole_set.filter(user=user).count() > 0
 
     def get_absolute_url(self):
-        return reverse('research:project_detail', kwargs={'pk':self.pk})
+        return reverse('research:project_detail', kwargs={'pk': self.pk})
 
 
 class ProjectRole(models.Model):
@@ -119,4 +118,3 @@ post_delete.connect(remove_research_project_collection_permissions, sender=Proje
 
 post_save.connect(assign_research_project_role_permissions, sender=ProjectRole)
 post_delete.connect(remove_research_project_role_permissions, sender=ProjectRole)
-

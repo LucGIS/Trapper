@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from django.views.generic import View,TemplateView
+from django.views.generic import View, TemplateView
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest
 from braces.views import AjaxResponseMixin, JSONResponseMixin
@@ -38,13 +38,12 @@ class TrapperDjangoJSONEncoder(json.JSONEncoder):
             return super(TrapperDjangoJSONEncoder, self).default(o)
 
 
-# some angularjs ng-grid related mixins
 class AngularNgGridMixin(JSONResponseMixin, AjaxResponseMixin, TemplateView):
-    '''
-    '''
+    ''' Some angularjs ng-grid related mixins. '''
+
     # OPTIONS:JSONResponseMixin
     #--------------------------------------#
-    content_type ="text/html"
+    content_type = "text/html"
     #json_dumps_kwargs = None
 
     # OPTIONS:TemplateView
@@ -53,8 +52,8 @@ class AngularNgGridMixin(JSONResponseMixin, AjaxResponseMixin, TemplateView):
 
     # OPTIONS:AngularNgGridMixin
     #--------------------------------------#
-    list_model = None # django model that will be used to feed nggrid
-    list_model_filter = None # 'django-filter' filter class
+    list_model = None  # django model that will be used to feed nggrid
+    list_model_filter = None  # 'django-filter' filter class
     pageSize_request_str = 'pageSize'
     pageNumber_request_str = 'pageNumber'
     search_request_str = 'search'
@@ -139,16 +138,20 @@ class AngularNgGridMixin(JSONResponseMixin, AjaxResponseMixin, TemplateView):
     def get_extra_json_content(self):
         return None
 
-    def get_ajax(self, request, extra_fields = None, *args, **kwargs):
+    def get_ajax(self, request, extra_fields=None, *args, **kwargs):
         self.filter_queryset(request)
         qs_p = self.get_paginated_data(request)
-        objects =  list(qs_p.object_list.values(*list(self.object_properties)))
+        objects = list(qs_p.object_list.values(*list(self.object_properties)))
         # use extra_fields to include non-model object properties
         extra_fields = self.get_extra_fields(qs_p)
         if extra_fields:
-            for d1,d2 in zip(objects, extra_fields):
+            for d1, d2 in zip(objects, extra_fields):
                 d1.update(d2)
-        json_content = {'count' : len(self.queryset), 'objects' : objects, 'object_edit_tools' : self.object_edit_tools,}
+        json_content = {
+            'count': len(self.queryset),
+            'objects': objects,
+            'object_edit_tools': self.object_edit_tools,
+        }
         extra_json_content = self.get_extra_json_content()
         if extra_json_content:
             json_content.update(extra_json_content)
@@ -166,24 +169,27 @@ class AjaxFormMixin(JSONResponseMixin, AjaxResponseMixin, View):
     '''
     # OPTIONS:JSONResponseMixin
     #--------------------------------------#
-    content_type ="application/json"
+    content_type = "application/json"
     # OPTIONS:AjaxFormMixin
     #--------------------------------------#
     ajax_form = None
     #--------------------------------------#
 
     def get_ajax(self, request, obj=None, *args, **kwargs):
-        if self.kwargs.has_key('pk'):
+        if 'pk' in self.kwargs:
             obj = get_object_or_404(self.ajax_form._meta.model, pk=self.kwargs['pk'])
         model = self.ajax_form._meta.model._meta.model_name
         scope_prefix = '_'.join([model, 'data'])
         form = self.ajax_form(instance=obj, scope_prefix=scope_prefix, user=request.user)
         # prepare inital data dict to feed ng-model
         form_html = render_crispy_form(form)
-        out_data = {'form_html':form_html, 'model':model,}
+        out_data = {
+            'form_html': form_html,
+            'model': model,
+        }
         if obj:
-            initial = json.dumps(form.initial, cls=TrapperDjangoJSONEncoder) #default=lambda x: ''
-            out_data.update({'initial':initial,})
+            initial = json.dumps(form.initial, cls=TrapperDjangoJSONEncoder)  # default=lambda x: ''
+            out_data.update({'initial': initial, })
         return self.render_json_response(out_data)
 
     # override this method to include some tests of incoming json data
@@ -205,9 +211,12 @@ class AjaxFormMixin(JSONResponseMixin, AjaxResponseMixin, View):
             return HttpResponseBadRequest(json.dumps({'msg': test_msg}), mimetype="application/json")
         model = self.ajax_form._meta.model._meta.model_name
         scope_prefix = '_'.join([model, 'data'])
-        if self.kwargs.has_key('pk'):
+        if 'pk' in self.kwargs:
             obj = get_object_or_404(self.ajax_form._meta.model, pk=self.kwargs['pk'])
-        bound_form = self.ajax_form(data=in_data, instance=obj, scope_prefix=scope_prefix, user=request.user)
+        bound_form = self.ajax_form(data=in_data,
+                                    instance=obj,
+                                    scope_prefix=scope_prefix,
+                                    user=request.user)
         bound_form.full_clean()
         if bound_form.is_valid():
             instance = bound_form.save(commit=False)
@@ -218,9 +227,9 @@ class AjaxFormMixin(JSONResponseMixin, AjaxResponseMixin, View):
                 msg = '%s successfully updated!' % model.capitalize()
             else:
                 msg = '%s successfully created!' % model.capitalize()
-            return HttpResponse(json.dumps({'msg': msg, 'form_html': form_html,}), mimetype="application/json")
+            return HttpResponse(json.dumps({'msg': msg, 'form_html': form_html, }),
+                                mimetype="application/json")
         else:
             form_html = render_crispy_form(bound_form)
             msg = 'Invalid form: please correct the errors below:'
             return HttpResponseBadRequest(json.dumps({'msg': msg, 'form_html': form_html}), mimetype="application/json")
-

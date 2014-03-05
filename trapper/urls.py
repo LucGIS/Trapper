@@ -7,30 +7,31 @@ from django.conf.urls.static import static
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-	# Trapper homepage
+urlpatterns = patterns(
+    '',
+    # Trapper homepage
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
     url(r'^msg/$', TemplateView.as_view(template_name='base.html'), name='msg'),
 
-	# Media classification urls
+    # Media classification urls
     url(r'^media_classification/', include('trapper.apps.media_classification.urls', namespace='media_classification')),
-	# Research urls
+    # Research urls
     url(r'^research/', include('trapper.apps.research.urls', namespace='research')),
 
-	# Storage urls
+    # Storage urls
     url(r'^storage/', include('trapper.apps.storage.urls', namespace='storage')),
 
-	# Messaging urls
+    # Messaging urls
     url(r'^messaging/', include('trapper.apps.messaging.urls', namespace='messaging')),
 
-	# Accounts urls
-	url('', include('django.contrib.auth.urls')),
+    # Accounts urls
+    url('', include('django.contrib.auth.urls')),
     url(r'^accounts/', include('trapper.apps.accounts.urls', namespace='accounts')),
 
-	# GeoMap urls
+    # GeoMap urls
     url(r'^geomap/', include('trapper.apps.geomap.urls', namespace='geomap')),
 
-        # Comments
+    # Comments
     url(r'^comments/', include('fluent_comments.urls')),
 
     url(r'^tinymce/', include('tinymce.urls')),
@@ -42,10 +43,8 @@ urlpatterns = patterns('',
 if settings.DEBUG:
         urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-        '''
-	urlpatterns = patterns('',
-                url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root':settings.MEDIA_ROOT,}),
-                url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
-	) + urlpatterns
-        '''
-                                                                                                                                                                       
+    #urlpatterns = patterns(
+    #   '',
+    #    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root':settings.MEDIA_ROOT,}),
+    #    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
+    #) + urlpatterns

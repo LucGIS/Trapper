@@ -4,9 +4,10 @@ from trapper.apps.storage.models import Resource
 from trapper.apps.research.models import Project
 import itertools
 
-# asynchronous task needed?
-# assign/remove appropriate view permissions when collection is changed
+
 def collection_m2m_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
+    # TODO:asynchronous task needed?
+    """ Assign/remove appropriate view permissions when collection is changed. """
     if action == 'pre_clear':
         instance._old_m2m = set(list(instance.resources.values_list('pk', flat=True)))
     if action == 'post_add' and hasattr(instance, '_old_m2m'):

@@ -25,6 +25,7 @@ from django.forms.models import inlineformset_factory
 
 from trapper.apps.media_classification.models import Project, ProjectCollection, ProjectRole, FeatureSet, Sequence
 
+
 class ProjectForm(forms.ModelForm):
     """Project ModelForm for the Update/Create views"""
 
@@ -34,6 +35,7 @@ class ProjectForm(forms.ModelForm):
 
     rp_pk = forms.IntegerField(widget=forms.HiddenInput)
 
+
 class ProjectCollectionForm(forms.ModelForm):
     """ProjectCollection ModelForm for the Update/Create views"""
 
@@ -41,16 +43,18 @@ class ProjectCollectionForm(forms.ModelForm):
         model = ProjectCollection
 
     def __init__(self, *args, **kwargs):
-        super(ProjectCollectionForm, self).__init__(*args,**kwargs)
+        super(ProjectCollectionForm, self).__init__(*args, **kwargs)
         if self.instance.id:
             # Adds collection as a simple label, so the user can't alter it.
             self.col_name = self.instance.collection.name
             del self.fields['collection']
 
+
 class FeatureSetForm(forms.ModelForm):
     class Meta:
         model = FeatureSet
-        exclude = ['features',]
+        exclude = ['features', ]
+
 
 class SequenceForm(forms.ModelForm):
     """Sequence ModelForm for the Update and Create views."""
@@ -64,5 +68,5 @@ class SequenceForm(forms.ModelForm):
 ProjectCollectionFormset = inlineformset_factory(Project, ProjectCollection, extra=0, form=ProjectCollectionForm)
 """Formset for the ProjectCollection model"""
 
-ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra = 1)
+ProjectRoleFormset = inlineformset_factory(Project, ProjectRole, extra=1)
 """Formset for the ProjectRole model"""

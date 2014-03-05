@@ -35,16 +35,17 @@ from crispy_forms.layout import Layout, HTML, Div
 # RESOURCE FORMS
 ############################################################################
 
+
 class ResourceForm(forms.ModelForm):
     """Model form for creating and updating :class:`.Resource` objects
     """
 
     class Meta:
         model = Resource
-        exclude=['uploader',]
+        exclude = ['uploader', ]
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
+        kwargs.pop('user', None)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.error_text_inline = True
@@ -53,7 +54,7 @@ class ResourceForm(forms.ModelForm):
         super(ResourceForm, self).__init__(*args, **kwargs)
         if self.instance.pk:
             self.initial['managers'] = [str(t.pk) for t in self.instance.managers.all()]
-            self.fields['managers'].help_text = 'Select your managers' # Django bug
+            self.fields['managers'].help_text = 'Select your managers'  # Django bug
             self.fields['date_recorded'].widget.attrs['datetimepicker'] = ''
 
     def save(self, force_insert=False, force_update=False, commit=True):
@@ -66,13 +67,15 @@ class ResourceForm(forms.ModelForm):
             r.update_metadata(commit=True)
         return r
 
+
 class ResourceAjaxForm(NgModelFormMixin, ResourceForm):
     class Meta:
         model = Resource
-        exclude=['file', 'extra_file', 'uploader', 'mime_type', 'extra_mime_type', 'resource_type']
+        exclude = ['file', 'extra_file', 'uploader', 'mime_type', 'extra_mime_type', 'resource_type']
+
 
 class ResourceRequestForm(forms.Form):
-    text = forms.CharField(widget=TinyMCE(attrs={'cols':60, 'rows':15}))
+    text = forms.CharField(widget=TinyMCE(attrs={'cols': 60, 'rows': 15}))
     object_pk = forms.IntegerField(widget=forms.HiddenInput())
 
 
@@ -86,10 +89,10 @@ class CollectionForm(NgModelFormMixin, forms.ModelForm):
 
     class Meta:
         model = Collection
-        exclude=['uploader', 'owner','resources']
+        exclude = ['uploader', 'owner', 'resources']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
+        kwargs.pop('user', None)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.error_text_inline = True
@@ -105,7 +108,7 @@ class CollectionForm(NgModelFormMixin, forms.ModelForm):
         super(CollectionForm, self).__init__(*args, **kwargs)
         if self.instance.pk:
             self.initial['managers'] = [str(t.pk) for t in self.instance.managers.all()]
-        self.fields['managers'].help_text = 'Select your managers' # Django bug
+        self.fields['managers'].help_text = 'Select your managers'  # Django bug
 
 
 class CollectionAjaxForm(CollectionForm):
@@ -133,7 +136,7 @@ class CollectionAjaxForm(CollectionForm):
 class CollectionRequestForm(forms.Form):
     """Defines a form for creating a collection request for the :class:`Project` object."""
 
-    text = forms.CharField(widget=TinyMCE(attrs={'cols':60, 'rows':15}))
+    text = forms.CharField(widget=TinyMCE(attrs={'cols': 60, 'rows': 15}))
     project = forms.ModelChoiceField(queryset=Project.objects.none())
     object_pk = forms.IntegerField(widget=forms.HiddenInput())
 

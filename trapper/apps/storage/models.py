@@ -20,9 +20,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.          #
 ############################################################################
 
-"""Module for storage application.
-
-"""
+"""Module for storage application. """
 
 from mimetypes import guess_type
 import datetime
@@ -53,7 +51,7 @@ class Resource(models.Model):
     file = ThumbnailerField(upload_to='storage/resource/file/', null=True, blank=True)
     extra_file = models.FileField(upload_to='storage/resource/file/', null=True, blank=True)
 
-    THUMBNAIL_SIZE = (96,96)
+    THUMBNAIL_SIZE = (96, 96)
 
     MIME_CHOICES = (
         ('audio/ogg', 'audio/ogg'),
@@ -105,15 +103,14 @@ class Resource(models.Model):
 
     def get_absolute_url(self):
         """Get the absolute url for an instance of this model."""
-        return reverse('storage:resource_detail', kwargs={'pk':self.pk})
-
+        return reverse('storage:resource_detail', kwargs={'pk': self.pk})
 
     def can_view(self, user):
         if self.status == 'Public':
             return True
         else:
             perms = get_perms(user, self)
-            return  user in (self.owner, self.uploader) or user in self.managers.all() or 'view_resource_PRO' in perms or 'view_resource_SNG' in perms
+            return user in (self.owner, self.uploader) or user in self.managers.all() or 'view_resource_PRO' in perms or 'view_resource_SNG' in perms
 
     # helper function; has project-based access; can return 'checkset' which can tell you which collections are shared between resource and user
     def has_access(self, user, return_checkset=False):
@@ -222,9 +219,9 @@ class CollectionUploadJob(models.Model):
     date_resolved = models.DateTimeField(null=True, blank=True)
     owner = models.ForeignKey(User)
 
-    STATUS_NEW        = 1
-    STATUS_PENDING    = 2
-    STATUS_RESOLVED_OK    = 3
+    STATUS_NEW = 1
+    STATUS_PENDING = 2
+    STATUS_RESOLVED_OK = 3
     STATUS_RESOLVED_ERROR = 4
 
     STATUS_CHIOCES = (
@@ -245,9 +242,9 @@ class CollectionUploadJob(models.Model):
         :type error_message: str
         """
 
-        self.status=status
+        self.status = status
         if error_message:
-            self.error_message=error_message
+            self.error_message = error_message
         self.save()
 
     def resolve_as_error(self, error_message):
@@ -268,7 +265,8 @@ class CollectionUploadJob(models.Model):
         self.set_status(self.STATUS_RESOLVED_OK)
 
     def __unicode__(self):
-        return unicode("Added on: %s, Status: %s"%(self.date_added, self.get_status_display(),))
+        return unicode("Added on: %s, Status: %s" % (self.date_added, self.get_status_display(),))
+
 
 class Collection(models.Model):
     """Collection of resources sharing a common origin (e.g. ownership or a recording session).
@@ -291,14 +289,13 @@ class Collection(models.Model):
     #is_public = models.BooleanField("Publicly available", default=False, help_text="Make it public")
     #is_private = models.BooleanField("Private", default=False, help_text="Make it private (only owner and managers can see this collection)")
 
-
     def __unicode__(self):
         return unicode("%s | %s" % (self.name, self.owner.username))
 
     def get_absolute_url(self):
         """Get the absolute url for an instance of this model."""
 
-        return reverse('storage:collection_detail', kwargs={'pk':self.pk})
+        return reverse('storage:collection_detail', kwargs={'pk': self.pk})
 
     def can_update_or_delete(self, user):
         return user == self.owner or user in self.managers.all()
@@ -315,11 +312,14 @@ class Collection(models.Model):
 class ResourceUserObjectPermission(Gmodels.UserObjectPermissionBase):
     content_object = models.ForeignKey(Resource)
 
+
 class ResourceGroupObjectPermission(Gmodels.GroupObjectPermissionBase):
     content_object = models.ForeignKey(Resource)
 
+
 class CollectionUserObjectPermission(Gmodels.UserObjectPermissionBase):
     content_object = models.ForeignKey(Collection)
+
 
 class CollectionGroupObjectPermission(Gmodels.GroupObjectPermissionBase):
     content_object = models.ForeignKey(Collection)
@@ -330,4 +330,3 @@ from signals import collection_m2m_changed
 from django.db.models.signals import m2m_changed
 
 m2m_changed.connect(collection_m2m_changed, sender=Collection.resources.through)
-
